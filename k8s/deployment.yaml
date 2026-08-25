@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eaze-level-up
+  labels:
+    app: eaze-level-up
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: eaze-level-up
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: eaze-level-up
+    spec:
+      # Ensures the one-off migration Job has already run to completion for
+      # this release before pods start — apply migration-job.yaml and wait
+      # for it in your deploy pipeline before applying this Deployment.
+      containers:
+        - name: eaze-level-up
+          image: ghcr.io/OWNER/eaze-level-up:latest   # replace OWNER, pin to :sha-<commit> for real rollouts
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: eaze-level-up-config
+            - secretRef:
+                name: eaze-level-up-secrets
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          # Gives the app time to finish in-flight requests after SIGTERM
+          # (see server.js's shutdown handler) before the pod is killed.
+          terminationGracePeriodSeconds: 15

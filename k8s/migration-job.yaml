@@ -1,0 +1,37 @@
+# One-time migration runner. This is the standard Kubernetes pattern for
+# "run this exactly once per deploy, not once per pod": a Job, applied and
+# waited on BEFORE the Deployment rolls out new pods.
+#
+# `metadata.name` is versioned so re-applying for a new release creates a new
+# Job object instead of silently no-op'ing against a completed one. Swap
+# <RELEASE> for a real value in CI (git sha, build number, etc).
+#
+#   kubectl apply -f k8s/migration-job.yaml
+#   kubectl wait --for=condition=complete --timeout=120s job/eaze-level-up-migrate-<RELEASE>
+#   kubectl apply -f k8s/deployment.yaml -f k8s/service.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: eaze-level-up-migrate-<RELEASE>
+  labels:
+    app: eaze-level-up
+    role: migrate
+spec:
+  backoffLimit: 2
+  ttlSecondsAfterFinished: 3600
+  template:
+    metadata:
+      labels:
+        app: eaze-level-up
+        role: migrate
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: ghcr.io/OWNER/eaze-level-up:latest   # must match the image being deployed
+          command: ["npm", "run", "migrate:up"]
+          envFrom:
+            - configMapRef:
+                name: eaze-level-up-config
+            - secretRef:
+                name: eaze-level-up-secrets

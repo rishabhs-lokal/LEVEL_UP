@@ -1,0 +1,9 @@
+# Non-secret configuration only. DATABASE_URL lives in a Secret (see secret.example.yaml).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: eaze-level-up-config
+data:
+  PORT: "3000"
+  DB_SSL: "false"
+  DB_POOL_MAX: "10"

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: eaze-level-up
+spec:
+  selector:
+    app: eaze-level-up
+  ports:
+    - port: 80
+      targetPort: 3000
+  type: ClusterIP

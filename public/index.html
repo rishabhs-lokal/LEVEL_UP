@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>eaze – Level Up</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#FF5722;--bg:#09091A;--surf:#12122A;--surf2:#1B1B36;
+  --txt:#FFFFFF;--muted:rgba(255,255,255,0.5);
+  --font:'Plus Jakarta Sans',Arial,sans-serif;
+  --btn:#FF9E44;--btn-txt:#1A1A1A;
+  --btn-dis:rgba(255,255,255,0.10);--btn-dis-txt:rgba(255,255,255,0.28);
+  --catA:#3EA6FF;--catA-dim:rgba(62,166,255,0.16);
+  --catB:#FF5C8A;--catB-dim:rgba(255,92,138,0.16);
+  --good:#2ECC71;--bad:#EF5350;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--bg);color:var(--txt);display:flex;justify-content:center}
+#app{width:100%;max-width:430px;height:100dvh;position:relative;overflow:hidden;background:var(--bg)}
+.scr{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;overflow-y:auto}
+.scr.on{display:flex}
+button{font-family:var(--font)}
+img{-webkit-user-drag:none}
+
+/* ── SPLASH ────────────────────────────────────────────────────── */
+#splash{justify-content:center;align-items:center;gap:18px;background:var(--bg)}
+#splash img{height:34px;opacity:.92}
+.spin-ring{width:26px;height:26px;border:3px solid rgba(255,255,255,.15);border-top-color:var(--brand);border-radius:50%;animation:spinr .7s linear infinite}
+@keyframes spinr{to{transform:rotate(360deg)}}
+.splash-txt{font-size:13px;color:var(--muted);font-weight:500}
+
+/* ── LOGIN ─────────────────────────────────────────────────────── */
+#login{justify-content:center;align-items:center;text-align:center;padding:32px 28px;background:radial-gradient(ellipse 80% 40% at 20% 0%,rgba(255,87,34,.18) 0%,transparent 70%),var(--bg)}
+#login img{height:32px;margin-bottom:26px}
+.login-title{font-size:22px;font-weight:900;letter-spacing:-.4px;margin-bottom:8px}
+.login-sub{font-size:14px;color:var(--muted);line-height:1.55;margin-bottom:28px;max-width:300px;font-weight:400}
+.login-flbl{display:block;font-size:11px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;font-weight:600;text-align:left;width:100%;max-width:300px}
+#loginInput{width:100%;max-width:300px;padding:15px 18px;background:var(--surf2);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;color:var(--txt);font-size:20px;font-family:var(--font);letter-spacing:3px;outline:none;margin-bottom:10px;transition:border-color .2s}
+#loginInput:focus{border-color:var(--brand)}
+#loginInput.err{border-color:var(--bad);animation:shake .35s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.login-err{font-size:12.5px;color:var(--bad);min-height:18px;margin-bottom:18px;font-weight:500}
+.login-cta{width:100%;max-width:300px;height:50px;border-radius:14px;border:none;background:var(--btn);color:var(--btn-txt);font-size:16px;font-weight:800;cursor:pointer;transition:transform .1s,opacity .15s}
+.login-cta:active{transform:scale(.98)}
+.login-cta:disabled{background:var(--btn-dis);color:var(--btn-dis-txt);cursor:not-allowed;transform:none}
+.login-hint{font-size:11.5px;color:rgba(255,255,255,.32);margin-top:20px;font-weight:500}
+
+/* ── HOME ──────────────────────────────────────────────────────── */
+#home{justify-content:flex-start;padding:22px 20px 40px;background:radial-gradient(ellipse 80% 34% at 20% 0%,rgba(255,87,34,.16) 0%,transparent 70%),var(--bg)}
+.home-hdr{display:flex;align-items:center;justify-content:space-between;width:100%;margin-bottom:4px}
+.home-hdr img{height:22px}
+.logoutbtn{background:none;border:none;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;padding:6px 2px}
+.logoutbtn:active{color:#fff}
+.home-title{font-size:26px;font-weight:900;letter-spacing:-.5px;margin:18px 0 4px;width:100%}
+.home-sub{font-size:14px;color:var(--muted);margin-bottom:22px;width:100%;font-weight:400}
+.topics{width:100%;display:flex;flex-direction:column;gap:14px}
+.tcard{
+  width:100%;text-align:left;border:1px solid rgba(255,255,255,.08);
+  background:var(--surf);border-radius:20px;padding:18px;
+  display:flex;flex-direction:column;gap:12px;cursor:pointer;
+  transition:transform .12s,border-color .2s;
+}
+.tcard:active{transform:scale(.98)}
+.tcard.done{border-color:rgba(46,204,113,.35)}
+.trow1{display:flex;align-items:center;gap:12px}
+.ticon{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;flex:none}
+.tinfo{flex:1;min-width:0}
+.tname{font-size:16px;font-weight:800;letter-spacing:-.2px}
+.tprog{font-size:12px;color:var(--muted);margin-top:2px;font-weight:500}
+.tcheck{font-size:18px;color:var(--good);flex:none}
+.tcats{display:flex;gap:8px}
+.tpill{flex:1;font-size:11px;font-weight:700;text-align:center;padding:6px 4px;border-radius:9px;letter-spacing:.1px}
+.tpill.a{background:var(--catA-dim);color:var(--catA)}
+.tpill.b{background:var(--catB-dim);color:var(--catB)}
+.tbar{height:4px;border-radius:2px;background:rgba(255,255,255,.08);overflow:hidden}
+.tbar i{display:block;height:100%;background:var(--brand);border-radius:2px;transition:width .3s}
+
+/* ── GAME ──────────────────────────────────────────────────────── */
+#game{justify-content:flex-start;background:radial-gradient(ellipse 80% 30% at 20% 0%,rgba(255,87,34,.14) 0%,transparent 70%),var(--bg);padding-bottom:20px}
+.topbar{width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px 16px 8px;gap:10px}
+.iconbtn{width:38px;height:38px;border-radius:12px;background:var(--surf);border:1px solid rgba(255,255,255,.08);color:#fff;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+.gtitle{flex:1;text-align:center;font-size:15px;font-weight:800;letter-spacing:-.1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.resetbtn{background:var(--surf);border:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:12px;font-weight:700;padding:9px 14px;border-radius:20px;cursor:pointer;flex:none}
+.metarow{width:100%;display:flex;align-items:center;justify-content:space-between;padding:6px 20px 2px}
+.timerbox{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums}
+.sesslbl{font-size:12px;color:var(--muted);font-weight:600}
+.dots{display:flex;gap:6px;padding:10px 20px 4px}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.14);transition:background .2s,transform .2s}
+.dot.now{background:rgba(255,255,255,.5);transform:scale(1.25)}
+.dot.ok{background:var(--good)}
+.dot.no{background:var(--bad)}
+
+.stagewrap{flex:1;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 22px 4px;min-height:0}
+.stack{position:relative;width:100%;max-width:300px;aspect-ratio:3/4;touch-action:none}
+.card{
+  position:absolute;inset:0;border-radius:24px;padding:26px 22px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:10px;
+  box-shadow:0 18px 40px rgba(0,0,0,.45);cursor:grab;
+  will-change:transform;
+}
+.card:active{cursor:grabbing}
+.card .cprompt{font-size:19px;font-weight:800;line-height:1.32;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.2)}
+.card .cquote{font-size:26px;line-height:1;opacity:.55;color:#fff}
+.hint{position:absolute;top:18px;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:900;letter-spacing:.6px;text-transform:uppercase;opacity:0;border:2px solid;pointer-events:none;transition:opacity .05s}
+.hint.left{left:18px;color:var(--catA);border-color:var(--catA);transform:rotate(-8deg)}
+.hint.right{right:18px;color:var(--catB);border-color:var(--catB);transform:rotate(8deg)}
+.stamp{
+  position:absolute;top:38%;left:50%;transform:translate(-50%,-50%) rotate(-14deg);
+  border:4px solid var(--bad);color:var(--bad);font-weight:900;font-size:20px;letter-spacing:2px;
+  padding:6px 14px;border-radius:10px;opacity:0;pointer-events:none;background:rgba(9,9,26,.35);
+  transition:opacity .15s,transform .15s;text-transform:uppercase;
+}
+.stamp.show{opacity:.92;transform:translate(-50%,-50%) rotate(-14deg) scale(1)}
+
+.fbanner{
+  position:absolute;top:-64px;left:0;right:0;margin:0 auto;width:calc(100% - 8px);
+  background:rgba(46,204,113,.14);border:1px solid rgba(46,204,113,.4);
+  border-radius:16px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;
+  opacity:0;pointer-events:none;
+  transition:top .32s cubic-bezier(.16,1,.3,1),opacity .32s;z-index:20;
+}
+.fbanner.show{top:-8px;opacity:1}
+.fbanner .fic{width:22px;height:22px;min-width:22px;border-radius:50%;background:var(--good);color:#08240f;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center}
+.fbanner .ftxt{font-size:12.5px;line-height:1.5;color:#fff;font-weight:500}
+.combo{position:absolute;top:-96px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#FFD54F,#FF9E44);color:#1A1A1A;font-weight:900;font-size:12px;padding:5px 12px;border-radius:14px;opacity:0;transition:top .3s,opacity .3s;z-index:21;letter-spacing:.3px}
+.combo.show{top:-124px;opacity:1}
+
+.ctabtns{width:100%;max-width:300px;display:flex;gap:10px;margin-top:16px}
+.catbtn{
+  flex:1;padding:13px 8px;border-radius:14px;border:1.5px solid;background:transparent;
+  font-size:13px;font-weight:800;cursor:pointer;line-height:1.25;letter-spacing:.1px;
+  transition:transform .1s,opacity .15s;
+}
+.catbtn:active{transform:scale(.96)}
+.catbtn.a{border-color:var(--catA);color:var(--catA);background:var(--catA-dim)}
+.catbtn.b{border-color:var(--catB);color:var(--catB);background:var(--catB-dim)}
+.catbtn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+.howto{
+  width:100%;max-width:300px;margin-top:16px;background:var(--surf);
+  border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:13px 15px;
+}
+.howto-h{font-size:12.5px;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.howto-p{font-size:11.5px;color:var(--muted);line-height:1.5;font-weight:400}
+
+/* ── COACH SHEET ───────────────────────────────────────────────── */
+.sbg{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.sbg.on{display:flex}
+.sht{width:100%;max-width:430px;background:var(--surf);border-radius:26px 26px 0 0;padding:22px 22px 30px;animation:slideUp .32s cubic-bezier(.16,1,.3,1)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.coachrow{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.coachav{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--brand),#FF9E44);display:flex;align-items:center;justify-content:center;font-size:18px}
+.coachlbl{font-size:11px;font-weight:900;letter-spacing:1px;color:var(--bad);text-transform:uppercase}
+.coachname{font-size:13px;color:var(--muted);font-weight:600}
+.coachbody{font-size:15px;line-height:1.55;color:#fff;font-weight:500;margin-bottom:22px}
+.gotit{width:100%;height:50px;border-radius:14px;border:none;background:var(--btn);color:var(--btn-txt);font-size:16px;font-weight:800;cursor:pointer}
+.gotit:active{transform:scale(.98)}
+
+/* ── LEVEL COMPLETE ────────────────────────────────────────────── */
+.bkdrop{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:150;display:none;align-items:center;justify-content:center;padding:20px}
+.bkdrop.on{display:flex}
+.lcard{width:100%;max-width:360px;background:var(--surf);border-radius:28px;padding:30px 26px 26px;position:relative;text-align:center;animation:popIn .3s cubic-bezier(.34,1.5,.64,1)}
+@keyframes popIn{from{transform:scale(.75);opacity:0}to{transform:scale(1);opacity:1}}
+.lclose{position:absolute;top:16px;left:16px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);border:none;color:#fff;font-size:14px;cursor:pointer}
+.leyebrow{font-size:11px;font-weight:800;letter-spacing:1.4px;color:var(--brand);text-transform:uppercase;margin-top:6px}
+.lscore{font-size:52px;font-weight:900;letter-spacing:-2px;margin:10px 0 2px}
+.lmsg{font-size:14px;color:rgba(255,255,255,.75);font-weight:500;margin-bottom:18px}
+.lstats{display:flex;gap:10px;margin-bottom:24px}
+.lstat{flex:1;background:var(--surf2);border-radius:14px;padding:12px 6px}
+.lstat b{display:block;font-size:18px;font-weight:900}
+.lstat span{font-size:10.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.lcta{width:100%;height:50px;border-radius:14px;border:none;background:var(--btn);color:var(--btn-txt);font-size:16px;font-weight:800;cursor:pointer;margin-bottom:10px}
+.lcta:active{transform:scale(.98)}
+.lsecrow{display:flex;gap:10px}
+.lsec{flex:1;height:44px;border-radius:12px;border:1.5px solid rgba(255,255,255,.15);background:transparent;color:#fff;font-size:13px;font-weight:700;cursor:pointer}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--surf2);border:1px solid rgba(255,255,255,.12);color:#fff;font-size:12.5px;font-weight:600;padding:11px 18px;border-radius:14px;z-index:999;opacity:0;transition:opacity .25s,bottom .25s;pointer-events:none}
+.toast.show{opacity:1;bottom:34px}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- SPLASH -->
+  <div id="splash" class="scr on">
+    <img src="eaze-logo.png" alt="eaze">
+    <div class="spin-ring"></div>
+    <div class="splash-txt">Loading eaze Level Up…</div>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="login" class="scr">
+    <img src="eaze-logo.png" alt="eaze">
+    <div class="login-title">Welcome to eaze Level Up</div>
+    <div class="login-sub">Enter your mobile number to continue.</div>
+    <label class="login-flbl" for="loginInput">Mobile Number</label>
+    <input id="loginInput" type="tel" inputmode="numeric" maxlength="10" placeholder="0000000000" autocomplete="off">
+    <div class="login-err" id="loginErr"></div>
+    <button class="login-cta" id="loginBtn" disabled>Continue</button>
+    <div class="login-hint">Testing? Use 9999999999 — real number login isn't live yet.</div>
+  </div>
+
+  <!-- HOME -->
+  <div id="home" class="scr">
+    <div class="home-hdr">
+      <img src="eaze-logo.png" alt="eaze">
+      <button class="logoutbtn" id="logoutBtn">Log out</button>
+    </div>
+    <div class="home-title">Level Up</div>
+    <div class="home-sub">Read the scenario. Swipe to sort it. Six topics, real-life moments.</div>
+    <div class="topics" id="topicsList"></div>
+  </div>
+
+  <!-- GAME -->
+  <div id="game" class="scr">
+    <div class="topbar">
+      <button class="iconbtn" id="backBtn" aria-label="Back">←</button>
+      <div class="gtitle" id="gTitle">Topic</div>
+      <button class="resetbtn" id="resetBtn">Reset</button>
+    </div>
+    <div class="metarow">
+      <div class="timerbox">⏱ <span id="gTimer">00:00</span></div>
+      <div class="sesslbl" id="gSession">Session 1 · —</div>
+    </div>
+    <div class="dots" id="gDots"></div>
+
+    <div class="stagewrap">
+      <div class="stack" id="stack">
+        <!-- cards injected here -->
+      </div>
+      <div class="ctabtns">
+        <button class="catbtn a" id="btnA">Category A</button>
+        <button class="catbtn b" id="btnB">Category B</button>
+      </div>
+      <div class="howto">
+        <div class="howto-h">🤔&nbsp; How to Play</div>
+        <div class="howto-p">Swipe the card left or right — or tap a button below it — to sort it into the right side.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COACH SHEET (wrong answer) -->
+  <div class="sbg" id="coachSheet">
+    <div class="sht">
+      <div class="coachrow">
+        <div class="coachav">💬</div>
+        <div>
+          <div class="coachlbl">Actually…</div>
+          <div class="coachname">eaze coach</div>
+        </div>
+      </div>
+      <div class="coachbody" id="coachBody">—</div>
+      <button class="gotit" id="gotItBtn">Got it</button>
+    </div>
+  </div>
+
+  <!-- LEVEL COMPLETE -->
+  <div class="bkdrop" id="levelBk">
+    <div class="lcard">
+      <button class="lclose" id="lCloseBtn">✕</button>
+      <div class="leyebrow">Session Complete</div>
+      <div class="lscore" id="lScore">0/0</div>
+      <div class="lmsg" id="lMsg">—</div>
+      <div class="lstats">
+        <div class="lstat"><b id="lAcc">0%</b><span>Accuracy</span></div>
+        <div class="lstat"><b id="lStreak">0</b><span>Best Streak</span></div>
+        <div class="lstat"><b id="lTime">0:00</b><span>Time</span></div>
+      </div>
+      <button class="lcta" id="lNextBtn">Play Next Session</button>
+      <div class="lsecrow">
+        <button class="lsec" id="lHomeBtn">Back to Topics</button>
+        <button class="lsec" id="lShareBtn">Share</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+// ╔══════════════════════════════════════════════════════════════════╗
+// ║  CONFIG                                                          ║
+// ╚══════════════════════════════════════════════════════════════════╝
+const CONFIG = {
+  topicIcons: {
+    'stress': '⚡',
+    'trauma': '🩹',
+    'work': '💼',
+    'health': '🌱',
+    'breakup-relationship': '💔',
+    'low-confidence': '🪞',
+  },
+  cardGradients: [
+    'linear-gradient(160deg,#3E1F92,#7A3FE0)',
+    'linear-gradient(160deg,#0F5C5C,#12A594)',
+    'linear-gradient(160deg,#7A1E3D,#D63A6A)',
+    'linear-gradient(160deg,#1E3A6E,#3E7BD6)',
+    'linear-gradient(160deg,#6E4A0F,#D69B3E)',
+    'linear-gradient(160deg,#2E1F5E,#5B3FA6)',
+  ],
+  swipeThreshold: 90,
+  sessionsPerTopic: 10,
+  cardsPerSession: 5,
+  // No real SMS/OTP backend exists yet — these numbers are the only ones that
+  // can log in until that's built. Mirrors eaze-spin-wheel's TESTER_MOBILE_NUMBERS.
+  testNumbers: ['9999999999'],
+};
+
+// ── State ──────────────────────────────────────────────────────────
+const S = {
+  deck: null,
+  progress: loadProgress(),
+  run: null, // { topicId, sessionNumber, cards, index, correct, streak, bestStreak, startedAt, timerId, resolved }
+};
+
+// ── Persistence ───────────────────────────────────────────────────
+function loadProgress(){
+  try {
+    return JSON.parse(localStorage.getItem('eazeLevelUpProgress_v1')) || {};
+  } catch(e){ return {}; }
+}
+function saveProgress(){
+  localStorage.setItem('eazeLevelUpProgress_v1', JSON.stringify(S.progress));
+}
+function topicProgress(topicId){
+  if (!S.progress[topicId]) S.progress[topicId] = { unlocked: 1, best: {} };
+  return S.progress[topicId];
+}
+
+// Anonymous per-device id, only used to attribute result rows server-side.
+// No account, no PII — just lets /api/sessions/complete group a device's plays.
+function getClientId(){
+  let id = localStorage.getItem('eazeLevelUpClientId');
+  if (!id) {
+    id = 'anon-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    localStorage.setItem('eazeLevelUpClientId', id);
+  }
+  return id;
+}
+
+// ── Auth (mobile-number gate, client-side only — no SMS/OTP backend yet) ────
+function getMobile(){
+  return localStorage.getItem('eazeLevelUpMobile');
+}
+function setMobile(mobile){
+  localStorage.setItem('eazeLevelUpMobile', mobile);
+}
+function logout(){
+  localStorage.removeItem('eazeLevelUpMobile');
+  document.getElementById('loginInput').value = '';
+  document.getElementById('loginErr').textContent = '';
+  document.getElementById('loginBtn').disabled = true;
+  showScreen('login');
+}
+
+// ── Utils ─────────────────────────────────────────────────────────
+function hashStr(str){
+  let h = 0;
+  for (let i = 0; i < str.length; i++){ h = (h * 31 + str.charCodeAt(i)) | 0; }
+  return Math.abs(h);
+}
+function fmtTime(ms){
+  const total = Math.floor(ms / 1000);
+  const m = String(Math.floor(total / 60)).padStart(2, '0');
+  const s = String(total % 60).padStart(2, '0');
+  return `${m}:${s}`;
+}
+function showScreen(id){
+  document.querySelectorAll('.scr').forEach(el => el.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+}
+let toastTid = null;
+function showToast(msg, dur=2200){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTid);
+  toastTid = setTimeout(() => t.classList.remove('show'), dur);
+}
+
+// ── Boot ──────────────────────────────────────────────────────────
+async function boot(){
+  try {
+    const res = await fetch('/api/content');
+    S.deck = await res.json();
+  } catch (e) {
+    document.querySelector('.splash-txt').textContent = 'Could not load content — check your connection.';
+    return;
+  }
+  if (!getMobile()) {
+    showScreen('login');
+    document.getElementById('loginInput').focus();
+    return;
+  }
+  renderHome();
+  showScreen('home');
+}
+
+// ── LOGIN ─────────────────────────────────────────────────────────
+const loginInput = document.getElementById('loginInput');
+const loginBtn = document.getElementById('loginBtn');
+const loginErr = document.getElementById('loginErr');
+
+loginInput.addEventListener('input', () => {
+  loginInput.value = loginInput.value.replace(/\D/g, '').slice(0, 10);
+  loginBtn.disabled = loginInput.value.length !== 10;
+  loginInput.classList.remove('err');
+  loginErr.textContent = '';
+});
+loginInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !loginBtn.disabled) submitLogin();
+});
+loginBtn.addEventListener('click', submitLogin);
+
+function submitLogin(){
+  const mobile = loginInput.value;
+  if (!CONFIG.testNumbers.includes(mobile)) {
+    loginInput.classList.add('err');
+    loginErr.textContent = `Not recognized yet — use the test number ${CONFIG.testNumbers[0]}.`;
+    return;
+  }
+  setMobile(mobile);
+  renderHome();
+  showScreen('home');
+}
+
+document.getElementById('logoutBtn').addEventListener('click', logout);
+
+// ── HOME ──────────────────────────────────────────────────────────
+function renderHome(){
+  const list = document.getElementById('topicsList');
+  list.innerHTML = '';
+  S.deck.topics.forEach(topic => {
+    const prog = topicProgress(topic.id);
+    const unlocked = Math.min(prog.unlocked, CONFIG.sessionsPerTopic);
+    const done = prog.unlocked > CONFIG.sessionsPerTopic;
+    const completedCount = Math.min(prog.unlocked - 1, CONFIG.sessionsPerTopic);
+
+    const card = document.createElement('div');
+    card.className = 'tcard' + (done ? ' done' : '');
+    card.innerHTML = `
+      <div class="trow1">
+        <div class="ticon" style="background:${CONFIG.cardGradients[hashStr(topic.id) % CONFIG.cardGradients.length]}">${CONFIG.topicIcons[topic.id] || '🎴'}</div>
+        <div class="tinfo">
+          <div class="tname">${topic.name}</div>
+          <div class="tprog">${done ? 'Completed · tap to replay' : `Session ${unlocked} of ${CONFIG.sessionsPerTopic}`}</div>
+        </div>
+        ${done ? '<div class="tcheck">✓</div>' : ''}
+      </div>
+      <div class="tcats">
+        <div class="tpill a">${topic.categoryA}</div>
+        <div class="tpill b">${topic.categoryB}</div>
+      </div>
+      <div class="tbar"><i style="width:${(completedCount / CONFIG.sessionsPerTopic) * 100}%"></i></div>
+    `;
+    card.addEventListener('click', () => {
+      const target = done ? 1 : unlocked;
+      startSession(topic.id, target);
+    });
+    list.appendChild(card);
+  });
+}
+
+// ── GAME SETUP ────────────────────────────────────────────────────
+function startSession(topicId, sessionNumber){
+  // A session in flight (e.g. mid swipe-animation) has pending setTimeouts
+  // that reference the OLD run object. Clear them before discarding it —
+  // otherwise a late timer can fire after this new run has replaced it and
+  // apply a stale card's result/explanation on top of the new session.
+  clearRunTimers(S.run);
+
+  const topic = S.deck.topics.find(t => t.id === topicId);
+  const session = topic.sessions.find(s => s.number === sessionNumber);
+
+  S.run = {
+    topicId, topic, sessionNumber, session,
+    cards: session.cards,
+    index: 0,
+    correct: 0,
+    streak: 0,
+    bestStreak: 0,
+    startedAt: Date.now(),
+    timerId: null,
+    pendingTimeouts: [],
+    resolved: false,
+  };
+
+  document.getElementById('gTitle').textContent = topic.name;
+  document.getElementById('gSession').textContent = `Session ${sessionNumber} · ${session.title}`;
+  document.getElementById('btnA').textContent = topic.categoryA;
+  document.getElementById('btnB').textContent = topic.categoryB;
+
+  renderDots();
+  renderCard();
+  startTimer();
+  showScreen('game');
+}
+
+function restartSession(){
+  clearInterval(S.run.timerId);
+  document.getElementById('coachSheet').classList.remove('on');
+  startSession(S.run.topicId, S.run.sessionNumber);
+}
+
+function startTimer(){
+  clearInterval(S.run.timerId);
+  const tick = () => {
+    document.getElementById('gTimer').textContent = fmtTime(Date.now() - S.run.startedAt);
+  };
+  tick();
+  S.run.timerId = setInterval(tick, 1000);
+}
+
+function renderDots(){
+  const wrap = document.getElementById('gDots');
+  wrap.innerHTML = '';
+  S.run.cards.forEach((c, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    if (c._result === 'ok') d.classList.add('ok');
+    else if (c._result === 'no') d.classList.add('no');
+    else if (i === S.run.index) d.classList.add('now');
+    wrap.appendChild(d);
+  });
+}
+
+// ── CARD RENDER + SWIPE ───────────────────────────────────────────
+function renderCard(){
+  const stack = document.getElementById('stack');
+  stack.innerHTML = '';
+  const cards = S.run.cards;
+
+  // Peek card behind (next one), purely decorative.
+  if (cards[S.run.index + 1]) {
+    const next = cards[S.run.index + 1];
+    const peek = document.createElement('div');
+    peek.className = 'card';
+    peek.style.background = CONFIG.cardGradients[hashStr(next.id) % CONFIG.cardGradients.length];
+    peek.style.transform = 'scale(.94) translateY(10px)';
+    peek.style.opacity = '.6';
+    stack.appendChild(peek);
+  }
+
+  const card = cards[S.run.index];
+  const top = document.createElement('div');
+  top.className = 'card';
+  top.id = 'topCard';
+  top.style.background = CONFIG.cardGradients[hashStr(card.id) % CONFIG.cardGradients.length];
+  top.innerHTML = `
+    <div class="cquote">&ldquo;</div>
+    <div class="cprompt">${card.prompt}</div>
+    <div class="hint left" id="hintA">${S.run.topic.categoryA}</div>
+    <div class="hint right" id="hintB">${S.run.topic.categoryB}</div>
+    <div class="stamp" id="stamp">Misclassified</div>
+    <div class="fbanner" id="fbanner"><div class="fic">✓</div><div class="ftxt" id="fbannerTxt"></div></div>
+    <div class="combo" id="combo"></div>
+  `;
+  stack.appendChild(top);
+
+  attachDrag(top, card);
+
+  document.getElementById('btnA').disabled = false;
+  document.getElementById('btnB').disabled = false;
+}
+
+function attachDrag(el, card){
+  let startX = 0, startY = 0, dx = 0, dy = 0, dragging = false, locked = false;
+
+  const onDown = (e) => {
+    if (locked) return;
+    dragging = true;
+    el.style.transition = 'none';
+    const p = pointFrom(e);
+    startX = p.x; startY = p.y;
+    el.setPointerCapture && e.pointerId != null && el.setPointerCapture(e.pointerId);
+  };
+  const onMove = (e) => {
+    if (!dragging || locked) return;
+    const p = pointFrom(e);
+    dx = p.x - startX; dy = p.y - startY;
+    const rot = dx / 18;
+    el.style.transform = `translate(${dx}px, ${dy * .4}px) rotate(${rot}deg)`;
+    const ratio = Math.min(Math.abs(dx) / CONFIG.swipeThreshold, 1);
+    document.getElementById('hintA').style.opacity = dx < 0 ? ratio : 0;
+    document.getElementById('hintB').style.opacity = dx > 0 ? ratio : 0;
+  };
+  const onUp = () => {
+    if (!dragging || locked) return;
+    dragging = false;
+    if (Math.abs(dx) > CONFIG.swipeThreshold) {
+      locked = true;
+      commitSwipe(dx > 0 ? 'B' : 'A', el);
+    } else {
+      el.style.transition = 'transform .25s cubic-bezier(.16,1,.3,1)';
+      el.style.transform = 'translate(0,0) rotate(0deg)';
+      document.getElementById('hintA').style.opacity = 0;
+      document.getElementById('hintB').style.opacity = 0;
+    }
+    dx = 0; dy = 0;
+  };
+
+  el.addEventListener('pointerdown', onDown);
+  el.addEventListener('pointermove', onMove);
+  el.addEventListener('pointerup', onUp);
+  el.addEventListener('pointercancel', onUp);
+}
+function pointFrom(e){
+  return { x: e.clientX, y: e.clientY };
+}
+
+// Clears any setTimeouts a run has scheduled (swipe-commit delay, auto-advance
+// delay). Called before a run is discarded so a late timer can never fire
+// against a session that has since been replaced or abandoned.
+function clearRunTimers(run){
+  if (!run || !run.pendingTimeouts) return;
+  run.pendingTimeouts.forEach(clearTimeout);
+  run.pendingTimeouts.length = 0;
+}
+
+function commitSwipe(direction, el){
+  const run = S.run;
+  const card = run.cards[run.index];
+  const flyX = direction === 'B' ? 600 : -600;
+  el.style.transition = 'transform .35s ease-in';
+  el.style.transform = `translate(${flyX}px, -40px) rotate(${direction === 'B' ? 25 : -25}deg)`;
+  document.getElementById('btnA').disabled = true;
+  document.getElementById('btnB').disabled = true;
+  const t = setTimeout(() => {
+    if (S.run !== run) return; // session changed while this was pending — drop it
+    handleAnswer(direction, card, run);
+  }, 200);
+  run.pendingTimeouts.push(t);
+}
+
+function handleAnswer(direction, card, run){
+  const isCorrect = direction === card.correctCategory;
+  card._result = isCorrect ? 'ok' : 'no';
+
+  if (isCorrect) {
+    run.correct++;
+    run.streak++;
+    run.bestStreak = Math.max(run.bestStreak, run.streak);
+  } else {
+    run.streak = 0;
+  }
+  renderDots();
+
+  if (isCorrect) {
+    const banner = document.getElementById('fbanner');
+    document.getElementById('fbannerTxt').textContent = card.explanation;
+    banner.classList.add('show');
+    if (run.streak >= 2) {
+      const combo = document.getElementById('combo');
+      combo.textContent = `${run.streak}× COMBO!`;
+      combo.classList.add('show');
+    }
+    const t = setTimeout(() => {
+      if (S.run !== run) return;
+      nextCard();
+    }, 1350);
+    run.pendingTimeouts.push(t);
+  } else {
+    document.getElementById('stamp').classList.add('show');
+    document.getElementById('coachBody').textContent = card.explanation;
+    document.getElementById('coachSheet').classList.add('on');
+  }
+}
+
+document.getElementById('gotItBtn').addEventListener('click', () => {
+  document.getElementById('coachSheet').classList.remove('on');
+  nextCard();
+});
+
+document.getElementById('btnA').addEventListener('click', () => {
+  const el = document.getElementById('topCard');
+  if (el) commitSwipe('A', el);
+});
+document.getElementById('btnB').addEventListener('click', () => {
+  const el = document.getElementById('topCard');
+  if (el) commitSwipe('B', el);
+});
+
+function nextCard(){
+  S.run.index++;
+  if (S.run.index >= S.run.cards.length) {
+    endSession();
+  } else {
+    renderDots();
+    renderCard();
+  }
+}
+
+// ── LEVEL COMPLETE ────────────────────────────────────────────────
+function endSession(){
+  clearInterval(S.run.timerId);
+  const { topicId, sessionNumber, correct, cards, bestStreak, startedAt } = S.run;
+  const total = cards.length;
+  const elapsed = Date.now() - startedAt;
+
+  const prog = topicProgress(topicId);
+  prog.unlocked = Math.max(prog.unlocked, Math.min(sessionNumber + 1, CONFIG.sessionsPerTopic + 1));
+  const prevBest = prog.best[sessionNumber];
+  if (!prevBest || correct > prevBest.correct) {
+    prog.best[sessionNumber] = { correct, total };
+  }
+  saveProgress();
+  reportSessionResult({ topicId, sessionNumber, correct, total, bestStreak, elapsed });
+
+  const accuracy = Math.round((correct / total) * 100);
+  document.getElementById('lScore').textContent = `${correct}/${total}`;
+  document.getElementById('lAcc').textContent = `${accuracy}%`;
+  document.getElementById('lStreak').textContent = bestStreak;
+  document.getElementById('lTime').textContent = fmtTime(elapsed);
+  document.getElementById('lMsg').textContent = messageFor(accuracy);
+
+  const nextBtn = document.getElementById('lNextBtn');
+  if (sessionNumber >= CONFIG.sessionsPerTopic) {
+    nextBtn.textContent = 'Topic Complete — Back to Topics';
+  } else {
+    nextBtn.textContent = 'Play Next Session';
+  }
+
+  document.getElementById('levelBk').classList.add('on');
+}
+
+// Fire-and-forget — the game already saved progress to localStorage, so a
+// failed or skipped network call (no backend, offline, DB not configured)
+// never blocks play.
+function reportSessionResult({ topicId, sessionNumber, correct, total, bestStreak, elapsed }){
+  fetch('/api/sessions/complete', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      clientId: getClientId(),
+      topicId,
+      sessionNumber,
+      correctCount: correct,
+      totalCount: total,
+      bestStreak,
+      durationMs: elapsed,
+    }),
+  }).catch(() => {});
+}
+
+function messageFor(accuracy){
+  if (accuracy === 100) return 'Perfect read — every one of them.';
+  if (accuracy >= 80) return 'Strong instincts on this one.';
+  if (accuracy >= 50) return 'Solid — a few worth a second look.';
+  return 'Worth another pass — the patterns get clearer.';
+}
+
+document.getElementById('lNextBtn').addEventListener('click', () => {
+  document.getElementById('levelBk').classList.remove('on');
+  if (S.run.sessionNumber >= CONFIG.sessionsPerTopic) {
+    renderHome();
+    showScreen('home');
+  } else {
+    startSession(S.run.topicId, S.run.sessionNumber + 1);
+  }
+});
+document.getElementById('lHomeBtn').addEventListener('click', () => {
+  document.getElementById('levelBk').classList.remove('on');
+  renderHome();
+  showScreen('home');
+});
+document.getElementById('lCloseBtn').addEventListener('click', () => {
+  document.getElementById('levelBk').classList.remove('on');
+  renderHome();
+  showScreen('home');
+});
+document.getElementById('lShareBtn').addEventListener('click', async () => {
+  const { topic, sessionNumber, correct, cards } = S.run;
+  const text = `I scored ${correct}/${cards.length} on eaze Level Up — ${topic.name}, session ${sessionNumber}.`;
+  if (navigator.share) {
+    try { await navigator.share({ text }); } catch (e) {}
+  } else {
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast('Copied to clipboard');
+    } catch (e) {
+      showToast(text, 4000);
+    }
+  }
+});
+
+// ── TOPBAR ────────────────────────────────────────────────────────
+document.getElementById('backBtn').addEventListener('click', () => {
+  if (S.run) {
+    clearInterval(S.run.timerId);
+    clearRunTimers(S.run);
+  }
+  document.getElementById('coachSheet').classList.remove('on');
+  document.getElementById('levelBk').classList.remove('on');
+  renderHome();
+  showScreen('home');
+});
+document.getElementById('resetBtn').addEventListener('click', () => {
+  restartSession();
+});
+
+boot();
+</script>
+</body>
+</html>

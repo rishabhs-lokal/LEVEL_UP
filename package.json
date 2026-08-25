@@ -1,0 +1,24 @@
+{
+  "name": "eaze-level-up",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "eaze Level Up — a this-or-that swipe card game for eaze, mental health scenario judgement across 6 topics",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "migrate:up": "node-pg-migrate up",
+    "migrate:down": "node-pg-migrate down",
+    "migrate:create": "node-pg-migrate create",
+    "db:test": "node scripts/test-connection.js",
+    "content:parse": "python3 scripts/parse-content.py"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "node-pg-migrate": "^7.9.1",
+    "pg": "^8.16.3"
+  }
+}

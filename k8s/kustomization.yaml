@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - configmap.yaml
+  - deployment.yaml
+  - service.yaml
+# secret.example.yaml and migration-job.yaml are intentionally NOT listed here —
+# the secret must be created out-of-band (see its file header), and the
+# migration Job is applied + waited on as a separate deploy step, not as part
+# of a blanket `kubectl apply -k`.

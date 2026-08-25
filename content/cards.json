@@ -1,0 +1,2512 @@
+{
+  "topics": [
+    {
+      "id": "stress",
+      "name": "Stress",
+      "categoryA": "Helpful Pressure",
+      "categoryB": "Harmful Overload",
+      "sessions": [
+        {
+          "number": 1,
+          "title": "Deadlines",
+          "cards": [
+            {
+              "prompt": "I have three deadlines this week, but I've mapped out what to do each day.",
+              "correct": "Helpful Pressure",
+              "explanation": "A plan turns pressure into direction — that's what makes stress helpful rather than overwhelming.",
+              "correctCategory": "A",
+              "id": "stress-s1-c1"
+            },
+            {
+              "prompt": "I've missed dinner for four nights straight trying to catch up on deadlines.",
+              "correct": "Harmful Overload",
+              "explanation": "Repeatedly sacrificing basic needs like meals is a sign the load has tipped into harmful territory, not just a busy stretch.",
+              "correctCategory": "B",
+              "id": "stress-s1-c2"
+            },
+            {
+              "prompt": "The deadline is tomorrow and I feel a jolt of urgency that's actually helping me focus.",
+              "correct": "Helpful Pressure",
+              "explanation": "A short burst of urgency that sharpens focus is your stress response working for you — that's the helpful kind.",
+              "correctCategory": "A",
+              "id": "stress-s1-c3"
+            },
+            {
+              "prompt": "I keep pushing the deadline back in my head because just thinking about it exhausts me.",
+              "correct": "Harmful Overload",
+              "explanation": "Avoidance driven by exhaustion, rather than genuine reprioritizing, is usually a sign the pressure has become overload.",
+              "correctCategory": "B",
+              "id": "stress-s1-c4"
+            },
+            {
+              "prompt": "I'm stressed about the deadline, but honestly this is the most engaged I've felt at work in weeks.",
+              "correct": "Helpful Pressure",
+              "explanation": "Feeling energized and engaged, even while stressed, usually means the challenge is a good match for you, not overload.",
+              "correctCategory": "A",
+              "id": "stress-s1-c5"
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Exams & Academics",
+          "cards": [
+            {
+              "prompt": "I'm nervous about tomorrow's exam, but I've studied and I feel mostly ready.",
+              "correct": "Helpful Pressure",
+              "explanation": "Nerves paired with real preparation is your body gearing up, not breaking down.",
+              "correctCategory": "A",
+              "id": "stress-s2-c1"
+            },
+            {
+              "prompt": "I've been studying 14 hours a day and can barely remember what I read an hour ago.",
+              "correct": "Harmful Overload",
+              "explanation": "When effort stops producing results and just produces exhaustion, that's overload, not diligence.",
+              "correctCategory": "B",
+              "id": "stress-s2-c2"
+            },
+            {
+              "prompt": "My hands feel shaky before the test starts, but they steady once I begin writing.",
+              "correct": "Helpful Pressure",
+              "explanation": "Nerves that settle once you start are a normal activation response, not a sign of overload.",
+              "correctCategory": "A",
+              "id": "stress-s2-c3"
+            },
+            {
+              "prompt": "I told myself I'd fail before even opening the exam paper.",
+              "correct": "Harmful Overload",
+              "explanation": "Catastrophizing before you've even started is a sign the stress has tipped into overwhelming your ability to think clearly.",
+              "correctCategory": "B",
+              "id": "stress-s2-c4"
+            },
+            {
+              "prompt": "I feel sick to my stomach about this exam, but it's because I care about doing well, and it passes once I start.",
+              "correct": "Helpful Pressure",
+              "explanation": "Physical nerves that fade once you engage are typical of helpful pressure — it's persistent, unrelenting distress that signals overload.",
+              "correctCategory": "A",
+              "id": "stress-s2-c5"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "New Responsibilities",
+          "cards": [
+            {
+              "prompt": "I got promoted and I'm nervous, but also kind of excited to prove myself.",
+              "correct": "Helpful Pressure",
+              "explanation": "Nervous excitement is the signature of a good challenge, not an overwhelming one.",
+              "correctCategory": "A",
+              "id": "stress-s3-c1"
+            },
+            {
+              "prompt": "I got promoted and now I can't sleep because I'm sure I'll mess it up.",
+              "correct": "Harmful Overload",
+              "explanation": "When new responsibility starts eating into your sleep through fear, that's overload, not ambition.",
+              "correctCategory": "B",
+              "id": "stress-s3-c2"
+            },
+            {
+              "prompt": "New role, new tools — I feel challenged in a good way.",
+              "correct": "Helpful Pressure",
+              "explanation": "Feeling challenged 'in a good way' is exactly the marker of helpful pressure.",
+              "correctCategory": "A",
+              "id": "stress-s3-c3"
+            },
+            {
+              "prompt": "I've started dreading Mondays so much I feel it in my chest by Sunday night.",
+              "correct": "Harmful Overload",
+              "explanation": "Physical dread building the night before is a sign the pressure has become something heavier than normal work stress.",
+              "correctCategory": "B",
+              "id": "stress-s3-c4"
+            },
+            {
+              "prompt": "I have a lot more on my plate now, but I still look forward to logging in most mornings.",
+              "correct": "Helpful Pressure",
+              "explanation": "Looking forward to the work, even a demanding version of it, usually means the stress is fueling you rather than draining you.",
+              "correctCategory": "A",
+              "id": "stress-s3-c5"
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Financial Stress",
+          "cards": [
+            {
+              "prompt": "I made a budget after my bills went up, and it's helping me feel in control.",
+              "correct": "Helpful Pressure",
+              "explanation": "Taking a concrete step that restores a sense of control is the hallmark of helpful pressure.",
+              "correctCategory": "A",
+              "id": "stress-s4-c1"
+            },
+            {
+              "prompt": "I've stopped opening my banking app because I can't handle looking at the number.",
+              "correct": "Harmful Overload",
+              "explanation": "Avoidance driven by dread, rather than a deliberate break, is a sign the stress has become overwhelming.",
+              "correctCategory": "B",
+              "id": "stress-s4-c2"
+            },
+            {
+              "prompt": "Money's tight this month, but I have a plan for the next three.",
+              "correct": "Helpful Pressure",
+              "explanation": "Having a plan even amid tightness keeps stress oriented toward action rather than panic.",
+              "correctCategory": "A",
+              "id": "stress-s4-c3"
+            },
+            {
+              "prompt": "I lie awake doing money math in my head most nights now.",
+              "correct": "Harmful Overload",
+              "explanation": "When financial worry starts consistently disrupting sleep, that's a sign of overload, not normal budgeting stress.",
+              "correctCategory": "B",
+              "id": "stress-s4-c4"
+            },
+            {
+              "prompt": "I'm anxious about the bill due Friday, but making the payment plan call actually calmed me down.",
+              "correct": "Helpful Pressure",
+              "explanation": "Taking an action that lowers your anxiety, even a hard one, shows the stress is still moving you forward, not overwhelming you.",
+              "correctCategory": "A",
+              "id": "stress-s4-c5"
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Social & Performance",
+          "cards": [
+            {
+              "prompt": "I get butterflies before presenting, but I know my material.",
+              "correct": "Helpful Pressure",
+              "explanation": "Butterflies with genuine preparation underneath are a classic sign of helpful pressure.",
+              "correctCategory": "A",
+              "id": "stress-s5-c1"
+            },
+            {
+              "prompt": "I've cancelled plans with friends three weekends in a row because socializing feels like too much.",
+              "correct": "Harmful Overload",
+              "explanation": "Repeated withdrawal from things you'd normally enjoy is a sign stress has tipped into overload.",
+              "correctCategory": "B",
+              "id": "stress-s5-c2"
+            },
+            {
+              "prompt": "I feel a spike of nerves walking on stage, and it usually settles by my second sentence.",
+              "correct": "Helpful Pressure",
+              "explanation": "Nerves that resolve quickly once you're in motion are your activation response doing its job.",
+              "correctCategory": "A",
+              "id": "stress-s5-c3"
+            },
+            {
+              "prompt": "I rehearse conversations in my head for hours before they happen, and it never feels like enough.",
+              "correct": "Harmful Overload",
+              "explanation": "Endless rehearsal that never feels sufficient is a sign anxiety has taken over, not just careful preparation.",
+              "correctCategory": "B",
+              "id": "stress-s5-c4"
+            },
+            {
+              "prompt": "I get nervous meeting new people, but I still say yes to the invite.",
+              "correct": "Helpful Pressure",
+              "explanation": "Following through despite nerves, rather than avoiding, usually means the stress hasn't taken over your decisions yet.",
+              "correctCategory": "A",
+              "id": "stress-s5-c5"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Parenting & Caregiving",
+          "cards": [
+            {
+              "prompt": "It's a full house this week, but we have a plan for who does what.",
+              "correct": "Helpful Pressure",
+              "explanation": "A shared plan under a heavy load keeps stress feeling manageable rather than crushing.",
+              "correctCategory": "A",
+              "id": "stress-s6-c1"
+            },
+            {
+              "prompt": "I haven't had a moment to myself in three weeks and I'm starting to snap at everyone.",
+              "correct": "Harmful Overload",
+              "explanation": "Snapping under sustained lack of rest is a clear sign the load has become overload.",
+              "correctCategory": "B",
+              "id": "stress-s6-c2"
+            },
+            {
+              "prompt": "Juggling school pickups and work calls is a lot, but it's manageable so far.",
+              "correct": "Helpful Pressure",
+              "explanation": "'A lot but manageable' is exactly the space where helpful pressure lives.",
+              "correctCategory": "A",
+              "id": "stress-s6-c3"
+            },
+            {
+              "prompt": "I feel resentful of the people I'm caring for now, and then guilty for feeling that.",
+              "correct": "Harmful Overload",
+              "explanation": "Building resentment followed by guilt is a sign caregiving stress has become too heavy to sustain as-is.",
+              "correctCategory": "B",
+              "id": "stress-s6-c4"
+            },
+            {
+              "prompt": "Caregiving is exhausting some days, but I still feel proud when I think about it.",
+              "correct": "Helpful Pressure",
+              "explanation": "Feeling pride or meaning alongside the tiredness usually means you're stretched, not broken — that's a sign of sustainable, if heavy, pressure.",
+              "correctCategory": "A",
+              "id": "stress-s6-c5"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Multitasking",
+          "cards": [
+            {
+              "prompt": "I've got five things on my list today, but I know the order I'm tackling them in.",
+              "correct": "Helpful Pressure",
+              "explanation": "Clarity on order, even with a full list, is what keeps a busy day feeling like helpful pressure.",
+              "correctCategory": "A",
+              "id": "stress-s7-c1"
+            },
+            {
+              "prompt": "I keep switching between tasks so fast I can't remember what I actually finished.",
+              "correct": "Harmful Overload",
+              "explanation": "Losing track of your own progress is a sign the pace has outrun what you can actually process.",
+              "correctCategory": "B",
+              "id": "stress-s7-c2"
+            },
+            {
+              "prompt": "It's a busy day, but each task feels doable one at a time.",
+              "correct": "Helpful Pressure",
+              "explanation": "Breaking a busy day into doable pieces is a sign you're still in control of the pressure.",
+              "correctCategory": "A",
+              "id": "stress-s7-c3"
+            },
+            {
+              "prompt": "My to-do list has tripled and I've started just staring at it instead of starting.",
+              "correct": "Harmful Overload",
+              "explanation": "Freezing in front of a list, rather than picking a starting point, is a sign the load has become overwhelming.",
+              "correctCategory": "B",
+              "id": "stress-s7-c4"
+            },
+            {
+              "prompt": "I have too much on today, honestly, but ticking things off is oddly satisfying.",
+              "correct": "Helpful Pressure",
+              "explanation": "If completing tasks still feels rewarding rather than just relieving, the load is heavy but you're still coping with it well.",
+              "correctCategory": "A",
+              "id": "stress-s7-c5"
+            }
+          ]
+        },
+        {
+          "number": 8,
+          "title": "Physical Symptoms",
+          "cards": [
+            {
+              "prompt": "My shoulders are tense before the meeting, but they relax once it starts.",
+              "correct": "Helpful Pressure",
+              "explanation": "Tension that eases once you're in motion is a normal, temporary stress response.",
+              "correctCategory": "A",
+              "id": "stress-s8-c1"
+            },
+            {
+              "prompt": "I've had a headache every day this week and I don't remember the last full night's sleep.",
+              "correct": "Harmful Overload",
+              "explanation": "Persistent physical symptoms stacking up over days are a sign the stress has become overload.",
+              "correctCategory": "B",
+              "id": "stress-s8-c2"
+            },
+            {
+              "prompt": "My heart's racing a bit, but a few deep breaths settle it down.",
+              "correct": "Helpful Pressure",
+              "explanation": "A racing heart that responds to a few calming breaths shows your system recovering quickly, which is healthy.",
+              "correctCategory": "A",
+              "id": "stress-s8-c3"
+            },
+            {
+              "prompt": "I've noticed my jaw hurts from clenching it all day, most days now.",
+              "correct": "Harmful Overload",
+              "explanation": "Chronic physical tension that's become a daily pattern is a sign of sustained overload, not a passing moment of stress.",
+              "correctCategory": "B",
+              "id": "stress-s8-c4"
+            },
+            {
+              "prompt": "I feel a knot in my stomach before big moments, but it's gone an hour later.",
+              "correct": "Helpful Pressure",
+              "explanation": "Physical tension that passes once the moment does is a normal stress response, not overload — overload tends to linger.",
+              "correctCategory": "A",
+              "id": "stress-s8-c5"
+            }
+          ]
+        },
+        {
+          "number": 9,
+          "title": "Perfectionism",
+          "cards": [
+            {
+              "prompt": "I want this project to be good, so I've built in time to revise it.",
+              "correct": "Helpful Pressure",
+              "explanation": "Planning revision time shows care that's channeled into action, which is a healthy kind of pressure.",
+              "correctCategory": "A",
+              "id": "stress-s9-c1"
+            },
+            {
+              "prompt": "I've rewritten the same paragraph eleven times and I still can't send it.",
+              "correct": "Harmful Overload",
+              "explanation": "Being stuck in an endless loop with no sense of 'good enough' is a sign perfectionism has turned into overload.",
+              "correctCategory": "B",
+              "id": "stress-s9-c2"
+            },
+            {
+              "prompt": "I care about getting this right, and that's actually kept me motivated all week.",
+              "correct": "Helpful Pressure",
+              "explanation": "Care that fuels motivation, rather than paralysis, is the helpful side of high standards.",
+              "correctCategory": "A",
+              "id": "stress-s9-c3"
+            },
+            {
+              "prompt": "Nothing I do feels finished enough, so I keep delaying handing anything in.",
+              "correct": "Harmful Overload",
+              "explanation": "Chronic delay driven by never feeling 'finished enough' is a sign the standard has become unreachable and draining.",
+              "correctCategory": "B",
+              "id": "stress-s9-c4"
+            },
+            {
+              "prompt": "I redid the slide three times, but each version genuinely got better.",
+              "correct": "Helpful Pressure",
+              "explanation": "Revising because it's improving the work is healthy drive — it becomes overload when the revising is driven by fear rather than progress.",
+              "correctCategory": "A",
+              "id": "stress-s9-c5"
+            }
+          ]
+        },
+        {
+          "number": 10,
+          "title": "Recovery & Reset",
+          "cards": [
+            {
+              "prompt": "It was an intense week, but I took the weekend fully off and feel recharged.",
+              "correct": "Helpful Pressure",
+              "explanation": "Being able to recharge after an intense stretch is a sign the pressure was sustainable.",
+              "correctCategory": "A",
+              "id": "stress-s10-c1"
+            },
+            {
+              "prompt": "It's been an intense month and even my days off don't feel like a break anymore.",
+              "correct": "Harmful Overload",
+              "explanation": "When rest stops actually restoring you, that's a strong sign of overload, not just a hard month.",
+              "correctCategory": "B",
+              "id": "stress-s10-c2"
+            },
+            {
+              "prompt": "I pushed hard this week, and I can already feel my energy coming back today.",
+              "correct": "Helpful Pressure",
+              "explanation": "Energy bouncing back after a hard push shows your system recovering the way it's meant to.",
+              "correctCategory": "A",
+              "id": "stress-s10-c3"
+            },
+            {
+              "prompt": "I don't remember the last time I felt actually rested, even after sleeping in.",
+              "correct": "Harmful Overload",
+              "explanation": "Rest that no longer restores you, even with enough sleep, is a sign the load has outpaced your recovery.",
+              "correctCategory": "B",
+              "id": "stress-s10-c4"
+            },
+            {
+              "prompt": "I'm still tired from this week, but I'm looking forward to next week anyway.",
+              "correct": "Helpful Pressure",
+              "explanation": "Tiredness paired with genuine anticipation for what's next usually signals you've recovered enough — chronic dread, not tiredness, is the marker of overload.",
+              "correctCategory": "A",
+              "id": "stress-s10-c5"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trauma",
+      "name": "Trauma",
+      "categoryA": "Normal Reaction",
+      "categoryB": "Sign It Needs Support",
+      "sessions": [
+        {
+          "number": 1,
+          "title": "Startle & Physical Response",
+          "cards": [
+            {
+              "prompt": "I jumped when the door slammed, then laughed it off a second later.",
+              "correct": "Normal Reaction",
+              "explanation": "A quick startle that resolves on its own is a normal, healthy nervous system response.",
+              "correctCategory": "A",
+              "id": "trauma-s1-c1"
+            },
+            {
+              "prompt": "My body still tenses up walking into any room that reminds me of it.",
+              "correct": "Sign It Needs Support",
+              "explanation": "A persistent, widespread physical reaction to reminders is a sign that extra support could help.",
+              "correctCategory": "B",
+              "id": "trauma-s1-c2"
+            },
+            {
+              "prompt": "A loud noise startled me, and my heart raced for a minute before it passed.",
+              "correct": "Normal Reaction",
+              "explanation": "A brief racing heart that settles within minutes is a typical stress response, not a red flag.",
+              "correctCategory": "A",
+              "id": "trauma-s1-c3"
+            },
+            {
+              "prompt": "I've started avoiding entire streets because they resemble where it happened.",
+              "correct": "Sign It Needs Support",
+              "explanation": "Avoidance that keeps expanding to more and more places is a sign the reaction is affecting daily life.",
+              "correctCategory": "B",
+              "id": "trauma-s1-c4"
+            },
+            {
+              "prompt": "I flinched at the sound, and felt shaky for the rest of the afternoon before it faded by evening.",
+              "correct": "Normal Reaction",
+              "explanation": "A startle response that gradually fades over hours is still within normal range — it's when it doesn't fade, or worsens, that support helps.",
+              "correctCategory": "A",
+              "id": "trauma-s1-c5"
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Anniversaries & Reminders",
+          "cards": [
+            {
+              "prompt": "The date came around and I felt a wave of sadness, then it passed by evening.",
+              "correct": "Normal Reaction",
+              "explanation": "A wave of feeling tied to a meaningful date, that passes on its own, is a normal part of processing.",
+              "correctCategory": "A",
+              "id": "trauma-s2-c1"
+            },
+            {
+              "prompt": "Every year around that date, I can't function for days beforehand.",
+              "correct": "Sign It Needs Support",
+              "explanation": "A recurring, disabling reaction each year is a sign it may help to have extra support around that time.",
+              "correctCategory": "B",
+              "id": "trauma-s2-c2"
+            },
+            {
+              "prompt": "Seeing something that reminded me of it gave me a jolt, but I kept going with my day.",
+              "correct": "Normal Reaction",
+              "explanation": "A jolt that doesn't derail your day shows you're able to move through the reminder.",
+              "correctCategory": "A",
+              "id": "trauma-s2-c3"
+            },
+            {
+              "prompt": "I've had to leave work early every time a reminder comes up, for months now.",
+              "correct": "Sign It Needs Support",
+              "explanation": "A consistent pattern of being unable to function around reminders, over months, is worth bringing to a professional.",
+              "correctCategory": "B",
+              "id": "trauma-s2-c4"
+            },
+            {
+              "prompt": "The anniversary hit harder this year than last, but I still made it through the day.",
+              "correct": "Normal Reaction",
+              "explanation": "Some years feeling harder than others is normal — what matters more is whether you can still function, not whether the feeling is completely gone.",
+              "correctCategory": "A",
+              "id": "trauma-s2-c5"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Sleep",
+          "cards": [
+            {
+              "prompt": "I had one rough night after thinking about it, then slept fine the next few nights.",
+              "correct": "Normal Reaction",
+              "explanation": "A single rough night followed by a return to normal sleep is a typical, non-concerning pattern.",
+              "correctCategory": "A",
+              "id": "trauma-s3-c1"
+            },
+            {
+              "prompt": "I haven't slept through a full night in months because of the nightmares.",
+              "correct": "Sign It Needs Support",
+              "explanation": "Months of disrupted sleep from nightmares is a sign it's worth getting support.",
+              "correctCategory": "B",
+              "id": "trauma-s3-c2"
+            },
+            {
+              "prompt": "I woke up once startled from a dream about it, then fell back asleep.",
+              "correct": "Normal Reaction",
+              "explanation": "An isolated disturbed night that resolves quickly is well within the range of normal processing.",
+              "correctCategory": "A",
+              "id": "trauma-s3-c3"
+            },
+            {
+              "prompt": "I've started staying awake on purpose to avoid the dreams.",
+              "correct": "Sign It Needs Support",
+              "explanation": "Actively avoiding sleep to escape dreams is a sign the impact has grown large enough to need support.",
+              "correctCategory": "B",
+              "id": "trauma-s3-c4"
+            },
+            {
+              "prompt": "I still get the occasional bad dream about it, months later, but they're rarer than they used to be.",
+              "correct": "Normal Reaction",
+              "explanation": "Occasional dreams that are becoming less frequent over time is the normal shape of processing — support helps when things are getting more frequent or intense instead.",
+              "correctCategory": "A",
+              "id": "trauma-s3-c5"
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Avoidance",
+          "cards": [
+            {
+              "prompt": "I skipped watching a show with a similar scene, just wasn't in the mood that night.",
+              "correct": "Normal Reaction",
+              "explanation": "Choosing not to engage with something in the moment is a normal, mild form of self-protection.",
+              "correctCategory": "A",
+              "id": "trauma-s4-c1"
+            },
+            {
+              "prompt": "I've quietly dropped every friend who knew about what happened.",
+              "correct": "Sign It Needs Support",
+              "explanation": "Cutting off your entire support network is a sign the avoidance has grown large enough to need attention.",
+              "correctCategory": "B",
+              "id": "trauma-s4-c2"
+            },
+            {
+              "prompt": "I changed the subject when it came up at dinner, then joined back into the conversation.",
+              "correct": "Normal Reaction",
+              "explanation": "Briefly steering away from a hard topic while staying present is a normal coping move.",
+              "correctCategory": "A",
+              "id": "trauma-s4-c3"
+            },
+            {
+              "prompt": "I've stopped leaving the house except for work, for the past two months.",
+              "correct": "Sign It Needs Support",
+              "explanation": "A sustained shrinking of your world over months is a sign the avoidance needs more support than you can give it alone.",
+              "correctCategory": "B",
+              "id": "trauma-s4-c4"
+            },
+            {
+              "prompt": "I still avoid one specific thing that reminds me of it, but everything else in my life feels normal.",
+              "correct": "Normal Reaction",
+              "explanation": "One specific, contained avoidance while the rest of life keeps functioning is common — it becomes a bigger concern when avoidance keeps spreading to more areas.",
+              "correctCategory": "A",
+              "id": "trauma-s4-c5"
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Emotional Waves",
+          "cards": [
+            {
+              "prompt": "I cried thinking about it out of nowhere, and felt lighter afterward.",
+              "correct": "Normal Reaction",
+              "explanation": "An unexpected wave of emotion that leaves you feeling lighter is a healthy sign of release.",
+              "correctCategory": "A",
+              "id": "trauma-s5-c1"
+            },
+            {
+              "prompt": "I feel numb about it most days, like I can't access any feeling at all anymore.",
+              "correct": "Sign It Needs Support",
+              "explanation": "Persistent emotional numbness is a sign that support could help you reconnect safely.",
+              "correctCategory": "B",
+              "id": "trauma-s5-c2"
+            },
+            {
+              "prompt": "It hit me randomly in the grocery store, I teared up, then finished shopping.",
+              "correct": "Normal Reaction",
+              "explanation": "A brief wave that doesn't stop you from continuing your day is a normal part of processing.",
+              "correctCategory": "A",
+              "id": "trauma-s5-c3"
+            },
+            {
+              "prompt": "I feel like I'm either completely fine or completely overwhelmed, with nothing in between.",
+              "correct": "Sign It Needs Support",
+              "explanation": "Swinging only between two extremes, with no middle ground, is a sign support could help you find steadier footing.",
+              "correctCategory": "B",
+              "id": "trauma-s5-c4"
+            },
+            {
+              "prompt": "I felt a wave of grief about it during a quiet moment, and let myself sit with it before moving on.",
+              "correct": "Normal Reaction",
+              "explanation": "Letting a wave come and pass, staying present through it, is a healthy sign of processing — it's when waves take over entirely, or get blocked out completely, that support helps.",
+              "correctCategory": "A",
+              "id": "trauma-s5-c5"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Relationships & Trust",
+          "cards": [
+            {
+              "prompt": "I was a little more guarded with a new person at first, then warmed up over time.",
+              "correct": "Normal Reaction",
+              "explanation": "Warming up gradually, after initial caution, is a normal way trust rebuilds.",
+              "correctCategory": "A",
+              "id": "trauma-s6-c1"
+            },
+            {
+              "prompt": "I've decided I can't trust anyone again because of what happened.",
+              "correct": "Sign It Needs Support",
+              "explanation": "A blanket, permanent shutdown of trust is a sign it could help to process this with support.",
+              "correctCategory": "B",
+              "id": "trauma-s6-c2"
+            },
+            {
+              "prompt": "I needed reassurance from my partner this week more than usual, and it helped.",
+              "correct": "Normal Reaction",
+              "explanation": "Needing and receiving reassurance, and having it help, is a healthy way of leaning on support.",
+              "correctCategory": "A",
+              "id": "trauma-s6-c3"
+            },
+            {
+              "prompt": "I've started pushing away everyone who tries to get close, even people who've shown up for me.",
+              "correct": "Sign It Needs Support",
+              "explanation": "Pushing away people who've proven trustworthy is a sign the guardedness has become self-isolating.",
+              "correctCategory": "B",
+              "id": "trauma-s6-c4"
+            },
+            {
+              "prompt": "I still get a flicker of doubt in new relationships, but I let people in anyway.",
+              "correct": "Normal Reaction",
+              "explanation": "A flicker of doubt that doesn't stop you from connecting is normal caution, not a red flag — it's the shutting-everyone-out pattern that's worth addressing.",
+              "correctCategory": "A",
+              "id": "trauma-s6-c5"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Memory",
+          "cards": [
+            {
+              "prompt": "Some details of that day are fuzzy, but I remember the important parts clearly.",
+              "correct": "Normal Reaction",
+              "explanation": "Some fuzziness in memory is completely normal, especially for difficult events.",
+              "correctCategory": "A",
+              "id": "trauma-s7-c1"
+            },
+            {
+              "prompt": "I have entire days I can't account for around that time, and it worries me.",
+              "correct": "Sign It Needs Support",
+              "explanation": "Losing entire stretches of time, in a way that worries you, is worth exploring with a professional.",
+              "correctCategory": "B",
+              "id": "trauma-s7-c2"
+            },
+            {
+              "prompt": "It comes back to me in pieces sometimes, more clearly on some days than others.",
+              "correct": "Normal Reaction",
+              "explanation": "Memory that varies in clarity day to day is a typical way memory works, not a warning sign.",
+              "correctCategory": "A",
+              "id": "trauma-s7-c3"
+            },
+            {
+              "prompt": "I get flashbacks so vivid I lose track of where I actually am.",
+              "correct": "Sign It Needs Support",
+              "explanation": "Losing your grip on the present moment during a flashback is a sign support could help.",
+              "correctCategory": "B",
+              "id": "trauma-s7-c4"
+            },
+            {
+              "prompt": "My memory of it feels different depending on my mood that day, but the core facts stay the same.",
+              "correct": "Normal Reaction",
+              "explanation": "Emotional coloring changing while the facts stay consistent is typical of how memory works — losing time or place, rather than detail, is the bigger signal.",
+              "correctCategory": "A",
+              "id": "trauma-s7-c5"
+            }
+          ]
+        },
+        {
+          "number": 8,
+          "title": "Daily Functioning",
+          "cards": [
+            {
+              "prompt": "It was a hard week emotionally, but I still got my work done.",
+              "correct": "Normal Reaction",
+              "explanation": "Staying functional through a hard emotional week shows resilience, not a problem.",
+              "correctCategory": "A",
+              "id": "trauma-s8-c1"
+            },
+            {
+              "prompt": "I've been calling in sick most weeks because I can't get out of bed.",
+              "correct": "Sign It Needs Support",
+              "explanation": "A recurring inability to function week after week is a sign it's time to bring in extra support.",
+              "correctCategory": "B",
+              "id": "trauma-s8-c2"
+            },
+            {
+              "prompt": "I had a rough moment mid-day, took a walk, and got back to it.",
+              "correct": "Normal Reaction",
+              "explanation": "Using a small break to reset and continue is a healthy coping strategy.",
+              "correctCategory": "A",
+              "id": "trauma-s8-c3"
+            },
+            {
+              "prompt": "I've stopped doing things I used to enjoy completely, for a long stretch now.",
+              "correct": "Sign It Needs Support",
+              "explanation": "A prolonged loss of interest in things you once enjoyed is a sign worth addressing with support.",
+              "correctCategory": "B",
+              "id": "trauma-s8-c4"
+            },
+            {
+              "prompt": "I'm slower at getting things done lately, but I'm still getting them done.",
+              "correct": "Normal Reaction",
+              "explanation": "A slower pace that still moves forward is manageable — it's a full stop on daily life, sustained over time, that's the clearer signal to reach out for support.",
+              "correctCategory": "A",
+              "id": "trauma-s8-c5"
+            }
+          ]
+        },
+        {
+          "number": 9,
+          "title": "Talking About It",
+          "cards": [
+            {
+              "prompt": "I told a friend a little about it, and felt relieved afterward.",
+              "correct": "Normal Reaction",
+              "explanation": "Sharing a piece of it and feeling relief afterward is a healthy sign of processing.",
+              "correctCategory": "A",
+              "id": "trauma-s9-c1"
+            },
+            {
+              "prompt": "I've never told a single person, and the thought of it makes me panic.",
+              "correct": "Sign It Needs Support",
+              "explanation": "Panic at the mere thought of speaking about it is a sign professional support could really help.",
+              "correctCategory": "B",
+              "id": "trauma-s9-c2"
+            },
+            {
+              "prompt": "I can talk about it now more easily than I could a year ago.",
+              "correct": "Normal Reaction",
+              "explanation": "Increasing ease over time is a strong, healthy sign of healing.",
+              "correctCategory": "A",
+              "id": "trauma-s9-c3"
+            },
+            {
+              "prompt": "I feel like no one would believe me, so I've stopped trying to talk about it at all.",
+              "correct": "Sign It Needs Support",
+              "explanation": "Isolating around a fear of not being believed is a sign it would help to talk to someone trained to listen without judgment.",
+              "correctCategory": "B",
+              "id": "trauma-s9-c4"
+            },
+            {
+              "prompt": "Talking about it still brings up some emotion, but I don't dread the conversations anymore.",
+              "correct": "Normal Reaction",
+              "explanation": "Emotion surfacing without dread is a sign you've built some safety around the topic — persistent panic or isolation around it is what signals a need for more support.",
+              "correctCategory": "A",
+              "id": "trauma-s9-c5"
+            }
+          ]
+        },
+        {
+          "number": 10,
+          "title": "Time Passing",
+          "cards": [
+            {
+              "prompt": "It's been a while, and while I still think of it, it doesn't run my day anymore.",
+              "correct": "Normal Reaction",
+              "explanation": "Still thinking of it while no longer having it dominate your day is a sign of healthy processing over time.",
+              "correctCategory": "A",
+              "id": "trauma-s10-c1"
+            },
+            {
+              "prompt": "It's been years, and it still feels as raw as day one.",
+              "correct": "Sign It Needs Support",
+              "explanation": "No softening at all over years is a sign it could help to process this with support.",
+              "correctCategory": "B",
+              "id": "trauma-s10-c2"
+            },
+            {
+              "prompt": "I have good stretches and hard stretches, but the good stretches are getting longer.",
+              "correct": "Normal Reaction",
+              "explanation": "A gradually improving ratio of good to hard stretches is exactly what healthy healing looks like.",
+              "correctCategory": "A",
+              "id": "trauma-s10-c3"
+            },
+            {
+              "prompt": "Nothing about how it feels has changed, no matter how much time passes.",
+              "correct": "Sign It Needs Support",
+              "explanation": "A total lack of change over a long time is a sign it's worth getting outside support.",
+              "correctCategory": "B",
+              "id": "trauma-s10-c4"
+            },
+            {
+              "prompt": "I thought I was 'over it,' then it resurfaced this year — but I got through it faster this time.",
+              "correct": "Normal Reaction",
+              "explanation": "Resurfacing occasionally is part of normal healing, especially if each time it's a little easier to move through — it's when nothing ever seems to ease that reaching out helps.",
+              "correctCategory": "A",
+              "id": "trauma-s10-c5"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "work",
+      "name": "Work",
+      "categoryA": "Sustainable Drive",
+      "categoryB": "Burnout Pattern",
+      "sessions": [
+        {
+          "number": 1,
+          "title": "Boundaries",
+          "cards": [
+            {
+              "prompt": "I said no to a task that wasn't mine to do.",
+              "correct": "Sustainable Drive",
+              "explanation": "Saying no to what isn't yours is exactly how sustainable drive protects itself.",
+              "correctCategory": "A",
+              "id": "work-s1-c1"
+            },
+            {
+              "prompt": "I say yes to everything because I'm scared of how it'll look if I don't.",
+              "correct": "Burnout Pattern",
+              "explanation": "Saying yes out of fear rather than choice is a classic early sign of burnout building.",
+              "correctCategory": "B",
+              "id": "work-s1-c2"
+            },
+            {
+              "prompt": "I set my hours and mostly stick to them.",
+              "correct": "Sustainable Drive",
+              "explanation": "Sticking to your own hours most of the time shows a boundary that's actually holding.",
+              "correctCategory": "A",
+              "id": "work-s1-c3"
+            },
+            {
+              "prompt": "I answer work messages the second they come in, even at midnight.",
+              "correct": "Burnout Pattern",
+              "explanation": "Being 'on' at all hours with no real off-switch is a strong sign of burnout patterns.",
+              "correctCategory": "B",
+              "id": "work-s1-c4"
+            },
+            {
+              "prompt": "I made an exception to help on an urgent thing this week, but it's rare for me.",
+              "correct": "Sustainable Drive",
+              "explanation": "One reasonable exception doesn't undo a healthy boundary — burnout is about the exception becoming the norm.",
+              "correctCategory": "A",
+              "id": "work-s1-c5"
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Rest",
+          "cards": [
+            {
+              "prompt": "I took my lunch break away from my desk today.",
+              "correct": "Sustainable Drive",
+              "explanation": "Stepping away for lunch is a small but real sign your work rhythm still has breathing room.",
+              "correctCategory": "A",
+              "id": "work-s2-c1"
+            },
+            {
+              "prompt": "I eat lunch at my desk while still answering emails, most days.",
+              "correct": "Burnout Pattern",
+              "explanation": "A daily habit of never fully stepping away is a sign the pace has become unsustainable.",
+              "correctCategory": "B",
+              "id": "work-s2-c2"
+            },
+            {
+              "prompt": "I logged off on time and it actually felt fine.",
+              "correct": "Sustainable Drive",
+              "explanation": "Logging off without guilt is a sign your relationship with work is currently healthy.",
+              "correctCategory": "A",
+              "id": "work-s2-c3"
+            },
+            {
+              "prompt": "I feel guilty the moment I stop working, even for five minutes.",
+              "correct": "Burnout Pattern",
+              "explanation": "Guilt attached to any pause, however small, is a hallmark of burnout thinking.",
+              "correctCategory": "B",
+              "id": "work-s2-c4"
+            },
+            {
+              "prompt": "I took a short break today, but I still thought about work the whole time.",
+              "correct": "Sustainable Drive",
+              "explanation": "Taking the break at all is a good sign, even if your mind wandered — burnout looks more like being unable to step away in the first place.",
+              "correctCategory": "A",
+              "id": "work-s2-c5"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Communication",
+          "cards": [
+            {
+              "prompt": "I told my manager I was overloaded and we adjusted my workload.",
+              "correct": "Sustainable Drive",
+              "explanation": "Speaking up and getting a real adjustment is sustainable drive working exactly as it should.",
+              "correctCategory": "A",
+              "id": "work-s3-c1"
+            },
+            {
+              "prompt": "I keep saying 'I'm fine' when asked, even though I'm not.",
+              "correct": "Burnout Pattern",
+              "explanation": "Habitually masking how you actually feel is a sign burnout is building beneath the surface.",
+              "correctCategory": "B",
+              "id": "work-s3-c2"
+            },
+            {
+              "prompt": "I asked a coworker for help on a task instead of struggling alone.",
+              "correct": "Sustainable Drive",
+              "explanation": "Asking for help when you need it is a healthy, sustainable way of managing your load.",
+              "correctCategory": "A",
+              "id": "work-s3-c3"
+            },
+            {
+              "prompt": "I've stopped speaking up in meetings because it feels pointless now.",
+              "correct": "Burnout Pattern",
+              "explanation": "Going quiet out of a sense of futility is a common burnout pattern.",
+              "correctCategory": "B",
+              "id": "work-s3-c4"
+            },
+            {
+              "prompt": "I raised a concern about my workload and it didn't fully get resolved, but I said it anyway.",
+              "correct": "Sustainable Drive",
+              "explanation": "Speaking up, even if the outcome isn't perfect, keeps you engaged — burnout tends to show up as going quiet altogether.",
+              "correctCategory": "A",
+              "id": "work-s3-c5"
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Workload",
+          "cards": [
+            {
+              "prompt": "My plate is full this month, but I know it'll ease up next month.",
+              "correct": "Sustainable Drive",
+              "explanation": "Seeing an end in sight helps a heavy month feel like a phase, not a permanent state.",
+              "correctCategory": "A",
+              "id": "work-s4-c1"
+            },
+            {
+              "prompt": "Every month feels like the busiest month, with no end in sight.",
+              "correct": "Burnout Pattern",
+              "explanation": "A permanent sense of 'no end in sight' is a strong signal of burnout, not just a busy season.",
+              "correctCategory": "B",
+              "id": "work-s4-c2"
+            },
+            {
+              "prompt": "I have a lot to do, but I'm prioritizing what matters most.",
+              "correct": "Sustainable Drive",
+              "explanation": "Being able to prioritize under load is a sign you still feel some control over your work.",
+              "correctCategory": "A",
+              "id": "work-s4-c3"
+            },
+            {
+              "prompt": "Everything feels equally urgent all the time, so I don't know where to start.",
+              "correct": "Burnout Pattern",
+              "explanation": "Losing the ability to tell what's actually urgent is a common effect of chronic overload.",
+              "correctCategory": "B",
+              "id": "work-s4-c4"
+            },
+            {
+              "prompt": "I'm behind on a few things this week, but I have a plan to catch up.",
+              "correct": "Sustainable Drive",
+              "explanation": "Being behind with a plan is normal work pressure — burnout is being behind with no sense that catching up is even possible.",
+              "correctCategory": "A",
+              "id": "work-s4-c5"
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Motivation",
+          "cards": [
+            {
+              "prompt": "I still feel some pull toward the parts of my job I actually enjoy.",
+              "correct": "Sustainable Drive",
+              "explanation": "Still feeling drawn to parts of your work is a strong sign of sustainable engagement.",
+              "correctCategory": "A",
+              "id": "work-s5-c1"
+            },
+            {
+              "prompt": "I feel completely indifferent to my work now, even the parts I used to like.",
+              "correct": "Burnout Pattern",
+              "explanation": "Losing interest even in the parts you used to enjoy is a hallmark sign of burnout.",
+              "correctCategory": "B",
+              "id": "work-s5-c2"
+            },
+            {
+              "prompt": "I had a good day at work today and it reminded me why I like this job.",
+              "correct": "Sustainable Drive",
+              "explanation": "Being reminded why you like your job, even occasionally, is a sign the connection to it is still alive.",
+              "correctCategory": "A",
+              "id": "work-s5-c3"
+            },
+            {
+              "prompt": "I can't remember the last time I felt anything but tired about work.",
+              "correct": "Burnout Pattern",
+              "explanation": "A long stretch with no positive feeling toward work at all is a strong burnout signal.",
+              "correctCategory": "B",
+              "id": "work-s5-c4"
+            },
+            {
+              "prompt": "I'm not thrilled about work this week, but I know that's just this week.",
+              "correct": "Sustainable Drive",
+              "explanation": "A low week that you can place in context is normal — burnout tends to feel like every week, indefinitely.",
+              "correctCategory": "A",
+              "id": "work-s5-c5"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Recognition",
+          "cards": [
+            {
+              "prompt": "I got positive feedback and let myself feel good about it.",
+              "correct": "Sustainable Drive",
+              "explanation": "Being able to take in positive feedback shows you're still emotionally connected to your work.",
+              "correctCategory": "A",
+              "id": "work-s6-c1"
+            },
+            {
+              "prompt": "Nothing feels like it's ever enough, no matter what feedback I get.",
+              "correct": "Burnout Pattern",
+              "explanation": "Feeling like nothing is ever enough, regardless of the feedback, is a common burnout thought pattern.",
+              "correctCategory": "B",
+              "id": "work-s6-c2"
+            },
+            {
+              "prompt": "I noticed my own progress on a project today.",
+              "correct": "Sustainable Drive",
+              "explanation": "Being able to notice your own progress is a healthy, sustaining habit.",
+              "correctCategory": "A",
+              "id": "work-s6-c3"
+            },
+            {
+              "prompt": "I feel invisible at work no matter what I accomplish.",
+              "correct": "Burnout Pattern",
+              "explanation": "A persistent sense of invisibility regardless of achievement is a sign of burnout, not just modesty.",
+              "correctCategory": "B",
+              "id": "work-s6-c4"
+            },
+            {
+              "prompt": "I got praised today but brushed it off quickly — that's just how I am.",
+              "correct": "Sustainable Drive",
+              "explanation": "Brushing off praise out of habit is common and not itself a red flag — burnout shows up more as feeling numb to any recognition at all, not just modest about it.",
+              "correctCategory": "A",
+              "id": "work-s6-c5"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Comparison",
+          "cards": [
+            {
+              "prompt": "I noticed a coworker's success and felt a little inspired.",
+              "correct": "Sustainable Drive",
+              "explanation": "Feeling inspired by someone else's success is a sign your own motivation is still intact.",
+              "correctCategory": "A",
+              "id": "work-s7-c1"
+            },
+            {
+              "prompt": "I compare myself to everyone and always come up short, constantly.",
+              "correct": "Burnout Pattern",
+              "explanation": "Constant unfavorable comparison is a common symptom of burnout eating into self-worth.",
+              "correctCategory": "B",
+              "id": "work-s7-c2"
+            },
+            {
+              "prompt": "Someone got a promotion and I was genuinely happy for them.",
+              "correct": "Sustainable Drive",
+              "explanation": "Genuine happiness for others' success is a sign you're not running on empty.",
+              "correctCategory": "A",
+              "id": "work-s7-c3"
+            },
+            {
+              "prompt": "I resent everyone around me lately, even people I used to like.",
+              "correct": "Burnout Pattern",
+              "explanation": "Widespread resentment, even toward people you liked, is a sign burnout is affecting how you see everyone.",
+              "correctCategory": "B",
+              "id": "work-s7-c4"
+            },
+            {
+              "prompt": "I felt a flicker of envy seeing a coworker's win, but it passed.",
+              "correct": "Sustainable Drive",
+              "explanation": "A brief flicker of envy is a normal human reaction — ongoing resentment that colors how you see everyone is more of a burnout signal.",
+              "correctCategory": "A",
+              "id": "work-s7-c5"
+            }
+          ]
+        },
+        {
+          "number": 8,
+          "title": "Physical Signs",
+          "cards": [
+            {
+              "prompt": "I feel a bit tired by Friday, but weekends restore me.",
+              "correct": "Sustainable Drive",
+              "explanation": "Weekly tiredness that recovers over the weekend is a normal, sustainable rhythm.",
+              "correctCategory": "A",
+              "id": "work-s8-c1"
+            },
+            {
+              "prompt": "I feel exhausted even after a full weekend off.",
+              "correct": "Burnout Pattern",
+              "explanation": "Exhaustion that survives a full weekend of rest is a strong sign of burnout.",
+              "correctCategory": "B",
+              "id": "work-s8-c2"
+            },
+            {
+              "prompt": "I get a normal headache after a long day sometimes.",
+              "correct": "Sustainable Drive",
+              "explanation": "An occasional headache after a hard day is a normal physical response, not a warning sign.",
+              "correctCategory": "A",
+              "id": "work-s8-c3"
+            },
+            {
+              "prompt": "I've had constant headaches and stomach issues for weeks now.",
+              "correct": "Burnout Pattern",
+              "explanation": "Weeks of ongoing physical symptoms is a sign the stress has become chronic overload.",
+              "correctCategory": "B",
+              "id": "work-s8-c4"
+            },
+            {
+              "prompt": "I'm more tired than usual this week, but I can still tell it's temporary.",
+              "correct": "Sustainable Drive",
+              "explanation": "Recognizing tiredness as temporary usually means you're still tracking your own state accurately — burnout often removes that sense of 'this will pass.'",
+              "correctCategory": "A",
+              "id": "work-s8-c5"
+            }
+          ]
+        },
+        {
+          "number": 9,
+          "title": "Weekends & After-Hours",
+          "cards": [
+            {
+              "prompt": "I mostly unplug on weekends and come back Monday feeling okay.",
+              "correct": "Sustainable Drive",
+              "explanation": "Unplugging and returning to work feeling okay is a sign your rhythm is currently sustainable.",
+              "correctCategory": "A",
+              "id": "work-s9-c1"
+            },
+            {
+              "prompt": "I spend my weekends dreading Monday instead of resting.",
+              "correct": "Burnout Pattern",
+              "explanation": "Weekends consumed by dread instead of rest is a sign work stress has taken over your recovery time.",
+              "correctCategory": "B",
+              "id": "work-s9-c2"
+            },
+            {
+              "prompt": "I checked email once this weekend, then put my phone away.",
+              "correct": "Sustainable Drive",
+              "explanation": "Checking briefly and then stepping back shows you still have some control over the habit.",
+              "correctCategory": "A",
+              "id": "work-s9-c3"
+            },
+            {
+              "prompt": "I can't remember my last weekend that felt like an actual break.",
+              "correct": "Burnout Pattern",
+              "explanation": "A long stretch with no real breaks is a strong burnout signal.",
+              "correctCategory": "B",
+              "id": "work-s9-c4"
+            },
+            {
+              "prompt": "I did a bit of work on Sunday, but it was by choice, not pressure.",
+              "correct": "Sustainable Drive",
+              "explanation": "Choosing to do a little work isn't the same as feeling unable to stop — burnout is marked by the compulsion, not the occasional voluntary hour.",
+              "correctCategory": "A",
+              "id": "work-s9-c5"
+            }
+          ]
+        },
+        {
+          "number": 10,
+          "title": "Long-Term Outlook",
+          "cards": [
+            {
+              "prompt": "I can picture myself doing this job a year from now, mostly content.",
+              "correct": "Sustainable Drive",
+              "explanation": "Being able to picture a mostly content future in this job is a sign of sustainable drive.",
+              "correctCategory": "A",
+              "id": "work-s10-c1"
+            },
+            {
+              "prompt": "I can't imagine doing this job for even another month.",
+              "correct": "Burnout Pattern",
+              "explanation": "A sense that you can't even imagine continuing is a strong burnout signal worth taking seriously.",
+              "correctCategory": "B",
+              "id": "work-s10-c2"
+            },
+            {
+              "prompt": "There are hard days, but overall I still feel like this job fits me.",
+              "correct": "Sustainable Drive",
+              "explanation": "An overall sense of fit, even with hard days, points to a sustainable relationship with your work.",
+              "correctCategory": "A",
+              "id": "work-s10-c3"
+            },
+            {
+              "prompt": "I fantasize about quitting almost every single day now.",
+              "correct": "Burnout Pattern",
+              "explanation": "A daily fantasy of quitting is a common and serious sign of burnout.",
+              "correctCategory": "B",
+              "id": "work-s10-c4"
+            },
+            {
+              "prompt": "I've thought about quitting a few times this year, but each time it passed.",
+              "correct": "Sustainable Drive",
+              "explanation": "The thought crossing your mind occasionally is common — it's when the thought becomes a daily, unshakable pull that it signals burnout rather than a passing rough patch.",
+              "correctCategory": "A",
+              "id": "work-s10-c5"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "health",
+      "name": "Health",
+      "categoryA": "Building Habit",
+      "categoryB": "Quiet Self-Sabotage",
+      "sessions": [
+        {
+          "number": 1,
+          "title": "Movement",
+          "cards": [
+            {
+              "prompt": "I went for a 10-minute walk even though I didn't feel like it.",
+              "correct": "Building Habit",
+              "explanation": "Showing up for a small version of the habit, even without motivation, is exactly how habits get built.",
+              "correctCategory": "A",
+              "id": "health-s1-c1"
+            },
+            {
+              "prompt": "I skipped the gym again and told myself I'll 'start Monday.'",
+              "correct": "Quiet Self-Sabotage",
+              "explanation": "Repeatedly pushing the start date is a quiet way of avoiding the habit altogether.",
+              "correctCategory": "B",
+              "id": "health-s1-c2"
+            },
+            {
+              "prompt": "I did a short stretch session instead of my full workout, and that was enough today.",
+              "correct": "Building Habit",
+              "explanation": "Scaling down without skipping entirely keeps the habit alive.",
+              "correctCategory": "A",
+              "id": "health-s1-c3"
+            },
+            {
+              "prompt": "I keep planning workouts I know I won't actually do.",
+              "correct": "Quiet Self-Sabotage",
+              "explanation": "Planning without any real intention to follow through is a subtle form of self-sabotage.",
+              "correctCategory": "B",
+              "id": "health-s1-c4"
+            },
+            {
+              "prompt": "I only did half my usual workout today, but I still showed up.",
+              "correct": "Building Habit",
+              "explanation": "Showing up in a smaller way still counts as building the habit — self-sabotage looks more like the pattern of planning and then not showing up at all.",
+              "correctCategory": "A",
+              "id": "health-s1-c5"
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Eating",
+          "cards": [
+            {
+              "prompt": "I had a good breakfast and felt fueled for the morning.",
+              "correct": "Building Habit",
+              "explanation": "Eating in a way that fuels you is a straightforward sign of building a good habit.",
+              "correctCategory": "A",
+              "id": "health-s2-c1"
+            },
+            {
+              "prompt": "I skipped a meal to 'make up for' eating out yesterday.",
+              "correct": "Quiet Self-Sabotage",
+              "explanation": "Skipping meals to compensate for a previous one is a quiet, unhealthy pattern rather than a fix.",
+              "correctCategory": "B",
+              "id": "health-s2-c2"
+            },
+            {
+              "prompt": "I had dessert and didn't spiral about it afterward.",
+              "correct": "Building Habit",
+              "explanation": "Enjoying something without spiraling shows a settled, sustainable relationship with food.",
+              "correctCategory": "A",
+              "id": "health-s2-c3"
+            },
+            {
+              "prompt": "I told myself I'd 'be good' tomorrow so it's fine to skip eating properly today.",
+              "correct": "Quiet Self-Sabotage",
+              "explanation": "Using a future promise to justify neglecting yourself today is a self-sabotage pattern.",
+              "correctCategory": "B",
+              "id": "health-s2-c4"
+            },
+            {
+              "prompt": "I ate more than planned at dinner, but I just moved on and had a normal breakfast the next day.",
+              "correct": "Building Habit",
+              "explanation": "Moving on without compensating afterward is what a stable relationship with food looks like — the compensating pattern is the sabotage, not the occasional bigger meal.",
+              "correctCategory": "A",
+              "id": "health-s2-c5"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Sleep",
+          "cards": [
+            {
+              "prompt": "I went to bed at a consistent time again tonight.",
+              "correct": "Building Habit",
+              "explanation": "Consistency at bedtime is one of the simplest and most powerful habit-building moves.",
+              "correctCategory": "A",
+              "id": "health-s3-c1"
+            },
+            {
+              "prompt": "I keep telling myself 'just one more episode' until it's 2am, most nights.",
+              "correct": "Quiet Self-Sabotage",
+              "explanation": "A repeated pattern of overriding your own need for sleep is a quiet form of self-sabotage.",
+              "correctCategory": "B",
+              "id": "health-s3-c2"
+            },
+            {
+              "prompt": "I put my phone away earlier to wind down before bed.",
+              "correct": "Building Habit",
+              "explanation": "A small, deliberate change to support better sleep is exactly how habits get built.",
+              "correctCategory": "A",
+              "id": "health-s3-c3"
+            },
+            {
+              "prompt": "I know I need sleep, but I scroll anyway most nights, on purpose.",
+              "correct": "Quiet Self-Sabotage",
+              "explanation": "Knowingly working against your own needs, night after night, is a self-sabotage pattern.",
+              "correctCategory": "B",
+              "id": "health-s3-c4"
+            },
+            {
+              "prompt": "I stayed up a bit late last night, but I still got up at my normal time today.",
+              "correct": "Building Habit",
+              "explanation": "One late night that doesn't derail your routine is normal life — the sabotage pattern is repeatedly choosing the late night over the thing you know you need.",
+              "correctCategory": "A",
+              "id": "health-s3-c5"
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Self-Talk",
+          "cards": [
+            {
+              "prompt": "I noticed I skipped a workout and just planned for tomorrow instead.",
+              "correct": "Building Habit",
+              "explanation": "Noticing a miss and moving forward without drama is exactly how sustainable habits survive slip-ups.",
+              "correctCategory": "A",
+              "id": "health-s4-c1"
+            },
+            {
+              "prompt": "I skipped one workout and decided the whole week is 'ruined' anyway.",
+              "correct": "Quiet Self-Sabotage",
+              "explanation": "Letting one miss spiral into giving up on the whole week is a self-sabotage pattern.",
+              "correctCategory": "B",
+              "id": "health-s4-c2"
+            },
+            {
+              "prompt": "I had an off day and didn't let it spiral into giving up.",
+              "correct": "Building Habit",
+              "explanation": "Keeping an off day contained, rather than letting it define the whole effort, is what building a habit actually looks like.",
+              "correctCategory": "A",
+              "id": "health-s4-c3"
+            },
+            {
+              "prompt": "I use one slip-up as an excuse to abandon the whole plan.",
+              "correct": "Quiet Self-Sabotage",
+              "explanation": "Treating a single slip as permission to quit entirely is a quiet form of self-sabotage.",
+              "correctCategory": "B",
+              "id": "health-s4-c4"
+            },
+            {
+              "prompt": "I was a bit hard on myself about a slip today, but I still followed through the next day.",
+              "correct": "Building Habit",
+              "explanation": "Following through despite some self-criticism is still building the habit — sabotage is when the self-criticism becomes the reason to quit entirely.",
+              "correctCategory": "A",
+              "id": "health-s4-c5"
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Setbacks",
+          "cards": [
+            {
+              "prompt": "I missed a few days of my routine, then just picked it back up.",
+              "correct": "Building Habit",
+              "explanation": "Picking a routine back up after missing it is the core skill of building any lasting habit.",
+              "correctCategory": "A",
+              "id": "health-s5-c1"
+            },
+            {
+              "prompt": "I missed a few days and used it as proof the whole thing was pointless.",
+              "correct": "Quiet Self-Sabotage",
+              "explanation": "Using a missed stretch as 'proof' to quit is a common self-sabotage pattern.",
+              "correctCategory": "B",
+              "id": "health-s5-c2"
+            },
+            {
+              "prompt": "I had a setback, felt annoyed, and got back on track the next day.",
+              "correct": "Building Habit",
+              "explanation": "Feeling annoyed but still returning to the routine is a sign the habit is genuinely taking hold.",
+              "correctCategory": "A",
+              "id": "health-s5-c3"
+            },
+            {
+              "prompt": "One setback and I quietly abandon the entire plan, every time.",
+              "correct": "Quiet Self-Sabotage",
+              "explanation": "A repeating pattern of total abandonment after any setback is a clear self-sabotage cycle.",
+              "correctCategory": "B",
+              "id": "health-s5-c4"
+            },
+            {
+              "prompt": "I had a rough week and didn't do much, but I didn't beat myself up or quit either.",
+              "correct": "Building Habit",
+              "explanation": "Staying neutral about a rough week — not spiraling, not quitting — is exactly what keeps a habit sustainable long-term.",
+              "correctCategory": "A",
+              "id": "health-s5-c5"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Everyday Basics",
+          "cards": [
+            {
+              "prompt": "I drank water before reaching for coffee this morning.",
+              "correct": "Building Habit",
+              "explanation": "A small, deliberate swap like this is exactly how sustainable habits get built one choice at a time.",
+              "correctCategory": "A",
+              "id": "health-s6-c1"
+            },
+            {
+              "prompt": "I run on caffeine and barely drink water most days, and I know it.",
+              "correct": "Quiet Self-Sabotage",
+              "explanation": "Knowingly neglecting a basic need, day after day, is a quiet self-sabotage pattern.",
+              "correctCategory": "B",
+              "id": "health-s6-c2"
+            },
+            {
+              "prompt": "I packed a snack so I wouldn't skip eating during a busy day.",
+              "correct": "Building Habit",
+              "explanation": "Planning ahead to meet your own needs is a clear building-habit move.",
+              "correctCategory": "A",
+              "id": "health-s6-c3"
+            },
+            {
+              "prompt": "I let myself get so busy I forget to eat, and secretly feel proud of it.",
+              "correct": "Quiet Self-Sabotage",
+              "explanation": "Taking pride in neglecting a basic need is a subtle but real form of self-sabotage.",
+              "correctCategory": "B",
+              "id": "health-s6-c4"
+            },
+            {
+              "prompt": "I forgot to drink water for most of the day, but I caught it in the evening and had some.",
+              "correct": "Building Habit",
+              "explanation": "Catching it and course-correcting, even late, is what building a habit looks like — sabotage is not noticing at all, or noticing and not caring.",
+              "correctCategory": "A",
+              "id": "health-s6-c5"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Screen Time",
+          "cards": [
+            {
+              "prompt": "I set a time to put my phone down before bed and mostly followed it.",
+              "correct": "Building Habit",
+              "explanation": "Mostly following through on a self-set limit is a strong sign of a habit taking hold.",
+              "correctCategory": "A",
+              "id": "health-s7-c1"
+            },
+            {
+              "prompt": "I tell myself I'll cut down on scrolling 'starting tomorrow,' every day.",
+              "correct": "Quiet Self-Sabotage",
+              "explanation": "A daily promise that never actually starts is a familiar self-sabotage loop.",
+              "correctCategory": "B",
+              "id": "health-s7-c2"
+            },
+            {
+              "prompt": "I noticed I was scrolling too much and took a short break from my phone.",
+              "correct": "Building Habit",
+              "explanation": "Noticing and adjusting in the moment is exactly how healthy habits get reinforced.",
+              "correctCategory": "A",
+              "id": "health-s7-c3"
+            },
+            {
+              "prompt": "I know screens are wrecking my sleep, and I keep doing it anyway on purpose.",
+              "correct": "Quiet Self-Sabotage",
+              "explanation": "Knowingly acting against your own well-being, repeatedly, is a self-sabotage pattern.",
+              "correctCategory": "B",
+              "id": "health-s7-c4"
+            },
+            {
+              "prompt": "I went over my screen time goal today, but I'm not going to let that stop me from trying again tomorrow.",
+              "correct": "Building Habit",
+              "explanation": "Trying again after going over is the habit-building mindset — sabotage is using today's slip as an excuse to give up on the goal altogether.",
+              "correctCategory": "A",
+              "id": "health-s7-c5"
+            }
+          ]
+        },
+        {
+          "number": 8,
+          "title": "Coping Habits",
+          "cards": [
+            {
+              "prompt": "I decided to skip a drink at the get-together tonight.",
+              "correct": "Building Habit",
+              "explanation": "Choosing to skip in the moment shows you're actively steering the habit, not just drifting.",
+              "correctCategory": "A",
+              "id": "health-s8-c1"
+            },
+            {
+              "prompt": "I keep telling myself I 'deserve' to overdo it because of a hard week, and I do it a lot.",
+              "correct": "Quiet Self-Sabotage",
+              "explanation": "Using a hard week as a repeated justification is a quiet self-sabotage pattern.",
+              "correctCategory": "B",
+              "id": "health-s8-c2"
+            },
+            {
+              "prompt": "I noticed I was using a drink to cope with stress and cut back.",
+              "correct": "Building Habit",
+              "explanation": "Noticing a coping pattern and adjusting it yourself is a strong, healthy sign.",
+              "correctCategory": "A",
+              "id": "health-s8-c3"
+            },
+            {
+              "prompt": "I use it most nights now to unwind and don't really question it anymore.",
+              "correct": "Quiet Self-Sabotage",
+              "explanation": "A nightly habit that's stopped being questioned is a sign it may be worth a closer look.",
+              "correctCategory": "B",
+              "id": "health-s8-c4"
+            },
+            {
+              "prompt": "I had more than I planned to at one event, but it's not something I do regularly.",
+              "correct": "Building Habit",
+              "explanation": "A one-off exception isn't sabotage — the concerning pattern is when it becomes the regular, unquestioned way of coping.",
+              "correctCategory": "A",
+              "id": "health-s8-c5"
+            }
+          ]
+        },
+        {
+          "number": 9,
+          "title": "Medical Care",
+          "cards": [
+            {
+              "prompt": "I booked the check-up I'd been putting off.",
+              "correct": "Building Habit",
+              "explanation": "Following through on a check-up, even a delayed one, is a strong building-habit move.",
+              "correctCategory": "A",
+              "id": "health-s9-c1"
+            },
+            {
+              "prompt": "I've been ignoring a symptom for months because I don't want to know.",
+              "correct": "Quiet Self-Sabotage",
+              "explanation": "Avoiding a known symptom out of fear is a form of self-sabotage worth gently interrupting.",
+              "correctCategory": "B",
+              "id": "health-s9-c2"
+            },
+            {
+              "prompt": "I followed up on the doctor's advice from last time.",
+              "correct": "Building Habit",
+              "explanation": "Following through on advice you've already received is a clear sign of building a healthy habit.",
+              "correctCategory": "A",
+              "id": "health-s9-c3"
+            },
+            {
+              "prompt": "I keep canceling appointments I actually need.",
+              "correct": "Quiet Self-Sabotage",
+              "explanation": "A repeated pattern of cancelling needed appointments is a quiet self-sabotage pattern.",
+              "correctCategory": "B",
+              "id": "health-s9-c4"
+            },
+            {
+              "prompt": "I was nervous about the appointment, but I went anyway.",
+              "correct": "Building Habit",
+              "explanation": "Following through despite nerves is still taking care of yourself — the sabotage is avoiding the appointment altogether out of fear.",
+              "correctCategory": "A",
+              "id": "health-s9-c5"
+            }
+          ]
+        },
+        {
+          "number": 10,
+          "title": "Motivation",
+          "cards": [
+            {
+              "prompt": "I don't feel amazing today, but I still did my small routine.",
+              "correct": "Building Habit",
+              "explanation": "Doing the small version even without full motivation is exactly how sustainable habits are built.",
+              "correctCategory": "A",
+              "id": "health-s10-c1"
+            },
+            {
+              "prompt": "I only 'count' it if I feel 100% motivated, so most days don't count.",
+              "correct": "Quiet Self-Sabotage",
+              "explanation": "Setting an all-or-nothing bar for motivation quietly guarantees most days will 'fail.'",
+              "correctCategory": "B",
+              "id": "health-s10-c2"
+            },
+            {
+              "prompt": "I'm doing this for how it makes me feel, not to punish myself.",
+              "correct": "Building Habit",
+              "explanation": "A motivation rooted in how it makes you feel is a sustainable foundation for a habit.",
+              "correctCategory": "A",
+              "id": "health-s10-c3"
+            },
+            {
+              "prompt": "I only do healthy things when I'm mad at myself about something.",
+              "correct": "Quiet Self-Sabotage",
+              "explanation": "Using self-criticism as the only fuel for healthy behavior is a self-sabotaging cycle in disguise.",
+              "correctCategory": "B",
+              "id": "health-s10-c4"
+            },
+            {
+              "prompt": "My motivation is low this week, but I'm still showing up in smaller ways.",
+              "correct": "Building Habit",
+              "explanation": "Scaling down without stopping is exactly how sustainable habits survive low-motivation weeks — sabotage is treating low motivation as a reason to stop entirely.",
+              "correctCategory": "A",
+              "id": "health-s10-c5"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "breakup-relationship",
+      "name": "Breakup & Relationship",
+      "categoryA": "Healthy Sign",
+      "categoryB": "Red Flag",
+      "sessions": [
+        {
+          "number": 1,
+          "title": "Communication",
+          "cards": [
+            {
+              "prompt": "They tell me when something's bothering them instead of going quiet.",
+              "correct": "Healthy Sign",
+              "explanation": "Direct communication, rather than silence, is a hallmark of a healthy dynamic.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s1-c1"
+            },
+            {
+              "prompt": "They give me the silent treatment when they're upset instead of talking.",
+              "correct": "Red Flag",
+              "explanation": "Using silence as a weapon rather than talking things through is a common red flag pattern.",
+              "correctCategory": "B",
+              "id": "breakup-relationship-s1-c2"
+            },
+            {
+              "prompt": "We can disagree and still text normally an hour later.",
+              "correct": "Healthy Sign",
+              "explanation": "Recovering quickly from disagreement shows the relationship can handle conflict without lasting damage.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s1-c3"
+            },
+            {
+              "prompt": "They bring up things I did wrong from months ago, in every argument.",
+              "correct": "Red Flag",
+              "explanation": "Stockpiling old grievances to use in every argument is a red flag pattern, not healthy conflict.",
+              "correctCategory": "B",
+              "id": "breakup-relationship-s1-c4"
+            },
+            {
+              "prompt": "They needed a bit of space before talking about something hard, but they came back to it.",
+              "correct": "Healthy Sign",
+              "explanation": "Needing a short pause before a hard conversation is healthy self-regulation — the red flag is using silence as punishment instead of space.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s1-c5"
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Trust",
+          "cards": [
+            {
+              "prompt": "They tell me where they're going, not because I ask, but because they want to share their day.",
+              "correct": "Healthy Sign",
+              "explanation": "Voluntary openness, rather than obligation, is a sign of genuine trust and closeness.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s2-c1"
+            },
+            {
+              "prompt": "They check my phone or messages without asking.",
+              "correct": "Red Flag",
+              "explanation": "Checking someone's phone without consent is a clear red flag around trust and boundaries.",
+              "correctCategory": "B",
+              "id": "breakup-relationship-s2-c2"
+            },
+            {
+              "prompt": "I feel comfortable being honest with them, even about small things.",
+              "correct": "Healthy Sign",
+              "explanation": "Comfort with small honesty is often the clearest sign of a safe relationship.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s2-c3"
+            },
+            {
+              "prompt": "I've started hiding small things from them to avoid a reaction.",
+              "correct": "Red Flag",
+              "explanation": "Hiding small things out of fear of their reaction is a sign the relationship doesn't feel safe.",
+              "correctCategory": "B",
+              "id": "breakup-relationship-s2-c4"
+            },
+            {
+              "prompt": "I felt a flicker of jealousy seeing them with a friend, but I didn't act on it.",
+              "correct": "Healthy Sign",
+              "explanation": "Noticing a feeling without acting on it is normal — the red flag is when jealousy turns into control, checking, or accusations.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s2-c5"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Conflict",
+          "cards": [
+            {
+              "prompt": "They apologize when they're wrong, even mid-argument.",
+              "correct": "Healthy Sign",
+              "explanation": "The ability to apologize mid-conflict is a strong sign of emotional maturity in the relationship.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s3-c1"
+            },
+            {
+              "prompt": "They never actually apologize, they just stop talking until I do.",
+              "correct": "Red Flag",
+              "explanation": "Withholding communication until you apologize first is a manipulative red flag pattern.",
+              "correctCategory": "B",
+              "id": "breakup-relationship-s3-c2"
+            },
+            {
+              "prompt": "We can raise our voices sometimes and still repair things after.",
+              "correct": "Healthy Sign",
+              "explanation": "Being able to repair after a heated moment matters more than never raising your voice at all.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s3-c3"
+            },
+            {
+              "prompt": "Arguments always end with me apologizing, even when I didn't do anything.",
+              "correct": "Red Flag",
+              "explanation": "A one-sided pattern where you always end up apologizing is a red flag worth noticing.",
+              "correctCategory": "B",
+              "id": "breakup-relationship-s3-c4"
+            },
+            {
+              "prompt": "We had a real disagreement this week, but we both listened to each other's side.",
+              "correct": "Healthy Sign",
+              "explanation": "Mutual listening during conflict, even heated conflict, is a sign the relationship can handle disagreement — one-sided blame is the red flag.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s3-c5"
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Space & Independence",
+          "cards": [
+            {
+              "prompt": "They're happy when I make plans with my own friends.",
+              "correct": "Healthy Sign",
+              "explanation": "Genuine support for your independence is a strong healthy sign.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s4-c1"
+            },
+            {
+              "prompt": "They get upset every time I make plans without them.",
+              "correct": "Red Flag",
+              "explanation": "Consistent upset over your independent plans is a red flag around control.",
+              "correctCategory": "B",
+              "id": "breakup-relationship-s4-c2"
+            },
+            {
+              "prompt": "We have separate hobbies and that feels normal to both of us.",
+              "correct": "Healthy Sign",
+              "explanation": "Comfortable separateness alongside togetherness is a sign of a healthy dynamic.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s4-c3"
+            },
+            {
+              "prompt": "They've slowly gotten me to drop hobbies and friends I used to have.",
+              "correct": "Red Flag",
+              "explanation": "A gradual shrinking of your world to fit them is a classic red flag pattern.",
+              "correctCategory": "B",
+              "id": "breakup-relationship-s4-c4"
+            },
+            {
+              "prompt": "They said they missed me while I was out with friends, and I liked hearing that.",
+              "correct": "Healthy Sign",
+              "explanation": "Missing you is a normal, warm feeling — the red flag is when that feeling turns into guilt-tripping or discouraging you from going.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s4-c5"
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Support",
+          "cards": [
+            {
+              "prompt": "They show up for me on a hard day without me having to ask.",
+              "correct": "Healthy Sign",
+              "explanation": "Proactive support on hard days is a clear healthy sign.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s5-c1"
+            },
+            {
+              "prompt": "They make my hard days about how it's affecting them instead.",
+              "correct": "Red Flag",
+              "explanation": "Redirecting your hard moments back onto themselves is a red flag around emotional support.",
+              "correctCategory": "B",
+              "id": "breakup-relationship-s5-c2"
+            },
+            {
+              "prompt": "I feel like I can have a bad day around them.",
+              "correct": "Healthy Sign",
+              "explanation": "Feeling safe enough to have a bad day is a strong sign of a healthy, accepting relationship.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s5-c3"
+            },
+            {
+              "prompt": "I feel like I have to perform being okay around them, always.",
+              "correct": "Red Flag",
+              "explanation": "Feeling pressure to always seem fine is a sign the relationship doesn't feel emotionally safe.",
+              "correctCategory": "B",
+              "id": "breakup-relationship-s5-c4"
+            },
+            {
+              "prompt": "They were a little distracted when I told them about a bad day, but circled back later to check in.",
+              "correct": "Healthy Sign",
+              "explanation": "Circling back shows they still care even if the first response wasn't perfect — the red flag is a pattern of never following up at all.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s5-c5"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Breakup: Letting Go",
+          "cards": [
+            {
+              "prompt": "I deleted our old photos when I felt ready to.",
+              "correct": "Healthy Sign",
+              "explanation": "Letting go at your own pace, when you feel ready, is a healthy part of moving on.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s6-c1"
+            },
+            {
+              "prompt": "I've kept every message just to re-read them at 2am.",
+              "correct": "Red Flag",
+              "explanation": "Regularly re-reading old messages late at night is a sign of staying stuck rather than processing.",
+              "correctCategory": "B",
+              "id": "breakup-relationship-s6-c2"
+            },
+            {
+              "prompt": "I unfollowed them because it made moving on easier.",
+              "correct": "Healthy Sign",
+              "explanation": "Making an active choice to protect your own healing is a healthy sign.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s6-c3"
+            },
+            {
+              "prompt": "I check their social media multiple times a day.",
+              "correct": "Red Flag",
+              "explanation": "Frequent checking is a common pattern that keeps the wound open rather than letting it close.",
+              "correctCategory": "B",
+              "id": "breakup-relationship-s6-c4"
+            },
+            {
+              "prompt": "I still have a few of our old photos saved, but I don't look at them anymore.",
+              "correct": "Healthy Sign",
+              "explanation": "Keeping something without revisiting it isn't the same as holding on — it's the active re-checking and re-reading that keeps the wound open.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s6-c5"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Breakup: Moving On",
+          "cards": [
+            {
+              "prompt": "I let myself feel sad about it today, and then went about my day.",
+              "correct": "Healthy Sign",
+              "explanation": "Letting sadness pass through you, rather than fighting it, is a healthy part of moving on.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s7-c1"
+            },
+            {
+              "prompt": "I've built my whole day around avoiding anything that reminds me of them.",
+              "correct": "Red Flag",
+              "explanation": "Restructuring your whole life around avoidance is a sign of staying stuck, not healing.",
+              "correctCategory": "B",
+              "id": "breakup-relationship-s7-c2"
+            },
+            {
+              "prompt": "I told a friend how I'm actually doing instead of pretending I'm fine.",
+              "correct": "Healthy Sign",
+              "explanation": "Being honest about how you're doing, instead of masking it, supports genuine healing.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s7-c3"
+            },
+            {
+              "prompt": "I've convinced myself I'm 'totally over it' while still checking if they've moved on.",
+              "correct": "Red Flag",
+              "explanation": "Claiming to be over it while still monitoring them is a sign you haven't actually let go yet.",
+              "correctCategory": "B",
+              "id": "breakup-relationship-s7-c4"
+            },
+            {
+              "prompt": "I thought about texting them today, and then didn't.",
+              "correct": "Healthy Sign",
+              "explanation": "Noticing the urge and choosing not to act on it is exactly what moving on looks like — the concerning pattern is acting on the urge repeatedly.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s7-c5"
+            }
+          ]
+        },
+        {
+          "number": 8,
+          "title": "Respect",
+          "cards": [
+            {
+              "prompt": "They support my goals even when they don't fully understand them.",
+              "correct": "Healthy Sign",
+              "explanation": "Supporting you even without full understanding is a strong sign of respect.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s8-c1"
+            },
+            {
+              "prompt": "They make jokes about my flaws in front of friends.",
+              "correct": "Red Flag",
+              "explanation": "Public jokes at your expense, especially about sensitive things, is a red flag around respect.",
+              "correctCategory": "B",
+              "id": "breakup-relationship-s8-c2"
+            },
+            {
+              "prompt": "They ask before making plans that affect both of us.",
+              "correct": "Healthy Sign",
+              "explanation": "Checking in before decisions that affect you both is a basic, healthy sign of respect.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s8-c3"
+            },
+            {
+              "prompt": "They make decisions for both of us without asking me.",
+              "correct": "Red Flag",
+              "explanation": "Making unilateral decisions that affect you is a red flag around respect and equality.",
+              "correctCategory": "B",
+              "id": "breakup-relationship-s8-c4"
+            },
+            {
+              "prompt": "They teased me a little about something, and I laughed along and it didn't bother me.",
+              "correct": "Healthy Sign",
+              "explanation": "Light teasing that genuinely lands as fun for both people is normal — it's a red flag when the teasing targets something sensitive and continues after you've said it bothers you.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s8-c5"
+            }
+          ]
+        },
+        {
+          "number": 9,
+          "title": "Consistency",
+          "cards": [
+            {
+              "prompt": "Their actions match what they say, most of the time.",
+              "correct": "Healthy Sign",
+              "explanation": "Actions matching words, consistently, is one of the clearest signs of a trustworthy partner.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s9-c1"
+            },
+            {
+              "prompt": "They say all the right things but rarely follow through.",
+              "correct": "Red Flag",
+              "explanation": "A gap between words and actions, if it's a pattern, is a red flag worth paying attention to.",
+              "correctCategory": "B",
+              "id": "breakup-relationship-s9-c2"
+            },
+            {
+              "prompt": "I know generally what to expect from them day to day.",
+              "correct": "Healthy Sign",
+              "explanation": "Predictability in a good sense — knowing what to expect — is a sign of a stable relationship.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s9-c3"
+            },
+            {
+              "prompt": "I never know which version of them I'll get today.",
+              "correct": "Red Flag",
+              "explanation": "Not knowing which version of someone you'll get is a red flag around emotional consistency.",
+              "correctCategory": "B",
+              "id": "breakup-relationship-s9-c4"
+            },
+            {
+              "prompt": "They had an off day and were a bit short with me, but it wasn't the norm and they acknowledged it.",
+              "correct": "Healthy Sign",
+              "explanation": "An occasional off day that gets acknowledged is normal — the red flag is unpredictability with no accountability for it.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s9-c5"
+            }
+          ]
+        },
+        {
+          "number": 10,
+          "title": "Growth",
+          "cards": [
+            {
+              "prompt": "We've both changed some habits based on things we've learned about each other.",
+              "correct": "Healthy Sign",
+              "explanation": "Mutual adjustment over time is a strong sign the relationship is growing in a healthy direction.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s10-c1"
+            },
+            {
+              "prompt": "Nothing ever changes no matter how many times I bring up the same issue.",
+              "correct": "Red Flag",
+              "explanation": "A total lack of change despite repeated conversations is a red flag around whether the relationship can actually grow.",
+              "correctCategory": "B",
+              "id": "breakup-relationship-s10-c2"
+            },
+            {
+              "prompt": "I feel like a better version of myself around them.",
+              "correct": "Healthy Sign",
+              "explanation": "Feeling like a better version of yourself is one of the clearest markers of a healthy relationship.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s10-c3"
+            },
+            {
+              "prompt": "I've started shrinking myself to avoid setting them off.",
+              "correct": "Red Flag",
+              "explanation": "Shrinking yourself to manage someone else's reactions is a significant red flag.",
+              "correctCategory": "B",
+              "id": "breakup-relationship-s10-c4"
+            },
+            {
+              "prompt": "We're still working through an old pattern, but I can see us both trying.",
+              "correct": "Healthy Sign",
+              "explanation": "Visible effort from both sides, even on an unresolved issue, is a healthy sign — the red flag is when the same issue never even gets acknowledged, let alone worked on.",
+              "correctCategory": "A",
+              "id": "breakup-relationship-s10-c5"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "low-confidence",
+      "name": "Low Confidence",
+      "categoryA": "Realistic Self-Check",
+      "categoryB": "Self-Doubt Talking",
+      "sessions": [
+        {
+          "number": 1,
+          "title": "Feedback",
+          "cards": [
+            {
+              "prompt": "I got critical feedback and thought about what specifically I could improve.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Turning feedback into a specific action is a realistic, constructive response.",
+              "correctCategory": "A",
+              "id": "low-confidence-s1-c1"
+            },
+            {
+              "prompt": "I got one piece of critical feedback and decided I'm bad at my job entirely.",
+              "correct": "Self-Doubt Talking",
+              "explanation": "Generalizing one comment into a verdict on your whole ability is self-doubt talking, not accuracy.",
+              "correctCategory": "B",
+              "id": "low-confidence-s1-c2"
+            },
+            {
+              "prompt": "I noticed a mistake in my work and made a note to double-check next time.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Learning a specific lesson from a mistake is a grounded, realistic response.",
+              "correctCategory": "A",
+              "id": "low-confidence-s1-c3"
+            },
+            {
+              "prompt": "I replay every piece of feedback I've ever gotten as proof I'm not good enough.",
+              "correct": "Self-Doubt Talking",
+              "explanation": "Compiling all past feedback into one big case against yourself is self-doubt distorting the picture.",
+              "correctCategory": "B",
+              "id": "low-confidence-s1-c4"
+            },
+            {
+              "prompt": "The feedback stung at first, but once I calmed down I could see the useful part in it.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Being able to extract the useful part after the sting fades is exactly what a realistic self-check looks like — self-doubt keeps circling the sting without ever getting to the useful part.",
+              "correctCategory": "A",
+              "id": "low-confidence-s1-c5"
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Comparison",
+          "cards": [
+            {
+              "prompt": "I noticed someone doing something well and thought about what I could learn from it.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Using someone else's success as a learning point is a realistic, constructive habit.",
+              "correctCategory": "A",
+              "id": "low-confidence-s2-c1"
+            },
+            {
+              "prompt": "I compare myself to everyone I see and always come up short.",
+              "correct": "Self-Doubt Talking",
+              "explanation": "A constant, one-directional comparison that always ends badly is self-doubt, not an accurate read of reality.",
+              "correctCategory": "B",
+              "id": "low-confidence-s2-c2"
+            },
+            {
+              "prompt": "Someone else got recognized and I felt happy for them, genuinely.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Genuine happiness for others shows your own sense of worth isn't being threatened.",
+              "correctCategory": "A",
+              "id": "low-confidence-s2-c3"
+            },
+            {
+              "prompt": "Every time someone else succeeds, it feels like proof of my own failure.",
+              "correct": "Self-Doubt Talking",
+              "explanation": "Treating others' wins as evidence of your own failure is a distorted, self-doubting pattern.",
+              "correctCategory": "B",
+              "id": "low-confidence-s2-c4"
+            },
+            {
+              "prompt": "I felt a pang comparing myself to a colleague, but I didn't let it change how I saw myself overall.",
+              "correct": "Realistic Self-Check",
+              "explanation": "A passing pang that doesn't shake your overall self-view is normal — self-doubt turns that single moment into a verdict on your whole worth.",
+              "correctCategory": "A",
+              "id": "low-confidence-s2-c5"
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Mistakes",
+          "cards": [
+            {
+              "prompt": "I made a mistake and fixed what I could, then moved on.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Fixing what's fixable and moving on is exactly how a realistic self-check handles a mistake.",
+              "correctCategory": "A",
+              "id": "low-confidence-s3-c1"
+            },
+            {
+              "prompt": "I made one mistake and now I'm sure everyone thinks I'm incompetent.",
+              "correct": "Self-Doubt Talking",
+              "explanation": "Assuming everyone's judgment based on one mistake is self-doubt filling in details that aren't actually there.",
+              "correctCategory": "B",
+              "id": "low-confidence-s3-c2"
+            },
+            {
+              "prompt": "I own my mistakes without spiraling about them.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Owning a mistake without spiraling shows a balanced, realistic self-view.",
+              "correctCategory": "A",
+              "id": "low-confidence-s3-c3"
+            },
+            {
+              "prompt": "I replay small mistakes for days, way past the point they matter.",
+              "correct": "Self-Doubt Talking",
+              "explanation": "Replaying small mistakes far past their relevance is a sign self-doubt has taken over the story.",
+              "correctCategory": "B",
+              "id": "low-confidence-s3-c4"
+            },
+            {
+              "prompt": "I made a mistake today and felt embarrassed for a bit, but I still spoke up in the next meeting.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Feeling embarrassed but still showing up afterward is a sign the mistake didn't take over your self-image — self-doubt tends to make you withdraw instead.",
+              "correctCategory": "A",
+              "id": "low-confidence-s3-c5"
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "New Situations",
+          "cards": [
+            {
+              "prompt": "I feel nervous starting something new, but I remind myself I've learned new things before.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Drawing on your own track record to steady your nerves is a realistic, grounded approach.",
+              "correctCategory": "A",
+              "id": "low-confidence-s4-c1"
+            },
+            {
+              "prompt": "I assume I'll fail at anything new before I've even tried.",
+              "correct": "Self-Doubt Talking",
+              "explanation": "Assuming failure before trying is self-doubt speaking, not an actual prediction based on evidence.",
+              "correctCategory": "B",
+              "id": "low-confidence-s4-c2"
+            },
+            {
+              "prompt": "I asked questions in a new setting instead of pretending to already know.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Asking questions rather than pretending is a confident, realistic way to handle not knowing something yet.",
+              "correctCategory": "A",
+              "id": "low-confidence-s4-c3"
+            },
+            {
+              "prompt": "I stay quiet in new settings because I'm sure my questions will sound stupid.",
+              "correct": "Self-Doubt Talking",
+              "explanation": "Assuming your questions will sound stupid, without evidence, is self-doubt shaping your behavior.",
+              "correctCategory": "B",
+              "id": "low-confidence-s4-c4"
+            },
+            {
+              "prompt": "I felt like an outsider on my first day somewhere new, but I gave it more than one day before judging it.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Giving something time before judging yourself is a realistic, grounded response — self-doubt jumps straight to a verdict on day one.",
+              "correctCategory": "A",
+              "id": "low-confidence-s4-c5"
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Decision-Making",
+          "cards": [
+            {
+              "prompt": "I made a decision, and even if it's not perfect, I trust I can adjust.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Trusting your ability to adjust later is a realistic, confidence-supporting mindset.",
+              "correctCategory": "A",
+              "id": "low-confidence-s5-c1"
+            },
+            {
+              "prompt": "I can't make small decisions because I'm sure I'll choose wrong.",
+              "correct": "Self-Doubt Talking",
+              "explanation": "Freezing over small decisions from a certainty of being wrong is self-doubt distorting the stakes.",
+              "correctCategory": "B",
+              "id": "low-confidence-s5-c2"
+            },
+            {
+              "prompt": "I picked an option and moved forward without endless second-guessing.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Being able to commit to a choice and move on is a sign of a realistic, steady self-view.",
+              "correctCategory": "A",
+              "id": "low-confidence-s5-c3"
+            },
+            {
+              "prompt": "I ask everyone around me to make decisions for me because I don't trust my own judgment at all.",
+              "correct": "Self-Doubt Talking",
+              "explanation": "A total lack of trust in your own judgment, across all decisions, is self-doubt rather than an accurate assessment.",
+              "correctCategory": "B",
+              "id": "low-confidence-s5-c4"
+            },
+            {
+              "prompt": "I went back and forth on a decision for a bit, but I still picked something and moved on.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Some deliberation before deciding is completely normal — self-doubt is the version where you can't ever land on a choice, or trust the one you made.",
+              "correctCategory": "A",
+              "id": "low-confidence-s5-c5"
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Speaking Up",
+          "cards": [
+            {
+              "prompt": "I shared my opinion in a meeting, even though I was a little nervous.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Sharing your opinion despite nerves is a sign your self-doubt isn't running the show.",
+              "correctCategory": "A",
+              "id": "low-confidence-s6-c1"
+            },
+            {
+              "prompt": "I stay silent in meetings because I assume my ideas aren't worth sharing.",
+              "correct": "Self-Doubt Talking",
+              "explanation": "Assuming your ideas aren't worth sharing, without testing that assumption, is self-doubt talking.",
+              "correctCategory": "B",
+              "id": "low-confidence-s6-c2"
+            },
+            {
+              "prompt": "I asked a clarifying question instead of pretending I understood.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Asking for clarity rather than faking understanding is a grounded, confident move.",
+              "correctCategory": "A",
+              "id": "low-confidence-s6-c3"
+            },
+            {
+              "prompt": "I nod along even when I'm confused because I don't want to look dumb.",
+              "correct": "Self-Doubt Talking",
+              "explanation": "Hiding confusion to avoid looking dumb is a self-doubt-driven habit that can actually undermine you.",
+              "correctCategory": "B",
+              "id": "low-confidence-s6-c4"
+            },
+            {
+              "prompt": "I hesitated before speaking up today, but I said it anyway.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Hesitating and still speaking up shows the doubt didn't win — the concerning pattern is when hesitation turns into staying silent every time.",
+              "correctCategory": "A",
+              "id": "low-confidence-s6-c5"
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Achievements",
+          "cards": [
+            {
+              "prompt": "I finished something and let myself feel proud of it, briefly.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Letting yourself feel proud, even briefly, is a healthy, realistic response to your own effort.",
+              "correctCategory": "A",
+              "id": "low-confidence-s7-c1"
+            },
+            {
+              "prompt": "I finish things and immediately move to the next thing without ever feeling proud.",
+              "correct": "Self-Doubt Talking",
+              "explanation": "Never allowing yourself a moment of pride is a self-doubt pattern that denies your own effort any weight.",
+              "correctCategory": "B",
+              "id": "low-confidence-s7-c2"
+            },
+            {
+              "prompt": "Someone complimented my work and I said thank you and meant it.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Accepting a compliment sincerely is a sign your self-view matches what others are actually seeing.",
+              "correctCategory": "A",
+              "id": "low-confidence-s7-c3"
+            },
+            {
+              "prompt": "Someone complimented my work and I assumed they were just being polite.",
+              "correct": "Self-Doubt Talking",
+              "explanation": "Dismissing genuine praise as mere politeness is self-doubt overriding the evidence in front of you.",
+              "correctCategory": "B",
+              "id": "low-confidence-s7-c4"
+            },
+            {
+              "prompt": "I got praised today and felt awkward about it, but I didn't argue with them out loud.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Feeling awkward but still letting the compliment land is a normal, healthy response — self-doubt actively argues against the praise, even internally.",
+              "correctCategory": "A",
+              "id": "low-confidence-s7-c5"
+            }
+          ]
+        },
+        {
+          "number": 8,
+          "title": "Rejection",
+          "cards": [
+            {
+              "prompt": "I didn't get the opportunity, so I asked for feedback to improve next time.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Turning rejection into a request for feedback is a realistic, forward-moving response.",
+              "correctCategory": "A",
+              "id": "low-confidence-s8-c1"
+            },
+            {
+              "prompt": "I didn't get the opportunity, so I decided I'm just not good enough, period.",
+              "correct": "Self-Doubt Talking",
+              "explanation": "Turning one rejection into a permanent verdict on your worth is self-doubt talking, not fact.",
+              "correctCategory": "B",
+              "id": "low-confidence-s8-c2"
+            },
+            {
+              "prompt": "I felt disappointed about the rejection, and then applied again elsewhere.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Feeling disappointment and still continuing to try is a sign of a realistic, resilient self-view.",
+              "correctCategory": "A",
+              "id": "low-confidence-s8-c3"
+            },
+            {
+              "prompt": "One rejection was enough to make me stop trying entirely.",
+              "correct": "Self-Doubt Talking",
+              "explanation": "Letting a single rejection stop all future effort is a self-doubt pattern generalizing far beyond the evidence.",
+              "correctCategory": "B",
+              "id": "low-confidence-s8-c4"
+            },
+            {
+              "prompt": "I took the rejection hard for a day or two, but then I got back to job searching.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Taking a hit and then getting back up is realistic processing — self-doubt is when the hit becomes the whole story you tell about yourself.",
+              "correctCategory": "A",
+              "id": "low-confidence-s8-c5"
+            }
+          ]
+        },
+        {
+          "number": 9,
+          "title": "Self-Perception",
+          "cards": [
+            {
+              "prompt": "I have things I'd like to improve about myself, and I'm working on a couple of them.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Identifying specific things to work on is a balanced, realistic form of self-awareness.",
+              "correctCategory": "A",
+              "id": "low-confidence-s9-c1"
+            },
+            {
+              "prompt": "I can't think of a single thing I like about myself.",
+              "correct": "Self-Doubt Talking",
+              "explanation": "A total blank when trying to find anything positive is a strong sign of self-doubt distorting the picture.",
+              "correctCategory": "B",
+              "id": "low-confidence-s9-c2"
+            },
+            {
+              "prompt": "I notice my flaws, but I also notice things I'm good at.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Holding both flaws and strengths at once is what a realistic self-view actually looks like.",
+              "correctCategory": "A",
+              "id": "low-confidence-s9-c3"
+            },
+            {
+              "prompt": "I only ever notice what's wrong with me, never what's working.",
+              "correct": "Self-Doubt Talking",
+              "explanation": "A one-sided focus that only ever finds fault is self-doubt filtering out anything positive.",
+              "correctCategory": "B",
+              "id": "low-confidence-s9-c4"
+            },
+            {
+              "prompt": "I was self-critical about something today, but a friend pointed out I was being harsh, and I could actually see it.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Being able to recognize you were being harsh, once it's pointed out, is a sign of a realistic self-view underneath — self-doubt usually resists that reframe entirely.",
+              "correctCategory": "A",
+              "id": "low-confidence-s9-c5"
+            }
+          ]
+        },
+        {
+          "number": 10,
+          "title": "Future Outlook",
+          "cards": [
+            {
+              "prompt": "I'm not sure how things will turn out, but I feel capable of handling whatever comes.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Trusting your ability to handle uncertainty, even without knowing the outcome, is a realistic, steady mindset.",
+              "correctCategory": "A",
+              "id": "low-confidence-s10-c1"
+            },
+            {
+              "prompt": "I'm convinced things will go badly no matter what I do.",
+              "correct": "Self-Doubt Talking",
+              "explanation": "A blanket certainty of bad outcomes regardless of your actions is self-doubt, not a real prediction.",
+              "correctCategory": "B",
+              "id": "low-confidence-s10-c2"
+            },
+            {
+              "prompt": "I have goals I'm working toward, even if the path isn't fully clear yet.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Working toward goals despite an unclear path is a sign of realistic, grounded confidence.",
+              "correctCategory": "A",
+              "id": "low-confidence-s10-c3"
+            },
+            {
+              "prompt": "I've stopped setting goals because I'm sure I'll just fail at them anyway.",
+              "correct": "Self-Doubt Talking",
+              "explanation": "Giving up on goals in advance, from a certainty of failure, is self-doubt shutting down possibility.",
+              "correctCategory": "B",
+              "id": "low-confidence-s10-c4"
+            },
+            {
+              "prompt": "I'm uncertain about a big decision coming up, but I trust I'll figure it out as I go, like I usually do.",
+              "correct": "Realistic Self-Check",
+              "explanation": "Trusting your own track record, even amid uncertainty, is the essence of a realistic self-check — self-doubt discounts your track record entirely.",
+              "correctCategory": "A",
+              "id": "low-confidence-s10-c5"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

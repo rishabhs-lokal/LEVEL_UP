@@ -1,0 +1,52 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: eaze-level-up-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: app_db
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: app_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app_user -d app_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Runs the migrations once, then exits. `app` waits for this to succeed
+  # before starting — mirrors how the one-off Kubernetes Job (k8s/migration-job.yaml)
+  # gates the Deployment rollout in the cluster.
+  migrate:
+    build: .
+    command: ["npm", "run", "migrate:up"]
+    environment:
+      DATABASE_URL: postgresql://app_user:app_password@postgres:5432/app_db
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      DATABASE_URL: postgresql://app_user:app_password@postgres:5432/app_db
+    volumes:
+      # Local-dev convenience: edit public/ or content/ on the host and see it
+      # immediately, no rebuild. Not present in the k8s deployment — there the
+      # image is the source of truth.
+      - ./public:/app/public
+      - ./content:/app/content
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  postgres_data:
