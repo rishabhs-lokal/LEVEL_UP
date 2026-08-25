@@ -58,6 +58,27 @@ img{-webkit-user-drag:none}
 .logoutbtn:active{color:#fff}
 .home-title{font-size:26px;font-weight:900;letter-spacing:-.5px;margin:18px 0 4px;width:100%}
 .home-sub{font-size:14px;color:var(--muted);margin-bottom:22px;width:100%;font-weight:400}
+
+/* Eaze Score bar — design ported from the eaze-checkin app's score card.
+   Deliberately violet, breaking from the orange used everywhere else here,
+   for the same reason it does there: this card announces itself as status,
+   not another topic tile. */
+.escore-card{
+  width:100%;padding:18px 20px;margin-bottom:22px;border-radius:20px;
+  background:linear-gradient(135deg,rgba(111,61,213,.32),rgba(19,13,33,.85));
+  border:1px solid rgba(194,165,253,.35);
+  box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 12px 32px rgba(0,0,0,.4);
+}
+.escore-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.escore-label{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:#EAE0FF}
+.escore-icon{width:18px;height:18px;border-radius:5px}
+.escore-value-row{display:flex;align-items:center;gap:8px}
+.escore-value{font-size:22px;font-weight:900;letter-spacing:-.5px;color:#C2A5FD;text-shadow:0 0 18px rgba(194,165,253,.45)}
+.escore-bonus-chip{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;background:rgba(46,204,113,.18);color:var(--good);border:1px solid rgba(46,204,113,.4);white-space:nowrap}
+.escore-bar-track{height:10px;border-radius:999px;background:rgba(0,0,0,.45);overflow:hidden}
+.escore-bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#6F3DD5,#C2A5FD);box-shadow:0 0 10px rgba(111,61,213,.6);width:0%;transition:width .5s ease}
+.escore-caption{margin:8px 0 0;font-size:12px;color:rgba(234,224,255,.6)}
+
 .topics{width:100%;display:flex;flex-direction:column;gap:14px}
 .tcard{
   width:100%;text-align:left;border:1px solid rgba(255,255,255,.08);
@@ -76,8 +97,8 @@ img{-webkit-user-drag:none}
 .tprog{font-size:12px;color:var(--muted);margin-top:2px;font-weight:500}
 .tcheck{font-size:18px;color:var(--good);flex:none}
 .tlock{font-size:16px;flex:none;opacity:.8}
-.tcats{display:flex;gap:8px}
-.tpill{flex:1;font-size:11px;font-weight:700;text-align:center;padding:6px 4px;border-radius:9px;letter-spacing:.1px}
+.tcats{display:flex;flex-direction:column;gap:8px}
+.tpill{font-size:11px;font-weight:700;text-align:center;padding:8px 4px;border-radius:9px;letter-spacing:.1px}
 .tpill.a{background:var(--catA-dim);color:var(--catA)}
 .tpill.b{background:var(--catB-dim);color:var(--catB)}
 .tbar{height:4px;border-radius:2px;background:rgba(255,255,255,.08);overflow:hidden}
@@ -225,6 +246,19 @@ img{-webkit-user-drag:none}
     </div>
     <div class="home-title">Level Up</div>
     <div class="home-sub">Read the scenario. Swipe to sort it. Six topics, real-life moments.</div>
+
+    <div class="escore-card">
+      <div class="escore-header">
+        <span class="escore-label"><img src="eaze-icon.png" alt="" class="escore-icon"> Eaze Score</span>
+        <span class="escore-value-row">
+          <span class="escore-value" id="escoreValue">0</span>
+          <span class="escore-bonus-chip" id="escoreBonusChip" hidden>🎉 +10 today!</span>
+        </span>
+      </div>
+      <div class="escore-bar-track"><div class="escore-bar-fill" id="escoreBarFill"></div></div>
+      <p class="escore-caption" id="escoreCaption">—</p>
+    </div>
+
     <div class="topics" id="topicsList"></div>
   </div>
 
@@ -332,6 +366,12 @@ const CONFIG = {
   // No real SMS/OTP backend exists yet — these numbers are the only ones that
   // can log in until that's built. Mirrors eaze-spin-wheel's TESTER_MOBILE_NUMBERS.
   testNumbers: ['9999999999'],
+  // EazeScore: 5 pts per completed session (any topic), +10 once per IST day
+  // a player completes a session in every topic. Separate earning mechanic
+  // from Checkin Eaze's daily-check-in one — same pooled currency, different
+  // tool, different shape (see eazescore-flow project memory).
+  pointsPerSession: 5,
+  allTopicsDailyBonus: 10,
 };
 
 // ── State ──────────────────────────────────────────────────────────
@@ -378,6 +418,43 @@ function fmtCountdown(ms){
 }
 function hasPlayedToday(topicId){
   return topicProgress(topicId).lastPlayedDateIST === getISTDateString();
+}
+
+// ── EazeScore ─────────────────────────────────────────────────────────────
+// Derived, not a stored mutable counter — same "compute from events" shape as
+// the shared EazeScore ledger spec. Points come from two things:
+//   1. 5 pts for every session ever completed, in any topic (lifetime total).
+//   2. +10 once per IST calendar day a player completes a session in EVERY
+//      topic that same day — logged by date so it's only ever awarded once
+//      per qualifying day, not re-counted on every render.
+function scoreMeta(){
+  if (!S.progress._eazeScore) S.progress._eazeScore = { bonusDates: [] };
+  return S.progress._eazeScore;
+}
+function sessionsCompletedCount(){
+  return S.deck.topics.reduce((sum, topic) => {
+    const prog = topicProgress(topic.id);
+    return sum + Math.min(prog.unlocked - 1, CONFIG.sessionsPerTopic);
+  }, 0);
+}
+function topicsPlayedTodayCount(){
+  return S.deck.topics.filter(topic => hasPlayedToday(topic.id)).length;
+}
+function computeEazeScore(){
+  const meta = scoreMeta();
+  return sessionsCompletedCount() * CONFIG.pointsPerSession
+    + meta.bonusDates.length * CONFIG.allTopicsDailyBonus;
+}
+// Called after a session completes. Returns true if the bonus was newly
+// awarded just now (so the caller can show a celebration).
+function checkAndAwardDailyBonus(){
+  const today = getISTDateString();
+  const meta = scoreMeta();
+  if (meta.bonusDates.includes(today)) return false;
+  if (topicsPlayedTodayCount() < S.deck.topics.length) return false;
+  meta.bonusDates.push(today);
+  saveProgress();
+  return true;
 }
 
 // Anonymous per-device id, only used to attribute result rows server-side.
@@ -528,9 +605,23 @@ function buildTopicCardEl(topic, { onOpen } = {}){
 }
 
 function renderHome(){
+  renderScoreBar();
   const list = document.getElementById('topicsList');
   list.innerHTML = '';
   S.deck.topics.forEach(topic => list.appendChild(buildTopicCardEl(topic)));
+}
+
+function renderScoreBar(){
+  const playedToday = topicsPlayedTodayCount();
+  const total = S.deck.topics.length;
+  const bonusEarnedToday = scoreMeta().bonusDates.includes(getISTDateString());
+
+  document.getElementById('escoreValue').textContent = computeEazeScore();
+  document.getElementById('escoreBarFill').style.width = `${Math.round((playedToday / total) * 100)}%`;
+  document.getElementById('escoreCaption').innerHTML = bonusEarnedToday
+    ? 'Full day complete — today’s bonus earned!'
+    : `${playedToday}/${total} topics played today · +${CONFIG.allTopicsDailyBonus} bonus at ${total}`;
+  document.getElementById('escoreBonusChip').hidden = !bonusEarnedToday;
 }
 
 // Keeps darkened cards live: once IST rolls past midnight, re-rendering
@@ -803,6 +894,7 @@ function endSession(){
   // One session per category per day — this topic is now locked until IST midnight.
   prog.lastPlayedDateIST = getISTDateString();
   saveProgress();
+  const bonusJustAwarded = checkAndAwardDailyBonus();
   reportSessionResult({ topicId, sessionNumber, correct, total, bestStreak, elapsed });
 
   const accuracy = Math.round((correct / total) * 100);
@@ -810,7 +902,10 @@ function endSession(){
   document.getElementById('lAcc').textContent = `${accuracy}%`;
   document.getElementById('lStreak').textContent = bestStreak;
   document.getElementById('lTime').textContent = fmtTime(elapsed);
-  document.getElementById('lMsg').textContent = messageFor(accuracy);
+  document.getElementById('lMsg').textContent = `${messageFor(accuracy)} · +${CONFIG.pointsPerSession} EazeScore`;
+  if (bonusJustAwarded) {
+    showToast(`🎉 All 6 topics today — +${CONFIG.allTopicsDailyBonus} EazeScore bonus!`, 3200);
+  }
 
   // Same-topic continuation is blocked now (today's play is used up), so the
   // primary action always routes to topic selection rather than auto-advancing.
