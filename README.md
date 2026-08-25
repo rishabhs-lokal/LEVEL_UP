@@ -25,12 +25,20 @@ A "this-or-that" swipe card game for [eaze](https://eazeapp.com) — read a shor
 ## How it plays
 
 1. Log in with the test mobile number (see below).
-2. Pick a topic on the home screen.
+2. Pick a topic on the home screen — tapping one drops you straight into its next session.
 3. Each session shows 5 cards, one scenario per card. Swipe (or tap a category button) to sort it.
 4. Correct swipe → a green confirmation banner, with a combo counter for streaks.
 5. Wrong swipe → the card gets stamped "MISCLASSIFIED" and a coach explains why, in plain language.
-6. Finish all 5 cards → a level-complete screen with your score and accuracy, then move to the next session.
+6. Finish all 5 cards → a level-complete screen with your score and accuracy.
 7. Progress (per-topic session unlocked, best scores) is saved to `localStorage` so it survives a refresh.
+
+### Daily limit
+
+Each topic allows **one session per day**, resetting at midnight IST:
+
+- Once a topic's session is finished, its card darkens on the home screen (🔒 "Played today · resets in Xh Ym") and can't be replayed until the date rolls over in `Asia/Kolkata` time — computed live, no server-side cron needed.
+- Other topics stay unlocked, so a player can work through several categories in a day, one session each.
+- Tap the topic name (with the ▾) in the game screen's header to open a switcher and jump to a different topic mid-session — leaving an in-progress session doesn't use up that topic's daily play, only finishing one does.
 
 ## Login
 
