@@ -140,10 +140,15 @@ svg{display:block;flex:none}
   cursor:pointer;
   transition:transform .12s,border-color .2s;
 }
-/* Alternating brand fills instead of a flat grey card — Primary orange and
-   Secondary purple, both from §1.1, no gradient between them. */
-.tcard.c-a{background:var(--primary-800)}
-.tcard.c-b{background:var(--secondary-800)}
+/* Bright alternating brand fills — the vivid /500 tier, not the dark /800
+   one — both straight from §1.1, no gradient between them. Primary/500
+   (#FF9E44) is light enough that white text on it fails contrast, so the
+   orange variant flips its text/icon color to the dark base instead; the
+   purple variant (#6F3DD5) is dark enough that white text stays correct. */
+.tcard.c-a{background:var(--primary-500)}
+.tcard.c-b{background:var(--secondary-500)}
+.tcard.c-a .tname,.tcard.c-a .tprog{color:var(--bg)}
+.tcard.c-a .tbgicon{color:var(--bg)}
 .tcard:active{transform:scale(.98)}
 .tcard.done{border-color:var(--success-500)}
 .tcard.locked:active{transform:none}
@@ -154,10 +159,10 @@ svg{display:block;flex:none}
    edge for a poster feel instead of sitting tidily in a corner. */
 .tbgicon{
   position:absolute;right:-20px;bottom:-20px;color:var(--white-100);
-  opacity:.18;transform:rotate(-12deg);pointer-events:none;filter:none;
+  opacity:.22;transform:rotate(-12deg);pointer-events:none;filter:none;
   transition:filter .2s,opacity .2s;
 }
-.tcard.locked .tbgicon{filter:grayscale(1);opacity:.09}
+.tcard.locked .tbgicon{filter:grayscale(1);opacity:.12}
 
 .tcontent{position:relative;z-index:1;display:flex;flex-direction:column;gap:12px}
 .trow1{display:flex;align-items:flex-start;gap:12px}
@@ -166,22 +171,31 @@ svg{display:block;flex:none}
 .tprog{font-size:12px;line-height:16px;color:var(--white-80);margin-top:2px;font-weight:700} /* Body 3, bold — status reads clearly, not washed out */
 .tcheck{color:var(--success-500);flex:none}
 /* Locked isn't a faded-out state — it's a distinct, legible one: a solid
-   badge instead of a bare small icon, same weight as the done checkmark. */
+   badge instead of a bare small icon, same weight as the done checkmark.
+   Fixed dark fill (not a white tint) so it reads the same on either bright
+   card color. */
 .tlock{
   width:26px;height:26px;border-radius:50%;flex:none;
   display:flex;align-items:center;justify-content:center;
-  background:var(--white-20);color:var(--white-100);
+  background:var(--bg);color:var(--white-100);
 }
 .tcats{display:flex;flex-direction:column;gap:8px}
-.tpill{font-size:12px;line-height:16px;font-weight:700;text-align:center;padding:8px 4px;border-radius:var(--radius);border:1px solid;color:var(--white-100)} /* Label 3 (P) */
-.tpill.a{border-color:var(--success-500);background:var(--success-500)}
-.tpill.b{border-color:var(--secondary-500);background:var(--secondary-500)}
+/* Green (success-500) and purple (secondary-500) fills stay exactly the
+   same on every card, every variant, everywhere — no per-background swap.
+   A white-40 border on both is what keeps the purple pill legible against a
+   purple card (and doubles as a consistent edge on the green one too),
+   instead of solving it by changing the fill color. */
+.tpill{font-size:12px;line-height:16px;font-weight:700;text-align:center;padding:8px 4px;border-radius:var(--radius);border:1px solid var(--white-40);color:var(--white-100)} /* Label 3 (P) */
+.tpill.a{background:var(--success-500)}
+.tpill.b{background:var(--secondary-500)}
 /* Locked: mute just the pills (they're not actionable right now) instead of
-   dimming the whole card — title, watermark, and status text stay bold. */
-.tcard.locked .tpill{background:var(--white-10);border-color:var(--white-20);color:var(--white-50)}
-.tcard.locked .tbar i{background:var(--white-40)}
-.tbar{height:4px;border-radius:var(--radius);background:var(--white-10);overflow:hidden}
-.tbar i{display:block;height:100%;background:var(--primary-500);border-radius:var(--radius);transition:width .3s}
+   dimming the whole card — title, watermark, and status text stay bold. A
+   dark scrim (not a white tint) so it reads the same over either bright
+   card color instead of nearly vanishing into the orange variant. */
+.tcard.locked .tpill{background:rgba(0,0,0,.35);border-color:rgba(0,0,0,.2);color:var(--white-70)}
+.tcard.locked .tbar i{background:rgba(0,0,0,.35)}
+.tbar{height:4px;border-radius:var(--radius);background:rgba(0,0,0,.2);overflow:hidden}
+.tbar i{display:block;height:100%;background:var(--white-80);border-radius:var(--radius);transition:width .3s}
 
 /* ── GAME ──────────────────────────────────────────────────────── */
 #game{justify-content:flex-start;background:var(--bg);padding-bottom:20px}
@@ -243,14 +257,16 @@ svg{display:block;flex:none}
 
 .ctabtns{width:100%;max-width:300px;display:flex;gap:10px;margin-top:var(--space)}
 .catbtn{
-  flex:1;min-height:48px;padding:12px 10px;border-radius:var(--radius);border:1.5px solid;background:transparent;
+  flex:1;min-height:48px;padding:12px 10px;border-radius:var(--radius);border:1.5px solid var(--white-40);background:transparent;
   font-size:14px;line-height:20px;font-weight:700;cursor:pointer; /* Label 2 (P) */
   transition:transform .1s,opacity .15s;
   display:flex;align-items:center;justify-content:center;text-align:center;color:var(--white-100);
 }
 .catbtn:active{transform:scale(.96)}
-.catbtn.a{border-color:var(--success-500);background:var(--success-500)}
-.catbtn.b{border-color:var(--secondary-500);background:var(--secondary-500)}
+/* Same fills as the home-card pills (success-500 / secondary-500), same
+   neutral border — one consistent "category" visual language everywhere. */
+.catbtn.a{background:var(--success-500)}
+.catbtn.b{background:var(--secondary-500)}
 .catbtn:disabled{opacity:.4;cursor:not-allowed;transform:none}
 
 .howto{width:100%;max-width:300px;margin-top:var(--space);background:var(--white-10);border-radius:var(--radius);padding:14px 16px}
