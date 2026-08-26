@@ -148,20 +148,21 @@ svg{display:block;flex:none}
 .tcard.done{border-color:var(--success-500)}
 .tcard.locked:active{transform:none}
 
-/* Large topic-icon watermark, same on every card state — the "bold, always
-   there" identity mark for the topic, not a status indicator itself. */
+/* Large topic-icon watermark (real Phosphor SVG, fill:currentColor) — the
+   icon now lives ONLY here, not as a small badge, same on every card state:
+   full color when active, grayscale + dimmer when locked. Bleeds off the
+   edge for a poster feel instead of sitting tidily in a corner. */
 .tbgicon{
-  position:absolute;right:-14px;bottom:-22px;font-size:96px;line-height:1;
-  opacity:.16;transform:rotate(-10deg);pointer-events:none;filter:none;
+  position:absolute;right:-20px;bottom:-20px;color:var(--white-100);
+  opacity:.18;transform:rotate(-12deg);pointer-events:none;filter:none;
   transition:filter .2s,opacity .2s;
 }
-.tcard.locked .tbgicon{filter:grayscale(1);opacity:.10}
+.tcard.locked .tbgicon{filter:grayscale(1);opacity:.09}
 
 .tcontent{position:relative;z-index:1;display:flex;flex-direction:column;gap:12px}
-.trow1{display:flex;align-items:center;gap:12px}
-.ticon{width:40px;height:40px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;flex:none;background:var(--white-10);color:var(--white-80);font-size:20px}
+.trow1{display:flex;align-items:flex-start;gap:12px}
 .tinfo{flex:1;min-width:0}
-.tname{font-size:16px;line-height:20px;font-weight:700;color:var(--white-100)} /* Title 3 — stays full-strength even when locked */
+.tname{font-size:18px;line-height:24px;font-weight:700;color:var(--white-100)} /* Title 2 — bolder now that the layout isn't sharing the row with a small icon badge */
 .tprog{font-size:12px;line-height:16px;color:var(--white-80);margin-top:2px;font-weight:700} /* Body 3, bold — status reads clearly, not washed out */
 .tcheck{color:var(--success-500);flex:none}
 /* Locked isn't a faded-out state — it's a distinct, legible one: a solid
@@ -429,25 +430,44 @@ svg{display:block;flex:none}
 // ║  ICONS — one outline family, stroke=currentColor, 1.75 weight.    ║
 // ║  Filled variants (check, lock-closed) mark state, per §1.6.       ║
 // ╚══════════════════════════════════════════════════════════════════╝
-const ICON_PATHS = {
-  back: '<path d="M15 5l-7 7 7 7"/>',
-  close: '<path d="M6 6l12 12M18 6L6 18"/>',
-  check: '<path d="M5 13l4 4L19 7"/>',
-  lock: '<rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
-  chevronDown: '<path d="M6 9l6 6 6-6"/>',
-  info: '<circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="8" x2="12.01" y2="8"/>',
-  clock: '<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/>',
-  shuffle: '<polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/>',
-  bolt: '<path d="M13 3L4 14h6l-1 7 9-11h-6l1-7z"/>',
-  care: '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>',
-  briefcase: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/>',
-  leaf: '<path d="M5 21c0-9 6-15 15-15 0 9-6 15-15 15z"/><path d="M5 21c3-4.5 6.5-8 10.5-11.5"/>',
-  heartbreak: '<path d="M20.8 6.6a5.5 5.5 0 0 0-7.8 0L12 7.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 23l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/><path d="M11 8l-2 5 3 2.5-2 4"/>',
-  reflect: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>',
+// Real Phosphor Icons (regular weight), self-hosted in public/icons/ — no
+// CDN dependency at runtime. One consistent icon language everywhere,
+// replacing the earlier hand-drawn stroke set and the emoji glyphs.
+const ICON_FILES = {
+  back: 'icons/arrow-left.svg',
+  close: 'icons/x.svg',
+  check: 'icons/check.svg',
+  lock: 'icons/lock-simple.svg',
+  chevronDown: 'icons/caret-down.svg',
+  info: 'icons/info.svg',
+  clock: 'icons/clock.svg',
+  shuffle: 'icons/shuffle.svg',
+  lightning: 'icons/lightning.svg',
+  bandaids: 'icons/bandaids.svg',
+  briefcase: 'icons/briefcase.svg',
+  leaf: 'icons/leaf.svg',
+  heartbreak: 'icons/heart-break.svg',
+  eye: 'icons/eye.svg',
 };
+const iconCache = {};
+async function loadIcons(){
+  await Promise.all(Object.entries(ICON_FILES).map(async ([name, path]) => {
+    try {
+      const res = await fetch(path);
+      iconCache[name] = await res.text();
+    } catch (e) {
+      iconCache[name] = '';
+    }
+  }));
+}
+// Phosphor ships each icon as a fixed 256x256 viewBox with fill="currentColor"
+// — we just re-stamp width/height for the size we need; color comes free by
+// inheriting `color` from whatever element wraps the icon.
 function svgIcon(name, size){
   size = size || 20;
-  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${ICON_PATHS[name] || ''}</svg>`;
+  const raw = iconCache[name];
+  if (!raw) return '';
+  return raw.replace('<svg ', `<svg width="${size}" height="${size}" `);
 }
 
 // ╔══════════════════════════════════════════════════════════════════╗
@@ -455,12 +475,12 @@ function svgIcon(name, size){
 // ╚══════════════════════════════════════════════════════════════════╝
 const CONFIG = {
   topicIcons: {
-    'stress': '⚡',
-    'trauma': '🩹',
-    'work': '💼',
-    'health': '🌱',
-    'breakup-relationship': '💔',
-    'low-confidence': '🪞',
+    'stress': 'lightning',
+    'trauma': 'bandaids',
+    'work': 'briefcase',
+    'health': 'leaf',
+    'breakup-relationship': 'heartbreak',
+    'low-confidence': 'eye',
   },
   swipeThreshold: 90,
   sessionsPerTopic: 10,
@@ -615,22 +635,21 @@ function showToast(msg, dur=2200){
   toastTid = setTimeout(() => t.classList.remove('show'), dur);
 }
 
-// Static icon slots that don't change per render — filled once at boot.
-document.getElementById('backBtn').innerHTML = svgIcon('back', 18);
-document.getElementById('gTimerIcon').innerHTML = svgIcon('clock', 14);
-document.getElementById('howtoIcon').innerHTML = svgIcon('info', 16);
-document.getElementById('switchCloseBtn').innerHTML = svgIcon('close', 15);
-document.getElementById('shuffleIcon').innerHTML = svgIcon('shuffle', 16);
-
 // ── Boot ──────────────────────────────────────────────────────────
 async function boot(){
   try {
-    const res = await fetch('/api/content');
-    S.deck = await res.json();
+    const [contentRes] = await Promise.all([fetch('/api/content'), loadIcons()]);
+    S.deck = await contentRes.json();
   } catch (e) {
     document.querySelector('.splash-txt').textContent = 'Could not load content — check your connection.';
     return;
   }
+  // Static icon slots that don't change per render — filled once icons are ready.
+  document.getElementById('backBtn').innerHTML = svgIcon('back', 18);
+  document.getElementById('gTimerIcon').innerHTML = svgIcon('clock', 14);
+  document.getElementById('howtoIcon').innerHTML = svgIcon('info', 16);
+  document.getElementById('switchCloseBtn').innerHTML = svgIcon('close', 15);
+  document.getElementById('shuffleIcon').innerHTML = svgIcon('shuffle', 16);
   if (!getMobile()) {
     showScreen('login');
     document.getElementById('loginInput').focus();
@@ -724,10 +743,9 @@ function buildTopicCardEl(topic, { onOpen } = {}){
   const card = document.createElement('div');
   card.className = 'tcard ' + fillClass(topic.id) + (done ? ' done' : '') + (locked ? ' locked' : '');
   card.innerHTML = `
-    <div class="tbgicon" aria-hidden="true">${CONFIG.topicIcons[topic.id] || '🎴'}</div>
+    <div class="tbgicon" aria-hidden="true">${svgIcon(CONFIG.topicIcons[topic.id], 128)}</div>
     <div class="tcontent">
       <div class="trow1">
-        <div class="ticon">${CONFIG.topicIcons[topic.id] || '🎴'}</div>
         <div class="tinfo">
           <div class="tname">${topic.name}</div>
           <div class="tprog">${subtitle}</div>
