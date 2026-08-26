@@ -795,8 +795,12 @@ function attachDrag(el, card){
 
   const onDown = (e) => {
     if (locked) return;
-    dragging = true;
+    // Defensive reset: if a previous gesture on this element never got a
+    // clean pointerup/cancel (see lostpointercapture below), starting a new
+    // drag shouldn't inherit its leftover transform.
     el.style.transition = 'none';
+    el.style.transform = 'translate(0,0) rotate(0deg)';
+    dragging = true;
     const p = pointFrom(e);
     startX = p.x; startY = p.y;
     el.setPointerCapture && e.pointerId != null && el.setPointerCapture(e.pointerId);
@@ -830,6 +834,16 @@ function attachDrag(el, card){
   el.addEventListener('pointermove', onMove);
   el.addEventListener('pointerup', onUp);
   el.addEventListener('pointercancel', onUp);
+  // The bug this fixes: a drag that ends without a clean pointerup (pointer
+  // released outside the window, a browser/OS gesture stealing it mid-drag,
+  // etc.) left the card stranded off-screen mid-transform forever — nothing
+  // else was listening for that, so the card underneath (just a bare
+  // background, no text) showed through as a blank-looking screen.
+  // lostpointercapture fires whenever capture is released for any reason,
+  // clean or not, so routing it through the same onUp logic guarantees the
+  // gesture always resolves — snaps back if short of the threshold, commits
+  // the swipe if past it, exactly like a normal release would.
+  el.addEventListener('lostpointercapture', onUp);
 }
 function pointFrom(e){
   return { x: e.clientX, y: e.clientY };
