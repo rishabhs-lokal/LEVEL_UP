@@ -892,14 +892,14 @@ function commitSwipe(direction, el){
   const run = S.run;
   const card = run.cards[run.index];
   const flyX = direction === 'B' ? 600 : -600;
-  el.style.transition = 'transform .35s ease-in';
+  el.style.transition = 'transform .22s ease-in';
   el.style.transform = `translate(${flyX}px, -40px) rotate(${direction === 'B' ? 25 : -25}deg)`;
   document.getElementById('btnA').disabled = true;
   document.getElementById('btnB').disabled = true;
   const t = setTimeout(() => {
     if (S.run !== run) return; // session changed while this was pending — drop it
     handleAnswer(direction, card, run);
-  }, 200);
+  }, 120);
   run.pendingTimeouts.push(t);
 }
 
@@ -928,7 +928,7 @@ function handleAnswer(direction, card, run){
     const t = setTimeout(() => {
       if (S.run !== run) return;
       nextCard();
-    }, 1350);
+    }, 800);
     run.pendingTimeouts.push(t);
   } else {
     document.getElementById('stamp').classList.add('show');
