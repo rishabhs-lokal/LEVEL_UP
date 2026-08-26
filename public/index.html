@@ -156,23 +156,26 @@ img{-webkit-user-drag:none}
 .combo{position:absolute;top:-96px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#FFD54F,#FF9E44);color:#1A1A1A;font-weight:900;font-size:12px;padding:5px 12px;border-radius:14px;opacity:0;transition:top .3s,opacity .3s;z-index:21;letter-spacing:.3px}
 .combo.show{top:-124px;opacity:1}
 
-.ctabtns{width:100%;max-width:300px;display:flex;gap:10px;margin-top:16px}
+.ctabtns{width:100%;max-width:300px;display:flex;gap:10px;margin-top:18px}
 .catbtn{
-  flex:1;padding:13px 8px;border-radius:14px;border:1.5px solid;background:transparent;
-  font-size:13px;font-weight:800;cursor:pointer;line-height:1.25;letter-spacing:.1px;
-  transition:transform .1s,opacity .15s;
+  flex:1;min-height:56px;padding:13px 10px;border-radius:16px;border:2px solid;
+  font-size:14px;font-weight:800;cursor:pointer;line-height:1.25;letter-spacing:.1px;
+  transition:transform .1s,opacity .15s,box-shadow .15s;
+  display:flex;align-items:center;justify-content:center;text-align:center;
 }
 .catbtn:active{transform:scale(.96)}
-.catbtn.a{border-color:var(--catA);color:var(--catA);background:var(--catA-dim)}
-.catbtn.b{border-color:var(--catB);color:var(--catB);background:var(--catB-dim)}
-.catbtn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.catbtn.a{border-color:var(--catA);color:#fff;background:linear-gradient(160deg,rgba(62,166,255,.42),rgba(62,166,255,.16));box-shadow:0 4px 14px rgba(62,166,255,.22)}
+.catbtn.b{border-color:var(--catB);color:#fff;background:linear-gradient(160deg,rgba(255,92,138,.42),rgba(255,92,138,.16));box-shadow:0 4px 14px rgba(255,92,138,.22)}
+.catbtn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
 
 .howto{
   width:100%;max-width:300px;margin-top:16px;background:var(--surf);
   border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:13px 15px;
 }
-.howto-h{font-size:12.5px;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:6px}
-.howto-p{font-size:11.5px;color:var(--muted);line-height:1.5;font-weight:400}
+.howto-h{font-size:12.5px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.howto-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.howto-list li{font-size:11.5px;color:var(--muted);line-height:1.5;font-weight:400;padding-left:16px;position:relative}
+.howto-list li::before{content:'';position:absolute;left:3px;top:7px;width:4px;height:4px;border-radius:50%;background:var(--brand)}
 
 /* ── COACH SHEET ───────────────────────────────────────────────── */
 .sbg{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;display:none;align-items:flex-end;justify-content:center}
@@ -287,7 +290,11 @@ img{-webkit-user-drag:none}
       </div>
       <div class="howto">
         <div class="howto-h">🤔&nbsp; How to Play</div>
-        <div class="howto-p">Swipe the card left or right — or tap a button below it — to sort it into the right side.</div>
+        <ul class="howto-list">
+          <li>Read the scenario on the card</li>
+          <li>Tap the button that matches which side it belongs on</li>
+          <li>You can also swipe the card that direction instead</li>
+        </ul>
       </div>
     </div>
   </div>
@@ -792,12 +799,24 @@ function renderCard(){
 
 function attachDrag(el, card){
   let startX = 0, startY = 0, dx = 0, dy = 0, dragging = false, locked = false;
+  let rafId = null;
+  // Looked up once per card instead of on every pointermove — with a fast
+  // trackpad/mouse, move events can fire well over 60 times a second, and
+  // repeatedly hitting getElementById + forcing a style write in that handler
+  // was the main source of the reported lag.
+  const hintA = document.getElementById('hintA');
+  const hintB = document.getElementById('hintB');
 
   const onDown = (e) => {
-    if (locked) return;
-    // Defensive reset: if a previous gesture on this element never got a
-    // clean pointerup/cancel (see lostpointercapture below), starting a new
-    // drag shouldn't inherit its leftover transform.
+    // The `dragging` check matters as much as `locked` here: a redundant
+    // pointerdown arriving mid-gesture (no up/cancel in between) must be
+    // ignored outright, not treated as a fresh drag — otherwise the defensive
+    // reset below fires mid-swipe and visually snaps the card back to center
+    // while the user is still actively dragging it.
+    if (locked || dragging) return;
+    // Defensive reset: if a PREVIOUS, already-finished gesture on this
+    // element never got a clean pointerup/cancel (see lostpointercapture
+    // below), starting a new one shouldn't inherit its leftover transform.
     el.style.transition = 'none';
     el.style.transform = 'translate(0,0) rotate(0deg)';
     dragging = true;
@@ -805,27 +824,37 @@ function attachDrag(el, card){
     startX = p.x; startY = p.y;
     el.setPointerCapture && e.pointerId != null && el.setPointerCapture(e.pointerId);
   };
+  // Pointermove only records the latest position; the actual style writes
+  // happen at most once per animation frame via applyDrag(), so a burst of
+  // move events between frames collapses into a single paint instead of one
+  // per event.
+  const applyDrag = () => {
+    rafId = null;
+    if (!dragging || locked) return;
+    const rot = dx / 18;
+    el.style.transform = `translate(${dx}px, ${dy * .4}px) rotate(${rot}deg)`;
+    const ratio = Math.min(Math.abs(dx) / CONFIG.swipeThreshold, 1);
+    hintA.style.opacity = dx < 0 ? ratio : 0;
+    hintB.style.opacity = dx > 0 ? ratio : 0;
+  };
   const onMove = (e) => {
     if (!dragging || locked) return;
     const p = pointFrom(e);
     dx = p.x - startX; dy = p.y - startY;
-    const rot = dx / 18;
-    el.style.transform = `translate(${dx}px, ${dy * .4}px) rotate(${rot}deg)`;
-    const ratio = Math.min(Math.abs(dx) / CONFIG.swipeThreshold, 1);
-    document.getElementById('hintA').style.opacity = dx < 0 ? ratio : 0;
-    document.getElementById('hintB').style.opacity = dx > 0 ? ratio : 0;
+    if (rafId == null) rafId = requestAnimationFrame(applyDrag);
   };
   const onUp = () => {
     if (!dragging || locked) return;
     dragging = false;
+    if (rafId != null) { cancelAnimationFrame(rafId); rafId = null; }
     if (Math.abs(dx) > CONFIG.swipeThreshold) {
       locked = true;
       commitSwipe(dx > 0 ? 'B' : 'A', el);
     } else {
       el.style.transition = 'transform .25s cubic-bezier(.16,1,.3,1)';
       el.style.transform = 'translate(0,0) rotate(0deg)';
-      document.getElementById('hintA').style.opacity = 0;
-      document.getElementById('hintB').style.opacity = 0;
+      hintA.style.opacity = 0;
+      hintB.style.opacity = 0;
     }
     dx = 0; dy = 0;
   };
