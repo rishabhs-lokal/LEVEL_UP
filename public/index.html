@@ -46,6 +46,16 @@
   --success-500:#33BF30;
   --success-800:#08620D;
 
+  /* Error/Failure — form validation, blocking states. Previously missing
+     entirely; the login error state was borrowing Primary orange, which the
+     handbook reserves for the Error ramp (§1.6, §2 "success is green, error
+     is red — don't swap them"). */
+  --error-50:#FFEAEB;
+  --error-100:#FFD6D9;
+  --error-200:#FF9499;
+  --error-500:#D41A23;
+  --error-800:#6E0005;
+
   --radius:12px;
   --space:16px;
   --shadow:0 2px 4px rgba(0,0,0,.10);
@@ -68,14 +78,25 @@ svg{display:block;flex:none}
 
 /* ── SPLASH ────────────────────────────────────────────────────── */
 #splash{justify-content:center;align-items:center;gap:18px;background:var(--bg)}
-#splash img{height:30px;opacity:.92}
+#splash .brand-halo img{height:30px;opacity:.92}
 .spin-ring{width:24px;height:24px;border:3px solid var(--white-10);border-top-color:var(--primary-500);border-radius:50%;animation:spinr .7s linear infinite}
 @keyframes spinr{to{transform:rotate(360deg)}}
 .splash-txt{font-size:12px;line-height:16px;color:var(--white-60)} /* Body 3 */
 
+/* Grey-and-orange richness for the two "first look" screens: two flat,
+   low-opacity Primary/500 discs stacked behind the wordmark instead of a
+   banned gradient/blur — a soft-edged halo built entirely from solid fills,
+   still just off-black + brand orange, nothing invented. */
+.brand-halo{position:relative;display:flex;align-items:center;justify-content:center}
+.brand-halo::before,.brand-halo::after{content:'';position:absolute;border-radius:50%;background:var(--primary-500)}
+.brand-halo::before{width:132px;height:132px;opacity:.08}
+.brand-halo::after{width:88px;height:88px;opacity:.14}
+.brand-halo img{position:relative}
+
 /* ── LOGIN ─────────────────────────────────────────────────────── */
 #login{justify-content:center;align-items:center;text-align:center;padding:var(--space);background:var(--bg)}
-#login img{height:28px;margin-bottom:24px}
+#login .brand-halo{margin-bottom:24px}
+#login .brand-halo img{height:28px}
 .login-title{font-size:28px;line-height:32px;margin-bottom:8px} /* Headline 2 */
 .login-sub{font-size:14px;line-height:20px;color:var(--white-80);margin-bottom:28px;max-width:300px} /* Body 2 */
 .login-flbl{display:block;font-size:12px;line-height:16px;font-weight:700;color:var(--white-60);margin-bottom:8px;text-align:left;width:100%;max-width:300px} /* Label 3 (P) */
@@ -86,9 +107,11 @@ svg{display:block;flex:none}
   margin-bottom:10px;transition:border-color .15s;
 }
 #loginInput:focus{border-color:var(--primary-500)}
-#loginInput.err{border-color:var(--primary-500);animation:shake .35s ease}
+/* Form validation error — Error ramp, per §1.6 ("border/text shifts into
+   the Error ramp"). Orange is reserved for the brand accent, not errors. */
+#loginInput.err{border-color:var(--error-500);animation:shake .35s ease}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-.login-err{font-size:12px;line-height:16px;color:var(--primary-500);min-height:16px;margin-bottom:18px} /* Body 3 */
+.login-err{font-size:12px;line-height:16px;color:var(--error-500);min-height:16px;margin-bottom:18px} /* Body 3 */
 .login-hint{font-size:11px;line-height:16px;color:var(--white-40);margin-top:20px} /* Body 4 */
 
 /* ── Buttons — one radius, one filled treatment, everywhere ──────── */
@@ -110,29 +133,61 @@ svg{display:block;flex:none}
 .btn-text:active{color:var(--white-100)}
 
 /* ── HOME ──────────────────────────────────────────────────────── */
-#home{justify-content:flex-start;padding:var(--space) var(--space) 40px;background:var(--bg)}
+/* Explicit, requested exception to §3's "no gradient" rule: a soft vertical
+   blend from the app's dark grey into brand orange, concentrated behind the
+   hero content and fading out before the topic list — a deliberate
+   deviation from the doc's flat-fill default, not an oversight. Sized and
+   capped with background-color so it never repeats/tiles into the
+   scrollable list below; below that height it's flat --bg like every other
+   screen. */
+#home{
+  justify-content:flex-start;padding:0 0 40px;
+  background-color:var(--bg);
+  background-image:radial-gradient(ellipse 640px 520px at 78% 0%, var(--primary-500) 0%, var(--primary-800) 38%, var(--bg) 72%);
+  background-repeat:no-repeat;
+  background-position:top;
+  background-size:100% 720px;
+}
+.home-hero{width:100%;padding:var(--space) var(--space) 20px;margin-bottom:var(--space)}
 .home-hdr{display:flex;align-items:center;justify-content:space-between;width:100%;margin-bottom:4px}
 .home-hdr img{height:20px}
 .home-title{font-size:32px;line-height:36px;margin:20px 0 4px;width:100%} /* Headline 1 */
 .home-sub{font-size:14px;line-height:20px;color:var(--white-80);margin-bottom:24px;width:100%} /* Body 2 */
 
-/* Eaze Score — the one place Secondary purple carries the identity,
-   "alongside or instead of orange for a distinct semantic meaning" (§1.1). */
+/* Eaze Score — the one card that keeps Secondary purple as its identity
+   even sitting on the orange stage, "alongside or instead of orange for a
+   distinct semantic meaning" (§1.1) — same neutral-object-on-colored-table
+   language as every other surface floating on Primary/800 in this app. */
 .escore-card{
-  width:100%;padding:16px;margin-bottom:var(--space);border-radius:var(--radius);
-  background:var(--white-10);border:1px solid var(--secondary-500);
+  width:100%;padding:16px;border-radius:var(--radius);
+  background:var(--white-10);border:1px solid var(--primary-500);
 }
 .escore-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
 .escore-label{display:inline-flex;align-items:center;gap:8px;font-size:14px;line-height:20px;font-weight:700;color:var(--white-100)} /* Label 2 (P) */
-.escore-icon{width:18px;height:18px;border-radius:5px}
+.escore-icon{width:18px;height:18px}
 .escore-value-row{display:flex;align-items:center;gap:8px}
-.escore-value{font-size:20px;line-height:28px;font-weight:700;color:var(--secondary-200)} /* Title 1, bold */
-.escore-bonus-chip{font-size:11px;line-height:16px;font-weight:700;padding:3px 9px;border-radius:var(--radius);background:var(--success-500);color:var(--bg);white-space:nowrap} /* Label 4 (P) */
-.escore-bar-track{height:8px;border-radius:var(--radius);background:var(--white-10);overflow:hidden}
-.escore-bar-fill{height:100%;border-radius:var(--radius);background:var(--secondary-500);width:0%;transition:width .5s ease}
-.escore-caption{margin:8px 0 0;font-size:12px;line-height:16px;color:var(--white-60)} /* Body 3 */
+/* Headline 3 (24/30, Fraunces) — the type table's own "big number" token,
+   in Primary/500 so the score reads as the card's one accent, matching the
+   reference. */
+.escore-value{font-size:24px;line-height:30px;color:var(--primary-500)}
+.escore-bar-track{height:8px;border-radius:var(--radius);background:var(--white-10);overflow:visible;position:relative}
+.escore-bar-fill{position:relative;height:100%;border-radius:var(--radius);background:var(--primary-500);width:0%;transition:width .5s ease}
+/* Slider-style thumb riding the leading edge of the fill, echoing the
+   reference's icon-in-a-circle progress marker instead of a bare flat bar. */
+/* White disc, not orange — eaze-icon.png already carries its own orange
+   rounded-square fill, so an orange circle behind it just muddies into one
+   blob. White gives the icon something to actually contrast against. */
+.escore-bar-thumb{position:absolute;top:50%;right:0;transform:translate(50%,-50%);width:20px;height:20px;border-radius:50%;background:var(--white-100);border:2px solid var(--primary-500);display:flex;align-items:center;justify-content:center}
+.escore-bar-thumb img{width:12px;height:12px;display:block;border-radius:3px}
+/* Static earning rule, always visible — the dynamic caption below only ever
+   showed the daily-bonus progress ("X/6 played today"), never explained
+   where points actually come from. Numbers highlighted in Primary/500,
+   matching the reference's colored-digits treatment. */
+.escore-rule{margin:8px 0 0;font-size:12px;line-height:16px;color:var(--white-80)} /* Body 3 */
+.escore-caption{margin:2px 0 0;font-size:12px;line-height:16px;color:var(--white-60)} /* Body 3 */
+.escore-rule .num,.escore-caption .num{color:var(--primary-500);font-weight:700}
 
-.topics{width:100%;display:flex;flex-direction:column;gap:var(--space)}
+.topics{width:100%;display:flex;flex-direction:column;gap:var(--space);padding:0 var(--space)}
 /* A card is a neutral surface that content and accent color sit ON, not a
    surface saturated in accent color — §2's "one accent per screen" rule
    means the orange should read as special, which it can't do if every card
@@ -179,10 +234,10 @@ svg{display:block;flex:none}
   background:var(--white-20);color:var(--white-100);
 }
 .tcats{display:flex;flex-direction:column;gap:8px}
-/* Green (success-500) and purple (secondary-500) — identical fill on every
-   card, every screen, no per-background swap. A white-40 border keeps both
-   consistent with the in-game category buttons below, which use the same
-   pattern. */
+/* Category color, everywhere: the literal Success/500 and Secondary/500
+   tokens as solid fills — the exact values the handbook calls "the" status
+   color for each ramp, not a lighter tint of them. Same identical pair on
+   every card, every screen, no per-background swap. */
 .tpill{font-size:12px;line-height:16px;font-weight:700;text-align:center;padding:8px 4px;border-radius:var(--radius);border:1px solid var(--white-40);color:var(--white-100)} /* Label 3 (P) */
 .tpill.a{background:var(--success-500)}
 .tpill.b{background:var(--secondary-500)}
@@ -217,21 +272,54 @@ svg{display:block;flex:none}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--white-10);transition:background .2s,transform .2s}
 .dot.now{background:var(--white-50);transform:scale(1.25)}
 .dot.ok{background:var(--success-500)}
-.dot.no{background:var(--white-40)}
+.dot.no{background:var(--error-500)}
 
-.stagewrap{flex:1;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 22px 4px;min-height:0}
+/* justify-content:flex-start, not center: the stage + howto card can be
+   taller than the space left after the topbar/timer/dots row, and centering
+   an over-tall flex child overflows it symmetrically — the top half bleeds
+   upward and paints over the timer/session text instead of just scrolling.
+   Anchoring to the top means any overflow only ever extends the page
+   downward, where `.scr`'s own overflow-y:auto already handles it. */
+.stagewrap{flex:1;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:6px var(--space) 4px;min-height:0}
+/* The shaded-grey-and-orange background the doc's own base calls for: the
+   screen itself stays on the app's standard dark grey (--bg, consistent
+   chrome everywhere), and Primary/800 shows up as a bounded, framed "table"
+   panel behind just the card + category buttons — not a full orange wash.
+   Both colors visibly coexist instead of orange replacing grey outright. */
+.stagepanel{width:100%;display:flex;flex-direction:column;align-items:center;background:var(--primary-800);border-radius:var(--radius);padding:24px 20px 20px;margin-bottom:var(--space)}
 .stack{position:relative;width:100%;max-width:300px;aspect-ratio:3/4;touch-action:none}
+/* One neutral card surface (--bg, same tone as the base app background)
+   instead of alternating brand fills — against the orange stage it reads as
+   an actual object sitting on a table, not more brand wallpaper. Elevation
+   is a deliberate, scoped exception to §1.5 ("persistent surfaces carry no
+   shadow"): a swipeable card stack is a physical-object metaphor the doc
+   doesn't cover, and the whole ask here is for it to look and move like a
+   real card being lifted off a pile, not a list row. Still one soft,
+   colorless shadow — just a wide, diffuse one instead of a tight one, since
+   a card floating above a table casts a bigger, softer shadow than a toast
+   sitting an inch off the screen. Only the top (active) card gets the full
+   shadow; cards resting behind stay flatter, per-layer, like a real deck. */
 .card{
-  position:absolute;inset:0;border-radius:var(--radius);padding:26px 22px;
-  display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:10px;
+  position:absolute;inset:0;border-radius:var(--radius);padding:28px 24px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:14px;
   cursor:grab;
   will-change:transform;
+  background:var(--bg);
+  border:1px solid rgba(255,201,152,.22);
+  box-shadow:0 24px 48px rgba(0,0,0,.4);
+  transition:box-shadow .18s ease;
 }
-.card.c-a{background:var(--primary-800)}
-.card.c-b{background:var(--secondary-800)}
 .card:active{cursor:grabbing}
+/* The extra lift a card gets the instant it's actually picked up — shadow
+   widens and darkens while it's being held, and settles back once it's
+   set back down (released short of the swipe threshold). */
+.card.lifting{box-shadow:0 32px 60px rgba(0,0,0,.5)}
+/* Topic icon riding above the scenario text — identifies which topic this
+   card belongs to at a glance (useful once a player's cycling through
+   several topics a day) and gives the card a focal point up top, the way a
+   real printed card leads with a mark before the copy. */
+.card .cicon{width:44px;height:44px;border-radius:50%;background:var(--white-10);color:var(--primary-500);display:flex;align-items:center;justify-content:center;flex:none}
 .card .cprompt{font-size:18px;line-height:24px;font-weight:700;color:var(--white-100)} /* Title 2 */
-.card .cquote{font-size:24px;line-height:1;color:var(--white-20)}
 .hint{position:absolute;top:16px;padding:6px 12px;border-radius:var(--radius);font-size:11px;line-height:16px;font-weight:700;letter-spacing:.2px;opacity:0;border:1.5px solid;pointer-events:none;transition:opacity .05s;background:var(--bg)}
 .hint.left{left:16px;color:var(--success-500);border-color:var(--success-500)}
 .hint.right{right:16px;color:var(--secondary-500);border-color:var(--secondary-500)}
@@ -260,20 +348,30 @@ svg{display:block;flex:none}
   display:flex;align-items:center;justify-content:center;text-align:center;color:var(--white-100);
 }
 .catbtn:active{transform:scale(.96)}
-/* Same fills as the home-card pills (success-500 / secondary-500), same
-   neutral border — one consistent "category" visual language everywhere. */
+/* Same solid tokens as the home-card pills, same neutral border — one
+   consistent "category" visual language everywhere. */
 .catbtn.a{background:var(--success-500)}
 .catbtn.b{background:var(--secondary-500)}
 /* Matches §1.6's disabled-button spec exactly: drop to white/10% fill, not
    a flat opacity fade of whatever color was there. */
 .catbtn:disabled{background:var(--white-10);border-color:var(--white-20);color:var(--white-40);cursor:not-allowed;transform:none}
 
-.howto{width:100%;max-width:300px;margin-top:var(--space);background:var(--white-10);border-radius:var(--radius);padding:14px 16px}
-.howto-h{font-size:14px;line-height:18px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px} /* Title 4 */
+.howto{width:100%;max-width:300px;margin-top:var(--space);background:var(--white-10);border-radius:var(--radius);padding:16px}
+.howto-h{font-size:16px;line-height:20px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px} /* Title 3 — stepped up so it still reads as the header now that the steps below are bigger */
 .howto-h svg{color:var(--white-60)}
-.howto-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
-.howto-list li{font-size:12px;line-height:16px;color:var(--white-60);padding-left:16px;position:relative} /* Body 3 */
-.howto-list li::before{content:'';position:absolute;left:2px;top:6px;width:4px;height:4px;border-radius:50%;background:var(--white-40)}
+.howto-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px;counter-reset:howto}
+/* Numbered steps instead of plain dots — a 1-2-3 sequence is easier to
+   follow at a glance than an unordered bullet list, and the size bump
+   (Body 3 → Body 2) makes this the easiest-to-read text on the card. */
+.howto-list li{font-size:14px;line-height:20px;color:var(--white-80);padding-left:32px;position:relative;counter-increment:howto} /* Body 2 */
+.howto-list li::before{
+  content:counter(howto);
+  position:absolute;left:0;top:0;
+  width:22px;height:22px;border-radius:50%;
+  background:var(--primary-500);color:var(--bg);
+  font-size:12px;font-weight:700;line-height:1;
+  display:flex;align-items:center;justify-content:center;
+}
 
 /* ── SHEETS (coach + switch topic) — the one place besides toasts
    that gets the approved shadow, per §1.5 "by extension sheets/menus". ── */
@@ -301,13 +399,18 @@ svg{display:block;flex:none}
 .lcard{width:100%;max-width:360px;background:var(--bg);border:1px solid var(--white-10);border-radius:var(--radius);padding:28px 24px 24px;position:relative;text-align:center;box-shadow:var(--shadow);animation:popIn .3s cubic-bezier(.34,1.5,.64,1)}
 @keyframes popIn{from{transform:scale(.75);opacity:0}to{transform:scale(1);opacity:1}}
 .leyebrow{font-size:11px;line-height:16px;font-weight:700;color:var(--primary-500);margin-top:4px} /* Label 4 (P) */
-.lscore{font-size:44px;line-height:48px;margin:10px 0 2px} /* Headline styled big number */
-.lmsg{font-size:14px;line-height:20px;color:var(--white-80);margin-bottom:var(--space)} /* Body 2 */
-.lstats{display:flex;gap:10px;margin-bottom:24px}
-.lstat{flex:1;background:var(--white-10);border-radius:var(--radius);padding:12px 6px}
-.lstat b{display:block;font-size:16px;line-height:20px;font-weight:700} /* Title 3 */
-.lstat span{font-size:11px;line-height:16px;color:var(--white-60)} /* Body 4 */
-.lsecrow{display:flex;gap:10px;margin-top:10px}
+/* Hero number — nearest documented token to a "big number" display is
+   Headline 3 (24/30, §1.2's own "big number, card headline" tier), but this
+   is the one true hero moment on the whole screen, so it's stepped up to
+   Headline 1 (32/36) instead — still on-scale, no invented size, just the
+   largest rung the type table actually offers. */
+.lscore{font-size:32px;line-height:36px;margin:10px 0 2px}
+.lmsg{font-size:14px;line-height:20px;color:var(--white-80);margin-bottom:4px} /* Body 2 */
+/* Best streak only gets its own line when it's actually something to call
+   out (2+ in a row) — otherwise it's just noise. Real hierarchy instead of
+   a three-up equal-weight stat row (§3's single most-flagged slop tell). */
+.lstreak{font-size:12px;line-height:16px;font-weight:700;color:var(--primary-500);margin-bottom:2px} /* Label 3 (P) */
+.lmeta{font-size:12px;line-height:16px;color:var(--white-60);margin-bottom:24px} /* Body 3 */
 
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:328px;background:var(--white-10);border:1px solid var(--white-20);color:var(--white-100);font-size:12px;line-height:16px;font-weight:400;padding:8px 16px 8px 12px;border-radius:var(--radius);box-shadow:var(--shadow);z-index:999;opacity:0;transition:opacity .25s,bottom .25s;pointer-events:none;text-align:left}
 .toast.show{opacity:1;bottom:34px}
@@ -318,14 +421,14 @@ svg{display:block;flex:none}
 
   <!-- SPLASH -->
   <div id="splash" class="scr on">
-    <img src="eaze-logo.png" alt="eaze">
+    <div class="brand-halo"><img src="eaze-logo.png" alt="eaze"></div>
     <div class="spin-ring"></div>
     <div class="splash-txt">Loading eaze Level Up…</div>
   </div>
 
   <!-- LOGIN -->
   <div id="login" class="scr">
-    <img src="eaze-logo.png" alt="eaze">
+    <div class="brand-halo"><img src="eaze-logo.png" alt="eaze"></div>
     <div class="login-title eh">Welcome to eaze Level Up</div>
     <div class="login-sub">Enter your mobile number to continue.</div>
     <label class="login-flbl" for="loginInput">Mobile number</label>
@@ -337,23 +440,25 @@ svg{display:block;flex:none}
 
   <!-- HOME -->
   <div id="home" class="scr">
-    <div class="home-hdr">
-      <img src="eaze-logo.png" alt="eaze">
-      <button class="btn-text" id="logoutBtn">Log out</button>
-    </div>
-    <div class="home-title eh">Level up</div>
-    <div class="home-sub">Read the scenario. Swipe to sort it. Six topics, real-life moments.</div>
-
-    <div class="escore-card">
-      <div class="escore-header">
-        <span class="escore-label"><img src="eaze-icon.png" alt="" class="escore-icon"> Eaze score</span>
-        <span class="escore-value-row">
-          <span class="escore-value" id="escoreValue">0</span>
-          <span class="escore-bonus-chip" id="escoreBonusChip" hidden>+10 today</span>
-        </span>
+    <div class="home-hero">
+      <div class="home-hdr">
+        <img src="eaze-logo.png" alt="eaze">
+        <button class="btn-text" id="logoutBtn">Log out</button>
       </div>
-      <div class="escore-bar-track"><div class="escore-bar-fill" id="escoreBarFill"></div></div>
-      <p class="escore-caption" id="escoreCaption">—</p>
+      <div class="home-title eh">Level up</div>
+      <div class="home-sub">Read the scenario. Swipe to sort it. Six topics, real-life moments.</div>
+
+      <div class="escore-card">
+        <div class="escore-header">
+          <span class="escore-label"><img src="eaze-icon-white.png" alt="" class="escore-icon"> EazeScore</span>
+          <span class="escore-value-row">
+            <span class="escore-value eh" id="escoreValue">0</span>
+          </span>
+        </div>
+        <div class="escore-bar-track"><div class="escore-bar-fill" id="escoreBarFill"><span class="escore-bar-thumb"><img src="eaze-icon.png" alt=""></span></div></div>
+        <p class="escore-rule"><span class="num">+5</span> EazeScore per session · <span class="num">+10</span> bonus when all <span class="num">6</span> topics are played the same day</p>
+        <p class="escore-caption" id="escoreCaption">—</p>
+      </div>
     </div>
 
     <div class="topics" id="topicsList"></div>
@@ -373,12 +478,14 @@ svg{display:block;flex:none}
     <div class="dots" id="gDots"></div>
 
     <div class="stagewrap">
-      <div class="stack" id="stack">
-        <!-- cards injected here -->
-      </div>
-      <div class="ctabtns">
-        <button class="catbtn a" id="btnA">Category A</button>
-        <button class="catbtn b" id="btnB">Category B</button>
+      <div class="stagepanel">
+        <div class="stack" id="stack">
+          <!-- cards injected here -->
+        </div>
+        <div class="ctabtns">
+          <button class="catbtn a" id="btnA">Category A</button>
+          <button class="catbtn b" id="btnB">Category B</button>
+        </div>
       </div>
       <div class="howto">
         <div class="howto-h"><span id="howtoIcon"></span> How to play</div>
@@ -425,15 +532,9 @@ svg{display:block;flex:none}
       <div class="leyebrow">Session complete</div>
       <div class="lscore eh" id="lScore">0/0</div>
       <div class="lmsg" id="lMsg">—</div>
-      <div class="lstats">
-        <div class="lstat"><b id="lAcc">0%</b><span>Accuracy</span></div>
-        <div class="lstat"><b id="lStreak">0</b><span>Best streak</span></div>
-        <div class="lstat"><b id="lTime">0:00</b><span>Time</span></div>
-      </div>
+      <div class="lstreak" id="lStreak" hidden>—</div>
+      <div class="lmeta" id="lMeta">—</div>
       <button class="btn-filled" id="lNextBtn">Choose another topic for today</button>
-      <div class="lsecrow">
-        <button class="btn-outlined" id="lShareBtn">Share</button>
-      </div>
     </div>
   </div>
 
@@ -621,16 +722,6 @@ function logout(){
 }
 
 // ── Utils ─────────────────────────────────────────────────────────
-function hashStr(str){
-  let h = 0;
-  for (let i = 0; i < str.length; i++){ h = (h * 31 + str.charCodeAt(i)) | 0; }
-  return Math.abs(h);
-}
-// Alternates card fills between Primary orange and Secondary purple, stable
-// per id (same topic/card always gets the same one) rather than random.
-function fillClass(id){
-  return hashStr(id) % 2 === 0 ? 'c-a' : 'c-b';
-}
 function fmtTime(ms){
   const total = Math.floor(ms / 1000);
   const m = String(Math.floor(total / 60)).padStart(2, '0');
@@ -799,10 +890,9 @@ function renderScoreBar(){
 
   document.getElementById('escoreValue').textContent = computeEazeScore();
   document.getElementById('escoreBarFill').style.width = `${Math.round((playedToday / total) * 100)}%`;
-  document.getElementById('escoreCaption').textContent = bonusEarnedToday
+  document.getElementById('escoreCaption').innerHTML = bonusEarnedToday
     ? 'Full day complete — today’s bonus earned'
-    : `${playedToday}/${total} topics played today · +${CONFIG.allTopicsDailyBonus} bonus at ${total}`;
-  document.getElementById('escoreBonusChip').hidden = !bonusEarnedToday;
+    : `<span class="num">${playedToday}</span>/<span class="num">${total}</span> topics played today`;
 }
 
 // Keeps darkened cards live: once IST rolls past midnight, re-rendering
@@ -908,22 +998,39 @@ function renderCard(){
   stack.innerHTML = '';
   const cards = S.run.cards;
 
-  // Peek card behind (next one), purely decorative.
+  // Two decorative cards behind the live one, purely for depth — a real
+  // deck has more than one card resting under the one you're holding.
+  // Fanned with a slight rotation + offset rather than scaled down: a tossed
+  // pile of same-size cards peeking out at an angle reads as more natural
+  // and more "real object" than a shrinking-perspective stack. Each step
+  // back gets fainter and a lighter shadow than the one in front of it, so
+  // it reads as physical layers, not a duplicate card pasted behind.
+  const nextNext = cards[S.run.index + 2];
+  if (nextNext) {
+    const peek2 = document.createElement('div');
+    peek2.className = 'card';
+    peek2.style.transform = 'translateY(8px) rotate(4deg)';
+    peek2.style.opacity = '.45';
+    peek2.style.boxShadow = '0 10px 22px rgba(0,0,0,.28)';
+    stack.appendChild(peek2);
+  }
+
   const next = cards[S.run.index + 1];
   if (next) {
     const peek = document.createElement('div');
-    peek.className = 'card ' + fillClass(next.id);
-    peek.style.transform = 'scale(.94) translateY(10px)';
-    peek.style.opacity = '.6';
+    peek.className = 'card';
+    peek.style.transform = 'translateY(4px) rotate(-3deg)';
+    peek.style.opacity = '.7';
+    peek.style.boxShadow = '0 16px 32px rgba(0,0,0,.32)';
     stack.appendChild(peek);
   }
 
   const card = cards[S.run.index];
   const top = document.createElement('div');
-  top.className = 'card ' + fillClass(card.id);
+  top.className = 'card';
   top.id = 'topCard';
   top.innerHTML = `
-    <div class="cquote">&ldquo;</div>
+    <div class="cicon">${svgIcon(CONFIG.topicIcons[S.run.topicId], 22)}</div>
     <div class="cprompt">${card.prompt}</div>
     <div class="hint left" id="hintA">${S.run.topic.categoryA}</div>
     <div class="hint right" id="hintB">${S.run.topic.categoryB}</div>
@@ -960,6 +1067,7 @@ function attachDrag(el, card){
     // below), starting a new one shouldn't inherit its leftover transform.
     el.style.transition = 'none';
     el.style.transform = 'translate(0,0) rotate(0deg)';
+    el.classList.add('lifting');
     dragging = true;
     const p = pointFrom(e);
     startX = p.x; startY = p.y;
@@ -992,8 +1100,11 @@ function attachDrag(el, card){
       locked = true;
       commitSwipe(dx > 0 ? 'B' : 'A', el);
     } else {
-      el.style.transition = 'transform .25s cubic-bezier(.16,1,.3,1)';
+      // A slight spring overshoot on the way back to center — a card set
+      // back down settles with a little give, not a linear snap.
+      el.style.transition = 'transform .32s cubic-bezier(.34,1.56,.64,1)';
       el.style.transform = 'translate(0,0) rotate(0deg)';
+      el.classList.remove('lifting');
       hintA.style.opacity = 0;
       hintB.style.opacity = 0;
     }
@@ -1121,10 +1232,13 @@ function endSession(){
 
   const accuracy = Math.round((correct / total) * 100);
   document.getElementById('lScore').textContent = `${correct}/${total}`;
-  document.getElementById('lAcc').textContent = `${accuracy}%`;
-  document.getElementById('lStreak').textContent = bestStreak;
-  document.getElementById('lTime').textContent = fmtTime(elapsed);
   document.getElementById('lMsg').textContent = `${messageFor(accuracy)} · +${CONFIG.pointsPerSession} EazeScore`;
+  // Best streak is only worth its own line when it's actually notable —
+  // otherwise it folds away and the accuracy/time meta line does the work.
+  const streakEl = document.getElementById('lStreak');
+  streakEl.hidden = bestStreak < 2;
+  streakEl.textContent = `Best streak: ${bestStreak} in a row`;
+  document.getElementById('lMeta').textContent = `${accuracy}% accuracy · ${fmtTime(elapsed)}`;
   if (bonusJustAwarded) {
     showToast(`All 6 topics today — +${CONFIG.allTopicsDailyBonus} EazeScore bonus`, 3200);
   }
@@ -1169,20 +1283,6 @@ document.getElementById('lNextBtn').addEventListener('click', () => {
   document.getElementById('levelBk').classList.remove('on');
   renderHome();
   showScreen('home');
-});
-document.getElementById('lShareBtn').addEventListener('click', async () => {
-  const { topic, sessionNumber, correct, cards } = S.run;
-  const text = `I scored ${correct}/${cards.length} on eaze Level Up — ${topic.name}, session ${sessionNumber}.`;
-  if (navigator.share) {
-    try { await navigator.share({ text }); } catch (e) {}
-  } else {
-    try {
-      await navigator.clipboard.writeText(text);
-      showToast('Copied to clipboard');
-    } catch (e) {
-      showToast(text, 4000);
-    }
-  }
 });
 
 // ── TOPBAR ────────────────────────────────────────────────────────
