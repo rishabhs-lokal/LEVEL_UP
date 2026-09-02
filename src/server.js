@@ -4,7 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { closePool, healthCheck } from './db/client.js';
 import { recordSessionResult } from './repositories/session-results.js';
-import { recordScoreEvent, getScoreForUser, SOURCE_APPS } from './repositories/score-events.js';
+import { recordScoreEvent, getScoreForUser, ensureWelcomeBonus, SOURCE_APPS } from './repositories/score-events.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
@@ -43,14 +43,14 @@ app.get('/api/content', (_req, res) => {
 
 app.post('/api/sessions/complete', async (req, res) => {
   try {
-    const { clientId, displayName, eazeUserId, topicId, sessionNumber, correctCount, totalCount, bestStreak, durationMs } = req.body;
+    const { eazeUserId, topicId, sessionNumber, correctCount, totalCount, bestStreak, durationMs } = req.body;
 
-    if (!clientId || !topicId || !sessionNumber || correctCount == null || totalCount == null) {
-      return res.status(400).json({ error: 'clientId, topicId, sessionNumber, correctCount and totalCount are required' });
+    if (!eazeUserId || !topicId || !sessionNumber || correctCount == null || totalCount == null) {
+      return res.status(400).json({ error: 'eazeUserId, topicId, sessionNumber, correctCount and totalCount are required' });
     }
 
     const result = await recordSessionResult({
-      clientId, displayName, eazeUserId, topicId,
+      eazeUserId, topicId,
       sessionNumber: Number(sessionNumber),
       correctCount: Number(correctCount),
       totalCount: Number(totalCount),
@@ -88,6 +88,20 @@ app.post('/api/score/events', async (req, res) => {
 
     const result = await recordScoreEvent({ eazeUserId, sourceApp, eventType, points, metadata });
     res.status(201).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Safe to call on every login — idempotent, see ensureWelcomeBonus.
+app.post('/api/score/welcome-bonus', async (req, res) => {
+  try {
+    const { eazeUserId } = req.body;
+    if (!eazeUserId || typeof eazeUserId !== 'string') {
+      return res.status(400).json({ error: 'eazeUserId is required' });
+    }
+    const result = await ensureWelcomeBonus(eazeUserId);
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

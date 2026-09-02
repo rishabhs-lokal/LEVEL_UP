@@ -2,12 +2,12 @@
 // Postgres (DATABASE_URL must be set — see package.json's "test" script),
 // not a mock, since the whole point of this ledger is correct SQL-level
 // behavior (SUM, same-day windowing, transactional atomicity). Every test
-// uses its own randomly-generated eazeUserId/clientId so runs never collide
+// uses its own randomly-generated eazeUserId so runs never collide
 // with each other or with real data, and there's nothing to clean up after.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
-import { recordScoreEvent, getScoreForUser } from '../src/repositories/score-events.js';
+import { recordScoreEvent, getScoreForUser, ensureWelcomeBonus } from '../src/repositories/score-events.js';
 import { recordSessionResult } from '../src/repositories/session-results.js';
 import { closePool } from '../src/db/client.js';
 
@@ -49,44 +49,81 @@ test('GET for a user with no events returns a zero total, not an error', async (
 
 test('completing every topic the same day awards the all-topics bonus exactly once, even if the triggering session is resubmitted', async () => {
   const eazeUserId = uniqueId('test-user');
-  const clientId = uniqueId('test-client');
   const topics = ['stress', 'trauma', 'work', 'health', 'breakup-relationship', 'low-confidence'];
 
   for (const topicId of topics) {
     await recordSessionResult({
-      clientId, eazeUserId, topicId, sessionNumber: 1,
+      eazeUserId, topicId, sessionNumber: 1,
       correctCount: 4, totalCount: 5, bestStreak: 2, durationMs: 20000,
       totalTopicCount: topics.length,
     });
   }
 
   // Simulate a network retry: the client resends the exact same request that
-  // completed the 6th (bonus-triggering) topic.
-  await recordSessionResult({
-    clientId, eazeUserId, topicId: 'low-confidence', sessionNumber: 1,
+  // completed the 6th (bonus-triggering) topic. The one-per-topic-per-day
+  // unique index means this earns nothing at all now, not even the plain
+  // per-session points — a stronger guarantee than "no double bonus."
+  const retryResult = await recordSessionResult({
+    eazeUserId, topicId: 'low-confidence', sessionNumber: 1,
     correctCount: 4, totalCount: 5, bestStreak: 2, durationMs: 20000,
     totalTopicCount: topics.length,
   });
+  assert.equal(retryResult.duplicate, true);
+  assert.equal(retryResult.scoreEvent, null);
 
   const score = await getScoreForUser(eazeUserId);
   const bonusEvents = score.events.filter((e) => e.event_type === 'session_complete_all_topics_bonus');
   assert.equal(bonusEvents.length, 1, 'bonus must be awarded exactly once, not on the retried submission too');
 
-  // 5 topics at 5 pts + 1 bonus-awarding session at 15 pts + 1 retried
-  // (post-bonus) session at the plain 5 pts = 45.
-  assert.equal(score.totalScore, 45);
+  // 5 topics at 5 pts + 1 bonus-awarding session at 15 pts = 40. The
+  // retried submission earns nothing further.
+  assert.equal(score.totalScore, 40);
 });
 
-test('recordSessionResult without an eazeUserId still records the session, but no score event', async () => {
-  const clientId = uniqueId('test-client-anon');
-  const result = await recordSessionResult({
-    clientId, topicId: 'stress', sessionNumber: 1,
-    correctCount: 3, totalCount: 5, bestStreak: 1, durationMs: 15000,
+test('submitting the same topic twice in one day is rejected server-side, not just deduped for scoring', async () => {
+  const eazeUserId = uniqueId('test-user');
+
+  const first = await recordSessionResult({
+    eazeUserId, topicId: 'stress', sessionNumber: 1,
+    correctCount: 5, totalCount: 5, bestStreak: 5, durationMs: 10000,
     totalTopicCount: 6,
   });
+  assert.equal(first.scoreEvent.points, 5);
 
-  assert.equal(result.persisted, true);
-  assert.equal(result.scoreEvent, null);
+  const second = await recordSessionResult({
+    eazeUserId, topicId: 'stress', sessionNumber: 1,
+    correctCount: 5, totalCount: 5, bestStreak: 5, durationMs: 10000,
+    totalTopicCount: 6,
+  });
+  assert.equal(second.duplicate, true);
+  assert.equal(second.scoreEvent, null);
+
+  const score = await getScoreForUser(eazeUserId);
+  assert.equal(score.totalScore, 5, 'the repeat submission must not add any further points');
+  assert.equal(score.sessionCount, 1);
+});
+
+test('recordSessionResult rejects a call with no eazeUserId — it is the only identity this app has', async () => {
+  await assert.rejects(() => recordSessionResult({
+    topicId: 'stress', sessionNumber: 1,
+    correctCount: 3, totalCount: 5, bestStreak: 1, durationMs: 15000,
+    totalTopicCount: 6,
+  }));
+});
+
+test('ensureWelcomeBonus awards 20 points once, and is a no-op on every later call', async () => {
+  const eazeUserId = uniqueId('test-user');
+
+  const first = await ensureWelcomeBonus(eazeUserId);
+  assert.equal(first.awarded, true);
+  assert.equal(first.event.points, 20);
+
+  const second = await ensureWelcomeBonus(eazeUserId);
+  assert.equal(second.awarded, false);
+  assert.equal(second.event, null);
+
+  const score = await getScoreForUser(eazeUserId);
+  assert.equal(score.totalScore, 20, 'bonus must be counted exactly once no matter how many times login fires it');
 });
 
 test.after(async () => {

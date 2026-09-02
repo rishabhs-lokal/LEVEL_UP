@@ -187,6 +187,29 @@ svg{display:block;flex:none}
 .escore-caption{margin:2px 0 0;font-size:12px;line-height:16px;color:var(--white-60)} /* Body 3 */
 .escore-rule .num,.escore-caption .num{color:var(--primary-500);font-weight:700}
 
+/* ── LIFETIME SCORE ────────────────────────────────────────────── */
+.sessions-box{width:100%;display:flex;align-items:center;gap:14px;margin-top:var(--space);padding:16px;border-radius:var(--radius);background:var(--white-10);border:1px solid var(--white-20)}
+.sessions-icon{width:40px;height:40px;border-radius:50%;background:var(--white-10);color:var(--primary-500);display:flex;align-items:center;justify-content:center;flex:none}
+.sessions-info{display:flex;flex-direction:column;gap:2px}
+.sessions-count{font-size:28px;line-height:32px;color:var(--white-100)} /* Headline 2 */
+.sessions-label{font-size:12px;line-height:16px;color:var(--white-70)} /* Body 3 */
+
+/* The one filled CTA on this screen — everything else here (score, session
+   count) is informational, so this is the single accent-colored, high-
+   emphasis surface per §2's "one primary CTA" rule. */
+.lifetime-banner{
+  width:100%;max-width:300px;margin:24px auto 0;display:flex;align-items:center;gap:12px;
+  padding:14px 16px;border-radius:var(--radius);background:var(--primary-500);color:var(--bg);
+  border:none;cursor:pointer;text-align:left;font-family:var(--font-body);
+}
+.lifetime-banner:active{transform:scale(.98)}
+.lifetime-banner-icon{width:36px;height:36px;border-radius:50%;background:rgba(23,26,29,.15);display:flex;align-items:center;justify-content:center;flex:none}
+.lifetime-banner-text{flex:1;display:flex;flex-direction:column;gap:1px;min-width:0}
+.lifetime-banner-title{font-size:14px;line-height:20px;font-weight:700} /* Label 2 (P) */
+.lifetime-banner-sub{font-size:12px;line-height:16px;color:rgba(23,26,29,.7)} /* Body 3, dark-on-light */
+.lifetime-banner-arrow{flex:none;display:flex}
+.lifetime-banner-arrow svg{transform:rotate(180deg)} /* reuses the back/arrow-left glyph, flipped */
+
 .topics{width:100%;display:flex;flex-direction:column;gap:var(--space);padding:0 var(--space)}
 /* A card is a neutral surface that content and accent color sit ON, not a
    surface saturated in accent color — §2's "one accent per screen" rule
@@ -436,6 +459,45 @@ svg{display:block;flex:none}
     <div class="login-err" id="loginErr"></div>
     <button class="btn-filled" id="loginBtn" disabled>Continue</button>
     <div class="login-hint">Testing? Use 9999999999 — real number login isn't live yet.</div>
+  </div>
+
+  <!-- LIFETIME SCORE — shown once per login, between Login and Home -->
+  <div id="lifetime" class="scr">
+    <div class="home-hero">
+      <div class="home-hdr">
+        <img src="eaze-logo.png" alt="eaze">
+      </div>
+      <div class="home-title eh">Your EazeScore</div>
+      <div class="home-sub">Lifetime points earned across eaze — every session adds up.</div>
+
+      <div class="escore-card">
+        <div class="escore-header">
+          <span class="escore-label"><img src="eaze-icon-white.png" alt="" class="escore-icon"> EazeScore</span>
+          <span class="escore-value-row">
+            <span class="escore-value eh" id="lifetimeScoreValue">0</span>
+          </span>
+        </div>
+        <div class="escore-bar-track"><div class="escore-bar-fill" id="lifetimeBarFill"><span class="escore-bar-thumb"><img src="eaze-icon.png" alt=""></span></div></div>
+        <p class="escore-caption" id="lifetimeTierCaption">—</p>
+      </div>
+
+      <div class="sessions-box">
+        <div class="sessions-icon"><span id="sessionsIcon"></span></div>
+        <div class="sessions-info">
+          <div class="sessions-count eh" id="lifetimeSessionCount">0</div>
+          <div class="sessions-label">sessions played</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="lifetime-banner" id="lifetimeBannerBtn">
+      <span class="lifetime-banner-icon"><span id="lifetimeBannerIcon"></span></span>
+      <span class="lifetime-banner-text">
+        <span class="lifetime-banner-title">Ready for today's scenarios?</span>
+        <span class="lifetime-banner-sub">Jump into Level Up</span>
+      </span>
+      <span class="lifetime-banner-arrow"><span id="lifetimeBannerArrow"></span></span>
+    </button>
   </div>
 
   <!-- HOME -->
@@ -695,17 +757,6 @@ function checkAndAwardDailyBonus(){
   return true;
 }
 
-// Anonymous per-device id, only used to attribute result rows server-side.
-// No account, no PII — just lets /api/sessions/complete group a device's plays.
-function getClientId(){
-  let id = localStorage.getItem('eazeLevelUpClientId');
-  if (!id) {
-    id = 'anon-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
-    localStorage.setItem('eazeLevelUpClientId', id);
-  }
-  return id;
-}
-
 // ── Auth (mobile-number gate, client-side only — no SMS/OTP backend yet) ────
 function getMobile(){
   return localStorage.getItem('eazeLevelUpMobile');
@@ -756,12 +807,15 @@ async function boot(){
   document.getElementById('howtoIcon').innerHTML = svgIcon('info', 16);
   document.getElementById('switchCloseBtn').innerHTML = svgIcon('close', 15);
   document.getElementById('shuffleIcon').innerHTML = svgIcon('shuffle', 16);
+  document.getElementById('sessionsIcon').innerHTML = svgIcon('check', 18);
+  document.getElementById('lifetimeBannerIcon').innerHTML = svgIcon('lightning', 18);
+  document.getElementById('lifetimeBannerArrow').innerHTML = svgIcon('back', 16);
   if (!getMobile()) {
     showScreen('login');
     document.getElementById('loginInput').focus();
     return;
   }
-  enterApp();
+  showLifetimeScreen();
 }
 
 // The session number a fresh tap on this topic should open — its next
@@ -794,6 +848,62 @@ function enterApp(){
   startSession(topic.id, nextSessionNumberFor(topic));
 }
 
+// ── LIFETIME SCORE ────────────────────────────────────────────────
+// Every login (not just the first) stops here before Home/the game — the
+// cumulative, cross-app EazeScore total pulled live from the shared ledger
+// backend, distinct from Home's own "today's topics" tracker. Points here
+// are grouped into flat 100-point tiers purely to give the bar something
+// meaningful to fill toward; the underlying score is still a plain sum.
+const LIFETIME_TIER_SIZE = 100;
+
+async function showLifetimeScreen(){
+  showScreen('lifetime');
+  const eazeUserId = getMobile();
+
+  document.getElementById('lifetimeScoreValue').textContent = '—';
+  document.getElementById('lifetimeSessionCount').textContent = '—';
+  document.getElementById('lifetimeTierCaption').textContent = 'Loading…';
+  document.getElementById('lifetimeBarFill').style.width = '0%';
+
+  // Idempotent server-side (see ensureWelcomeBonus) — only the very first
+  // call for a given eazeUserId actually awards anything, so it's safe to
+  // fire on every login rather than needing our own "have we already done
+  // this" tracking on the client.
+  let bonusAwarded = false;
+  try {
+    const res = await fetch('/api/score/welcome-bonus', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ eazeUserId }),
+    });
+    bonusAwarded = Boolean((await res.json()).awarded);
+  } catch (e) { /* offline/no DB — welcome bonus just doesn't fire */ }
+
+  let score = { totalScore: 0, sessionCount: 0 };
+  try {
+    const res = await fetch(`/api/score/${encodeURIComponent(eazeUserId)}`);
+    const data = await res.json();
+    if (data.persisted) score = data;
+  } catch (e) { /* offline/no DB — show zeros rather than block the flow */ }
+
+  renderLifetimeScore(score);
+  if (bonusAwarded) showToast('Welcome bonus — +20 EazeScore', 3200);
+}
+
+function renderLifetimeScore({ totalScore, sessionCount }){
+  const total = totalScore || 0;
+  const tierNumber = Math.floor(total / LIFETIME_TIER_SIZE) + 1;
+  const progressInTier = total % LIFETIME_TIER_SIZE;
+
+  document.getElementById('lifetimeScoreValue').textContent = total;
+  document.getElementById('lifetimeSessionCount').textContent = sessionCount || 0;
+  document.getElementById('lifetimeBarFill').style.width = `${Math.round((progressInTier / LIFETIME_TIER_SIZE) * 100)}%`;
+  document.getElementById('lifetimeTierCaption').textContent =
+    `Tier ${tierNumber} · ${progressInTier}/${LIFETIME_TIER_SIZE} to next tier`;
+}
+
+document.getElementById('lifetimeBannerBtn').addEventListener('click', enterApp);
+
 // ── LOGIN ─────────────────────────────────────────────────────────
 const loginInput = document.getElementById('loginInput');
 const loginBtn = document.getElementById('loginBtn');
@@ -818,7 +928,7 @@ function submitLogin(){
     return;
   }
   setMobile(mobile);
-  enterApp();
+  showLifetimeScreen();
 }
 
 document.getElementById('logoutBtn').addEventListener('click', logout);
@@ -1261,12 +1371,11 @@ function reportSessionResult({ topicId, sessionNumber, correct, total, bestStrea
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      clientId: getClientId(),
-      // The mobile number is the only durable, cross-device identity this
-      // app collects — it's what lets a session's score event land in the
-      // shared EazeScore ledger under the same eaze_user_id other apps
-      // (eaze-checkin) report into, instead of the anonymous per-device
-      // clientId above.
+      // The mobile number is the only identity this app has — login is
+      // mandatory before a session can ever complete, so it's always
+      // available here. It's also what lets a session's score event land
+      // in the shared EazeScore ledger under the same eaze_user_id
+      // eaze-checkin reports into.
       eazeUserId: getMobile(),
       topicId,
       sessionNumber,
