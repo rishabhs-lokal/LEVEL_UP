@@ -1262,6 +1262,12 @@ function reportSessionResult({ topicId, sessionNumber, correct, total, bestStrea
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       clientId: getClientId(),
+      // The mobile number is the only durable, cross-device identity this
+      // app collects — it's what lets a session's score event land in the
+      // shared EazeScore ledger under the same eaze_user_id other apps
+      // (eaze-checkin) report into, instead of the anonymous per-device
+      // clientId above.
+      eazeUserId: getMobile(),
       topicId,
       sessionNumber,
       correctCount: correct,

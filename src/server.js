@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { closePool, healthCheck } from './db/client.js';
 import { recordSessionResult } from './repositories/session-results.js';
+import { recordScoreEvent, getScoreForUser, SOURCE_APPS } from './repositories/score-events.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
@@ -42,22 +43,64 @@ app.get('/api/content', (_req, res) => {
 
 app.post('/api/sessions/complete', async (req, res) => {
   try {
-    const { clientId, displayName, topicId, sessionNumber, correctCount, totalCount, bestStreak, durationMs } = req.body;
+    const { clientId, displayName, eazeUserId, topicId, sessionNumber, correctCount, totalCount, bestStreak, durationMs } = req.body;
 
     if (!clientId || !topicId || !sessionNumber || correctCount == null || totalCount == null) {
       return res.status(400).json({ error: 'clientId, topicId, sessionNumber, correctCount and totalCount are required' });
     }
 
     const result = await recordSessionResult({
-      clientId, displayName, topicId,
+      clientId, displayName, eazeUserId, topicId,
       sessionNumber: Number(sessionNumber),
       correctCount: Number(correctCount),
       totalCount: Number(totalCount),
       bestStreak: Number(bestStreak || 0),
       durationMs: durationMs != null ? Number(durationMs) : null,
+      totalTopicCount: cardDeck.topics.length,
     });
 
     res.status(201).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ── Shared EazeScore ledger ─────────────────────────────────────────────────────
+// The single source of truth for EazeScore across every app that reports into
+// it (this one, eaze-checkin, and whatever comes later) — see score-events.js.
+
+app.post('/api/score/events', async (req, res) => {
+  try {
+    const { eazeUserId, sourceApp, eventType, points, metadata } = req.body;
+
+    if (!eazeUserId || typeof eazeUserId !== 'string') {
+      return res.status(400).json({ error: 'eazeUserId is required' });
+    }
+    if (!eventType || typeof eventType !== 'string') {
+      return res.status(400).json({ error: 'eventType is required' });
+    }
+    if (!SOURCE_APPS.includes(sourceApp)) {
+      return res.status(400).json({ error: `sourceApp must be one of: ${SOURCE_APPS.join(', ')}` });
+    }
+    if (!Number.isInteger(points) || points <= 0) {
+      return res.status(400).json({ error: 'points must be a positive integer' });
+    }
+
+    const result = await recordScoreEvent({ eazeUserId, sourceApp, eventType, points, metadata });
+    res.status(201).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/score/:eazeUserId', async (req, res) => {
+  try {
+    const { eazeUserId } = req.params;
+    if (!eazeUserId) {
+      return res.status(400).json({ error: 'eazeUserId is required' });
+    }
+    const result = await getScoreForUser(eazeUserId);
+    res.json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
