@@ -6,16 +6,35 @@ import { dbEnabled, query, withTransaction } from '../db/client.js';
 
 export const SOURCE_APPS = ['checkin', 'level-up'];
 
-// Single source of truth for these two event_type strings — session-results.js
-// imports them rather than redefining its own, so the "count of sessions
-// played" query below can never silently drift out of sync with what
-// actually gets written on session completion.
-export const SESSION_EVENT_TYPE = 'session_complete';
-export const ALL_TOPICS_BONUS_EVENT_TYPE = 'session_complete_all_topics_bonus';
-const SESSION_EVENT_TYPES = [SESSION_EVENT_TYPE, ALL_TOPICS_BONUS_EVENT_TYPE];
+// Single source of truth for this event_type string — card-results.js
+// imports it rather than redefining its own.
+export const CARD_COMPLETE_EVENT_TYPE = 'card_complete';
 
 const WELCOME_BONUS_EVENT_TYPE = 'welcome_bonus';
 const WELCOME_BONUS_POINTS = 20;
+const CLAIM_EVENT_TYPE = 'claim';
+
+// EazeScore -> coin conversion, tiered rather than 1:1: the first
+// HALFWAY_THRESHOLD points of a claim convert at LOW_RATE, anything beyond
+// that at HIGH_RATE. A claim always empties the full available balance (see
+// claimScore below), never a partial amount. This app's HALFWAY_THRESHOLD is
+// set independently of eaze-checkin's own backend/app/services/eaze_score.py
+// compute_coins — the two apps share the score_events ledger itself, but not
+// this rate; don't assume they need to match.
+const COIN_HALFWAY_THRESHOLD = 150;
+const COIN_LOW_RATE = 0.5;
+const COIN_HIGH_RATE = 1.0;
+
+// Rounds half up to a whole coin (e.g. an odd score at the 0.5 rate lands on
+// an X.5 coin value, which rounds up, not down) — Math.floor(x + 0.5) rather
+// than Math.round(), matching the Python reference's own reasoning exactly.
+export function computeCoins(score) {
+  if (score <= 0) return 0;
+  const coins = score <= COIN_HALFWAY_THRESHOLD
+    ? score * COIN_LOW_RATE
+    : COIN_HALFWAY_THRESHOLD * COIN_LOW_RATE + (score - COIN_HALFWAY_THRESHOLD) * COIN_HIGH_RATE;
+  return Math.floor(coins + 0.5);
+}
 
 // Inserts one row using a caller-supplied client — for callers already
 // inside a transaction (e.g. this app's own session-complete flow, which
@@ -41,19 +60,15 @@ export async function recordScoreEvent(params) {
 }
 
 // Total is always derived by summing the ledger, never read from a stored
-// counter — the whole point of an append-only event table. sessionCount
-// counts this app's own session-completion events specifically (not
-// eaze-checkin's check-ins) — each one corresponds 1:1 with a completed
-// eaze-level-up session, so it's an exact count, not an estimate.
+// counter — the whole point of an append-only event table. Lifetime
+// "sessions completed" isn't derived here — that's a card_results concept
+// now (see card-results.js's getCompletedSessionsCount), not something
+// score_events itself can answer.
 export async function getScoreForUser(eazeUserId) {
   if (!dbEnabled) return { persisted: false };
 
-  const [{ rows: sumRows }, { rows: sessionRows }, { rows: eventRows }] = await Promise.all([
+  const [{ rows: sumRows }, { rows: eventRows }] = await Promise.all([
     query('SELECT COALESCE(SUM(points), 0)::int AS total FROM score_events WHERE eaze_user_id = $1', [eazeUserId]),
-    query(
-      'SELECT COUNT(*)::int AS cnt FROM score_events WHERE eaze_user_id = $1 AND event_type = ANY($2)',
-      [eazeUserId, SESSION_EVENT_TYPES],
-    ),
     query(
       `SELECT id, source_app, event_type, points, metadata, created_at
        FROM score_events
@@ -68,7 +83,6 @@ export async function getScoreForUser(eazeUserId) {
     persisted: true,
     eazeUserId,
     totalScore: sumRows[0].total,
-    sessionCount: sessionRows[0].cnt,
     events: eventRows,
   };
 }
@@ -89,5 +103,40 @@ export async function ensureWelcomeBonus(eazeUserId) {
       [eazeUserId, WELCOME_BONUS_EVENT_TYPE, WELCOME_BONUS_POINTS],
     );
     return { persisted: true, awarded: rows.length > 0, event: rows[0] || null };
+  });
+}
+
+// A claim always empties the user's full available balance, never a partial
+// amount — same rule as eaze-checkin's own claim_coins. "Available" IS
+// totalScore here: unlike the Python schema's separate earned/claimed sum,
+// this ledger has no split to maintain — a claim is just another (negative)
+// row in the same append-only sum, so the total already reflects it the
+// instant it's inserted, from either app, since both read the same rows.
+export async function claimScore(eazeUserId) {
+  if (!dbEnabled) return { persisted: false };
+
+  return withTransaction(async (client) => {
+    const { rows: sumRows } = await client.query(
+      'SELECT COALESCE(SUM(points), 0)::int AS total FROM score_events WHERE eaze_user_id = $1',
+      [eazeUserId],
+    );
+    const available = sumRows[0].total;
+    if (available <= 0) {
+      return { persisted: true, claimed: false, available: 0, coins: 0 };
+    }
+
+    const coins = computeCoins(available);
+    // Ledger deduction is inserted before the transfer is even attempted (see
+    // the /api/score/claim route) — a failed transfer never undoes it, so a
+    // concurrent second claim always sees this deduction already reflected.
+    const event = await insertScoreEvent(client, {
+      eazeUserId,
+      sourceApp: 'level-up',
+      eventType: CLAIM_EVENT_TYPE,
+      points: -available,
+      metadata: { coins },
+    });
+
+    return { persisted: true, claimed: true, available, coins, event };
   });
 }

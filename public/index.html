@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-<title>eaze – Level Up</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5,user-scalable=yes,viewport-fit=cover">
+<title>Eaze - Choices</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 /* ══════════════════════════════════════════════════════════════════
    Tokens — pulled directly from Eaze_design_handbook.md §1. Every
@@ -15,6 +15,7 @@
 :root{
   /* Base */
   --bg:#171A1D;
+  --card-grey:#34383E;
   --white-10:rgba(255,255,255,.10);
   --white-20:rgba(255,255,255,.20);
   --white-40:rgba(255,255,255,.40);
@@ -60,21 +61,60 @@
   --space:16px;
   --shadow:0 2px 4px rgba(0,0,0,.10);
 
+  /* Single font everywhere, matching eaze-checkin — --font-head used to be
+     Fraunces; every element still referencing it (.eh, big dashboard
+     numbers) now renders in the same face as the rest of the app instead of
+     a second serif family. */
   --font-body:'Plus Jakarta Sans',Arial,sans-serif;
-  --font-head:'Fraunces',Georgia,serif;
+  --font-head:'Plus Jakarta Sans',Arial,sans-serif;
+
+  /* Card fill for the Home dashboard — same warm, brand-tied tint as
+     eaze-checkin's --card-fill (Primary/500 at low opacity), not the
+     neutral white/10% the rest of the app's surfaces use. */
+  --card-fill:rgba(255,158,68,.14);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
 html,body{height:100%;overflow:hidden}
-body{font-family:var(--font-body);font-weight:400;background:var(--bg);color:var(--white-100);display:flex;justify-content:center}
-#app{width:100%;max-width:430px;height:100dvh;position:relative;overflow:hidden;background:var(--bg)}
+/* padding:12px — the app content sits inset from the physical screen edge
+   on every side (a visible gutter of body's own flat --bg showing around
+   it) instead of running edge to edge; #app's own width:100%/flex:1 below
+   resolve against this narrowed content box, so the gutter is real on an
+   actual phone-width viewport, not just an artifact of desktop centering. */
+body{font-family:var(--font-body);font-weight:400;background:var(--bg);color:var(--white-100);display:flex;flex-direction:column;align-items:center;padding:12px}
+/* #app flexes to fill whatever height the tester bar doesn't take —
+   height:100dvh only when that bar is hidden (the default, real-user case). */
+/* The gradient lives here, on #app, not on the individual scrolling screens
+   (#home/#terms/#game). Two mobile-Safari background bugs to dodge, and
+   #app dodges both at once since it never scrolls (only its .scr children
+   scroll their own overflow): background-attachment:scroll (the default)
+   on an element that scrolls ITS OWN content is known to glitch/desync
+   during momentum scrolling on iOS; background-attachment:local (tried
+   next, to fix that) has its own history of iOS Safari bugs sizing the
+   background incorrectly relative to the element's actual width — which
+   is what caused cards to visibly sit wider than the background. Neither
+   quirk applies to a background on an element that itself never scrolls.
+   background-size:cover, not a width percentage — a percentage left a
+   visible black strip down one side on-device (it wasn't resolving
+   against the true rendered width there). cover is spec-guaranteed to
+   fill the box on both axes with no gap possible, and the image's own
+   aspect ratio (1440x3200) is already close to a phone screen's, so it
+   barely needs to crop anything to do that. border-radius: now that this
+   box sits inset from the screen edge (padding on body) instead of flush
+   against it, a square corner reads as unfinished — round it like the
+   cards floating inside it. */
+#app{
+  width:100%;max-width:430px;flex:1;min-height:0;position:relative;overflow:hidden;background:var(--bg);
+  border-radius:28px;
+  background-image:url('bg-gradient.png');background-repeat:no-repeat;background-position:top center;background-size:cover;
+}
 .scr{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;overflow-y:auto}
 .scr.on{display:flex}
-button{font-family:var(--font-body);-webkit-appearance:none;appearance:none}
+button{font-family:var(--font-body);-webkit-appearance:none;appearance:none;touch-action:manipulation}
 img{-webkit-user-drag:none}
 svg{display:block;flex:none}
 
-/* Headline — Fraunces 144pt SuperSoft Semibold. Never used below 24px. */
-.eh{font-family:var(--font-head);font-weight:600;font-variation-settings:'SOFT' 100,'opsz' 144;letter-spacing:-.3px}
+/* Dashboard hero numbers — Bold Plus Jakarta Sans (was Fraunces). */
+.eh{font-family:var(--font-head);font-weight:700;letter-spacing:-.3px}
 
 /* ── SPLASH ────────────────────────────────────────────────────── */
 #splash{justify-content:center;align-items:center;gap:18px;background:var(--bg)}
@@ -132,170 +172,211 @@ svg{display:block;flex:none}
 .btn-text{background:none;border:none;color:var(--white-60);font-size:12px;line-height:16px;font-weight:700;cursor:pointer;padding:6px 2px}
 .btn-text:active{color:var(--white-100)}
 
-/* ── HOME ──────────────────────────────────────────────────────── */
+/* ── HOME hero ─────────────────────────────────────────────────── */
 /* Explicit, requested exception to §3's "no gradient" rule: a soft vertical
-   blend from the app's dark grey into brand orange, concentrated behind the
-   hero content and fading out before the topic list — a deliberate
-   deviation from the doc's flat-fill default, not an oversight. Sized and
-   capped with background-color so it never repeats/tiles into the
-   scrollable list below; below that height it's flat --bg like every other
-   screen. */
-#home{
+   blend from the app's dark grey into brand orange — a deliberate deviation
+   from the doc's flat-fill default, not an oversight.
+   background-size:100% auto (not 100% 100%): the source image is a full
+   portrait-screen gradient (1440x3200) whose orange-to-dark transition is
+   calibrated to that aspect ratio — stretching it to exactly one viewport's
+   height compresses that whole transition into a sliver at the very top,
+   so every card below the fold sits on flat near-black instead of the
+   gradient, defeating the point of it. Auto height keeps the image at its
+   natural proportions (renders close to a full screen tall at typical
+   mobile widths) so the transition actually reaches down to where the
+   cards are. background-attachment:local sizes/scrolls it against the
+   FULL scrollable content (not just the visible box), so on content taller
+   than the image it still covers everything — any leftover past the
+   image's own bottom edge is --bg, which the image already fades to, so
+   the seam is invisible. */
+/* No background of their own — transparent lets #app's gradient (painted
+   once, pinned, never scrolling — see the comment on #app) show through. */
+#home,#terms{
   justify-content:flex-start;padding:0 0 40px;
-  background-color:var(--bg);
-  background-image:radial-gradient(ellipse 640px 520px at 78% 0%, var(--primary-500) 0%, var(--primary-800) 38%, var(--bg) 72%);
-  background-repeat:no-repeat;
-  background-position:top;
-  background-size:100% 720px;
+  background-color:transparent;
 }
-.home-hero{width:100%;padding:var(--space) var(--space) 20px;margin-bottom:var(--space)}
+/* No padding-bottom/margin-bottom here — .lifetime-banner's own margin-top
+   is the sole gap between the stats row and that card, matching the single
+   margin-top gap below it (before .claim-card), so the banner sits evenly
+   centered between its neighbors instead of sitting closer to one. */
+.home-hero{width:100%;padding:var(--space) var(--space) 0}
 .home-hdr{display:flex;align-items:center;justify-content:space-between;width:100%;margin-bottom:4px}
 .home-hdr img{height:20px}
 .home-title{font-size:32px;line-height:36px;margin:20px 0 4px;width:100%} /* Headline 1 */
-.home-sub{font-size:14px;line-height:20px;color:var(--white-80);margin-bottom:24px;width:100%} /* Body 2 */
+.home-sub{font-size:14px;line-height:20px;color:var(--white-80);margin-bottom:16px;width:100%} /* Body 2 */
 
-/* Eaze Score — the one card that keeps Secondary purple as its identity
-   even sitting on the orange stage, "alongside or instead of orange for a
-   distinct semantic meaning" (§1.1) — same neutral-object-on-colored-table
-   language as every other surface floating on Primary/800 in this app. */
-.escore-card{
-  width:100%;padding:16px;border-radius:var(--radius);
-  background:var(--white-10);border:1px solid var(--primary-500);
+/* Small streak indicator under the header — bare icon + text, same language
+   as eaze-checkin's check-in-page streak pill, not a stat card of its own. */
+.streak-row{display:flex;align-items:center;gap:6px;margin-bottom:20px;width:100%}
+.streak-icon{width:16px;height:16px;color:var(--primary-500);flex:none}
+.streak-text{font-size:14px;line-height:20px;color:var(--white-80)}
+.streak-text .num{font-weight:700;color:var(--white-100)}
+
+/* Two tappable stat cards — EazeScore, Sessions completed — the exact same
+   surface eaze-checkin uses on its own Home: a warm card-fill tint,
+   white/40% border, 20px radius (bigger than this app's usual 12px, matching
+   the shared card scale), a header row (label + chevron), and one big
+   centered number filling the rest of the card. */
+.home-stats-row{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat-card{
+  display:flex;flex-direction:column;align-items:stretch;min-height:140px;
+  padding:18px;border-radius:20px;background:var(--card-fill);border:1px solid var(--white-40);
+  text-align:left;cursor:pointer;font-family:var(--font-body);color:inherit;
+  transition:border-color .15s ease,transform .1s ease;
 }
-.escore-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
-.escore-label{display:inline-flex;align-items:center;gap:8px;font-size:14px;line-height:20px;font-weight:700;color:var(--white-100)} /* Label 2 (P) */
-.escore-icon{width:18px;height:18px}
-.escore-value-row{display:flex;align-items:center;gap:8px}
-/* Headline 3 (24/30, Fraunces) — the type table's own "big number" token,
-   in Primary/500 so the score reads as the card's one accent, matching the
-   reference. */
-.escore-value{font-size:24px;line-height:30px;color:var(--primary-500)}
-.escore-bar-track{height:8px;border-radius:var(--radius);background:var(--white-10);overflow:visible;position:relative}
-.escore-bar-fill{position:relative;height:100%;border-radius:var(--radius);background:var(--primary-500);width:0%;transition:width .5s ease}
-/* Slider-style thumb riding the leading edge of the fill, echoing the
-   reference's icon-in-a-circle progress marker instead of a bare flat bar. */
-/* White disc, not orange — eaze-icon.png already carries its own orange
-   rounded-square fill, so an orange circle behind it just muddies into one
-   blob. White gives the icon something to actually contrast against. */
-.escore-bar-thumb{position:absolute;top:50%;right:0;transform:translate(50%,-50%);width:20px;height:20px;border-radius:50%;background:var(--white-100);border:2px solid var(--primary-500);display:flex;align-items:center;justify-content:center}
-.escore-bar-thumb img{width:12px;height:12px;display:block;border-radius:3px}
-/* Static earning rule, always visible — the dynamic caption below only ever
-   showed the daily-bonus progress ("X/6 played today"), never explained
-   where points actually come from. Numbers highlighted in Primary/500,
-   matching the reference's colored-digits treatment. */
-.escore-rule{margin:8px 0 0;font-size:12px;line-height:16px;color:var(--white-80)} /* Body 3 */
-.escore-caption{margin:2px 0 0;font-size:12px;line-height:16px;color:var(--white-60)} /* Body 3 */
-.escore-rule .num,.escore-caption .num{color:var(--primary-500);font-weight:700}
+.stat-card:active{transform:scale(.98)}
+.stat-card-header{display:flex;align-items:flex-start;justify-content:space-between;width:100%}
+.stat-card-head{display:inline-flex;align-items:center;flex-wrap:wrap;gap:6px;min-width:0;font-size:14px;line-height:20px;font-weight:400;color:var(--white-100)} /* Label 2 */
+.stat-card-icon{width:18px;height:18px;flex:none}
+/* Hint "?" and chevron kept together as one unit, separate from the label
+   text — so they stay aligned with each other even when the label (e.g.
+   "Sessions completed") wraps to a second line. */
+.stat-card-header-actions{display:inline-flex;align-items:center;gap:6px;flex:none}
+.stat-card-value{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;font-size:40px;line-height:44px;color:var(--white-100)} /* .eh applied inline for weight */
 
-/* ── LIFETIME SCORE ────────────────────────────────────────────── */
-.sessions-box{width:100%;display:flex;align-items:center;gap:14px;margin-top:var(--space);padding:16px;border-radius:var(--radius);background:var(--white-10);border:1px solid var(--white-20)}
-.sessions-icon{width:40px;height:40px;border-radius:50%;background:var(--white-10);color:var(--primary-500);display:flex;align-items:center;justify-content:center;flex:none}
-.sessions-info{display:flex;flex-direction:column;gap:2px}
-.sessions-count{font-size:28px;line-height:32px;color:var(--white-100)} /* Headline 2 */
-.sessions-label{font-size:12px;line-height:16px;color:var(--white-70)} /* Body 3 */
+/* "?" hint badge on a tappable card's label — same small outlined circle
+   eaze-checkin uses next to "EazeScore"/"Sessions completed", a second,
+   more literal signal (besides the chevron) that the card opens something. */
+.stat-card-hint{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;border:1px solid var(--white-40);color:var(--white-80);font-size:10px;line-height:1;flex:none}
 
-/* The one filled CTA on this screen — everything else here (score, session
-   count) is informational, so this is the single accent-colored, high-
-   emphasis surface per §2's "one primary CTA" rule. */
+/* Whole-card CTA banner ("Play/Continue session") — same card-fill/white-40/
+   20px surface as the stat cards and eaze-checkin's own .home-banner,
+   left-aligned column layout with a dulled-down watermark, same treatment
+   as .claim-card::before uses eaze-coin.png. */
+/* min-height:160px — sized to comfortably fit the tallest content variant
+   (the locked state's 4 lines: eyebrow/title/countdown-label/countdown).
+   Overflow:hidden below is needed to clip the watermark to the card's
+   rounded corners, but it also stops this flex column from auto-growing
+   past min-height for a taller variant — so min-height has to be a real
+   fit for the tallest case, not just a floor, or that variant's content
+   gets clipped/cramped against the bottom edge instead of centering. */
 .lifetime-banner{
-  width:100%;max-width:300px;margin:24px auto 0;display:flex;align-items:center;gap:12px;
-  padding:14px 16px;border-radius:var(--radius);background:var(--primary-500);color:var(--bg);
-  border:none;cursor:pointer;text-align:left;font-family:var(--font-body);
-}
-.lifetime-banner:active{transform:scale(.98)}
-.lifetime-banner-icon{width:36px;height:36px;border-radius:50%;background:rgba(23,26,29,.15);display:flex;align-items:center;justify-content:center;flex:none}
-.lifetime-banner-text{flex:1;display:flex;flex-direction:column;gap:1px;min-width:0}
-.lifetime-banner-title{font-size:14px;line-height:20px;font-weight:700} /* Label 2 (P) */
-.lifetime-banner-sub{font-size:12px;line-height:16px;color:rgba(23,26,29,.7)} /* Body 3, dark-on-light */
-.lifetime-banner-arrow{flex:none;display:flex}
-.lifetime-banner-arrow svg{transform:rotate(180deg)} /* reuses the back/arrow-left glyph, flipped */
-
-.topics{width:100%;display:flex;flex-direction:column;gap:var(--space);padding:0 var(--space)}
-/* A card is a neutral surface that content and accent color sit ON, not a
-   surface saturated in accent color — §2's "one accent per screen" rule
-   means the orange should read as special, which it can't do if every card
-   in a list is drenched in it. white/10% fill is exactly what the doc gives
-   persistent surfaces (list rows, buttons, inputs) for "lift from fill
-   alone" without a shadow. Same 12px radius as everything else — no
-   invented larger "card" radius, since none is documented. */
-.tcard{
   position:relative;overflow:hidden;
-  width:100%;text-align:left;border:1px solid var(--white-10);
-  background:var(--white-10);
-  border-radius:var(--radius);padding:16px;
-  cursor:pointer;
-  transition:transform .12s,border-color .2s;
+  width:100%;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:10px;
+  min-height:148px;margin-top:var(--space);padding:18px 16px;border-radius:20px;
+  background:var(--card-fill);border:1px solid var(--white-40);color:var(--white-100);
+  cursor:pointer;text-align:left;font-family:var(--font-body);
+  transition:border-color .15s ease,opacity .2s ease;
 }
-.tcard:active{transform:scale(.98)}
-.tcard.done{border-color:var(--success-500)}
-.tcard.locked:active{transform:none}
+.lifetime-banner:active{opacity:.85}
+.lifetime-banner::before{
+  content:'';position:absolute;right:-14px;top:50%;transform:translateY(-50%);width:220px;height:115px;
+  background-image:url('lifetime-banner-watermark.png');background-repeat:no-repeat;background-size:contain;background-position:center right;
+  opacity:.18;pointer-events:none;
+}
+.lifetime-banner-copy{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-width:0}
+.lifetime-banner-eyebrow{font-size:12px;line-height:16px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--white-100)}
+.lifetime-banner-title{font-size:20px;line-height:26px;font-weight:700;color:var(--white-100)}
+.lifetime-banner-accent{color:var(--white-100)}
+.lifetime-banner-cta{display:inline-flex;align-items:center;gap:6px;margin-top:6px;padding:8px 14px;border-radius:12px;background:var(--primary-800);color:var(--white-100);font-size:13px;font-weight:700;line-height:18px}
+.lifetime-banner-cta svg{transform:rotate(180deg)} /* reuses the back/arrow-left glyph, flipped */
+.lifetime-banner-countdown-label{margin-top:2px;font-size:12px;line-height:16px;color:var(--white-80)}
+.lifetime-banner-countdown{font-variant-numeric:tabular-nums;font-size:30px;line-height:36px;font-weight:700;letter-spacing:.5px;color:var(--white-100)}
+/* Locked (§7): once today's one session is done, the CTA goes inert — same
+   minimal cursor-only change eaze-checkin's own cooldown state uses, not a
+   flat-grey swap (the card-fill surface stays the same either way). */
+.lifetime-banner.locked{cursor:not-allowed}
+.lifetime-banner.locked:active{opacity:1}
 
-/* Large topic-icon watermark (real Phosphor SVG, fill:currentColor), tinted
-   Primary/500 — the one accent color, used the same way on every card
-   instead of alternating between two, so it actually reads as "the brand
-   accent" rather than wallpaper. Bleeds off the edge for a poster feel
-   instead of sitting tidily in a corner; dims further and desaturates when
-   locked. */
-.tbgicon{
-  position:absolute;right:-20px;bottom:-20px;color:var(--primary-500);
-  opacity:.20;transform:rotate(-12deg);pointer-events:none;filter:none;
-  transition:filter .2s,opacity .2s;
-}
-.tcard.locked .tbgicon{filter:grayscale(1);opacity:.10}
+/* Chevron on every tappable card (stat cards, claim card) — signals "tap
+   for more," same reused back-arrow glyph flipped 180°. */
+.card-chevron{display:inline-flex;color:var(--white-60);flex:none}
+.card-chevron svg{transform:rotate(180deg)}
 
-.tcontent{position:relative;z-index:1;display:flex;flex-direction:column;gap:12px}
-.trow1{display:flex;align-items:flex-start;gap:12px}
-.tinfo{flex:1;min-width:0}
-.tname{font-size:18px;line-height:24px;font-weight:700;color:var(--white-100)} /* Title 2 */
-.tprog{font-size:12px;line-height:16px;color:var(--white-60);margin-top:2px} /* Body 3 — de-emphasized meta line, per the doc's white-60 "secondary stat label" step */
-.tcheck{color:var(--success-500);flex:none}
-/* Locked isn't a faded-out state — it's a distinct, legible one: a solid
-   badge instead of a bare small icon, same weight as the done checkmark. */
-.tlock{
-  width:26px;height:26px;border-radius:50%;flex:none;
-  display:flex;align-items:center;justify-content:center;
-  background:var(--white-20);color:var(--white-100);
+/* ── CLAIM COINS card — same card-fill/white-40/20px surface as the stat
+   cards above, full-width like eaze-checkin's own claim card (no separate
+   narrower max-width). ── */
+/* margin-top:var(--space) — same gap the lifetime-banner uses above itself,
+   so that card sits centered in the space between the stat-cards row and
+   this one instead of being pulled closer to one neighbor than the other. */
+.claim-card{
+  position:relative;overflow:hidden;width:100%;min-height:140px;margin-top:var(--space);
+  padding:18px;border-radius:20px;background:var(--card-fill);border:1px solid var(--white-40);
+  text-align:left;cursor:pointer;font-family:var(--font-body);color:var(--white-100);
+  transition:border-color .15s ease,transform .1s ease;
 }
-.tcats{display:flex;flex-direction:column;gap:8px}
-/* Category color, everywhere: the literal Success/500 and Secondary/500
-   tokens as solid fills — the exact values the handbook calls "the" status
-   color for each ramp, not a lighter tint of them. Same identical pair on
-   every card, every screen, no per-background swap. */
-.tpill{font-size:12px;line-height:16px;font-weight:700;text-align:center;padding:8px 4px;border-radius:var(--radius);border:1px solid var(--white-40);color:var(--white-100)} /* Label 3 (P) */
-.tpill.a{background:var(--success-500)}
-.tpill.b{background:var(--secondary-500)}
-/* Locked: mute just the pills (not actionable right now) instead of dimming
-   the whole card. Plain white/10% fill, per §1.6's own disabled-button spec
-   — no special-case scrim needed now that the card underneath is neutral. */
-.tcard.locked .tpill{background:var(--white-10);border-color:var(--white-20);color:var(--white-40)}
-.tcard.locked .tbar i{background:var(--white-40)}
-.tbar{height:4px;border-radius:var(--radius);background:var(--white-10);overflow:hidden}
-.tbar i{display:block;height:100%;background:var(--primary-500);border-radius:var(--radius);transition:width .3s}
+.claim-card:active{transform:scale(.99)}
+.claim-card::before{
+  content:'';position:absolute;right:-14px;bottom:-14px;width:150px;height:150px;
+  background-image:url('eaze-coin.png');background-repeat:no-repeat;background-size:contain;
+  opacity:.4;pointer-events:none;
+}
+.claim-card-header{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.claim-card-label{display:inline-flex;align-items:center;gap:8px;font-size:14px;line-height:20px;font-weight:400;color:var(--white-100)} /* Label 2 */
+.claim-card-coin-icon{width:20px;height:20px;flex:none}
+.claim-card-value{position:relative;z-index:1;font-size:40px;line-height:44px;color:var(--white-100)} /* .eh applied inline for weight */
+.claim-card-caption{position:relative;z-index:1;display:block;margin-top:2px;font-size:12px;line-height:16px;color:var(--white-80)} /* Body 3 */
+
+/* ── INFO / CLAIM MODALS — centered dialog, same language as the tester
+   scenario picker (.scn-modal), reused here for the stat-card popups and
+   the claim-coins flow. 20px radius matches eaze-checkin's own
+   .day-detail-modal/.rules-modal — bigger than this app's usual 12px. ── */
+.info-modal{
+  position:relative;width:100%;max-width:340px;background:var(--bg);border:1px solid var(--white-20);
+  border-radius:20px;padding:28px 24px 24px;text-align:center;box-shadow:var(--shadow);
+  animation:popIn .25s cubic-bezier(.34,1.5,.64,1);
+}
+.info-modal-close{
+  position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;border:none;
+  background:var(--white-10);color:var(--white-60);font-size:13px;cursor:pointer;font-family:var(--font-body);
+}
+.info-modal-icon{width:40px;height:40px;border-radius:10px;display:block;margin:0 auto 10px}
+.info-modal-title{margin:0;font-size:11px;line-height:16px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--white-60)} /* Label 4 (P) */
+.info-modal-sub{margin:4px 0 16px;font-size:16px;line-height:20px;font-weight:700;color:var(--white-100)} /* Title 3 */
+.info-modal-list{margin:0;padding:0;list-style:none;text-align:left;display:flex;flex-direction:column;gap:10px}
+.info-modal-list li{position:relative;padding-left:16px;font-size:14px;line-height:20px;color:var(--white-80)} /* Body 2 */
+.info-modal-list li::before{content:'';position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;background:var(--primary-500)}
+.info-modal-cta{
+  display:inline-flex;align-items:center;justify-content:center;margin:18px auto 0;padding:10px 22px;
+  border-radius:999px;border:none;background:var(--primary-500);color:var(--bg);font-family:var(--font-body);
+  font-size:13px;font-weight:700;cursor:pointer;
+}
+.info-modal-cta:disabled{background:var(--white-10);color:var(--white-40);cursor:not-allowed}
+
+.claim-breakdown{margin-top:16px;padding:14px 16px;border-radius:14px;background:var(--white-10);display:flex;flex-direction:column;gap:8px;text-align:left}
+.claim-breakdown-row{display:flex;align-items:center;justify-content:space-between;font-size:13px;line-height:18px;color:var(--white-70)}
+.claim-breakdown-value{font-weight:700;color:var(--white-100)}
+.claim-breakdown-value.accent{color:var(--primary-500)}
+.claim-result-coin-icon{width:72px;height:72px;display:block;margin:0 auto 10px}
+.claim-result-coins{margin:4px 0 16px;font-size:22px;line-height:28px;color:var(--primary-500)} /* eh applied inline for Fraunces */
+
+/* Confetti burst on a successful claim — clipped to its own box, sits above
+   the modal content but never blocks the Done button. */
+.confetti-wrap{position:absolute;inset:0;overflow:hidden;border-radius:inherit;pointer-events:none}
+.confetti-piece{position:absolute;top:-10%;left:var(--x);width:7px;height:12px;background:var(--piece-color);opacity:0;border-radius:1px;animation:confettiFall var(--dur) ease-in var(--delay) 1 forwards}
+@keyframes confettiFall{0%{transform:translateY(0) translateX(0) rotate(0deg);opacity:1}85%{opacity:1}100%{transform:translateY(340px) translateX(var(--drift)) rotate(var(--rot));opacity:0}}
+@media (prefers-reduced-motion: reduce){.confetti-piece{display:none}}
+
+/* ── TERMS AND CONDITIONS — sections wrapped in the same card-fill/20px/
+   white-40 surface as eaze-checkin's .card.terms-card. ── */
+.terms-wrap{width:100%;max-width:430px;padding:8px var(--space) 40px}
+.terms-card{display:flex;flex-direction:column;gap:20px;padding:18px;border-radius:20px;background:var(--card-fill);border:1px solid var(--white-40)}
+.terms-section:last-child{padding-bottom:0}
+.terms-heading{margin:0 0 6px;font-size:15px;line-height:20px;font-weight:700;color:var(--white-100)} /* Title 4 */
+.terms-body{margin:0;font-size:14px;line-height:21px;color:var(--white-80)} /* Body 2 */
 
 /* ── GAME ──────────────────────────────────────────────────────── */
-#game{justify-content:flex-start;background:var(--bg);padding-bottom:20px}
+/* Transparent, same reasoning as #home/#terms above. */
+#game{
+  justify-content:flex-start;padding-bottom:20px;
+  background-color:transparent;
+}
 .topbar{width:100%;display:flex;align-items:center;justify-content:space-between;padding:var(--space) var(--space) 8px;gap:10px}
 .iconbtn{width:38px;height:38px;border-radius:var(--radius);background:var(--white-10);border:none;color:var(--white-100);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
 .gtitle{
   flex:1;min-width:0;text-align:center;font-size:16px;line-height:20px;font-weight:700; /* Title 3 */
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  background:none;border:none;color:var(--white-100);font-family:var(--font-body);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:5px;padding:8px 4px;
 }
-.gtitle:active{opacity:.7}
-.gtitle span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.gtitle svg{color:var(--white-60)}
-.resetbtn{background:none;border:none;color:var(--white-60);font-size:12px;line-height:16px;font-weight:700;padding:9px 4px;cursor:pointer;flex:none} /* Label 3 (P), text button */
-.resetbtn:active{color:var(--white-100)}
 .metarow{width:100%;display:flex;align-items:center;justify-content:space-between;padding:6px var(--space) 2px}
 .timerbox{display:flex;align-items:center;gap:6px;font-size:12px;line-height:16px;color:var(--white-60);font-variant-numeric:tabular-nums} /* Body 3 */
 .timerbox svg{color:var(--white-60)}
 .sesslbl{font-size:12px;line-height:16px;color:var(--white-60)} /* Body 3 */
-.dots{display:flex;gap:6px;padding:10px var(--space) 4px}
+.dots{display:flex;flex-wrap:wrap;gap:6px;padding:10px var(--space) 4px}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--white-10);transition:background .2s,transform .2s}
 .dot.now{background:var(--white-50);transform:scale(1.25)}
-.dot.ok{background:var(--success-500)}
-.dot.no{background:var(--error-500)}
+/* Answered cards (right or wrong) share one fill color — the dots read as
+   a progress bar for the session, not a per-card correctness log. */
+.dot.ok,.dot.no{background:var(--primary-500)}
 
 /* justify-content:flex-start, not center: the stage + howto card can be
    taller than the space left after the topbar/timer/dots row, and centering
@@ -304,12 +385,13 @@ svg{display:block;flex:none}
    Anchoring to the top means any overflow only ever extends the page
    downward, where `.scr`'s own overflow-y:auto already handles it. */
 .stagewrap{flex:1;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:6px var(--space) 4px;min-height:0}
-/* The shaded-grey-and-orange background the doc's own base calls for: the
-   screen itself stays on the app's standard dark grey (--bg, consistent
-   chrome everywhere), and Primary/800 shows up as a bounded, framed "table"
-   panel behind just the card + category buttons — not a full orange wash.
-   Both colors visibly coexist instead of orange replacing grey outright. */
-.stagepanel{width:100%;display:flex;flex-direction:column;align-items:center;background:var(--primary-800);border-radius:var(--radius);padding:24px 20px 20px;margin-bottom:var(--space)}
+/* A translucent tint, not a flat brand-color fill: #game now sits on the
+   same full-page gradient as home/terms, so an opaque --primary-800 panel
+   would read as a mismatched box sitting on top of it rather than a
+   surface that belongs to the page. var(--white-10) — the same token
+   .howto below uses — just lightens whatever gradient color is behind it,
+   so the panel always blends with the screen instead of clashing with it. */
+.stagepanel{width:100%;display:flex;flex-direction:column;align-items:center;background:var(--white-10);border-radius:var(--radius);padding:24px 20px 20px;margin-bottom:var(--space)}
 .stack{position:relative;width:100%;max-width:300px;aspect-ratio:3/4;touch-action:none}
 /* One neutral card surface (--bg, same tone as the base app background)
    instead of alternating brand fills — against the orange stage it reads as
@@ -327,7 +409,7 @@ svg{display:block;flex:none}
   display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:14px;
   cursor:grab;
   will-change:transform;
-  background:var(--bg);
+  background:var(--card-grey);
   border:1px solid rgba(255,201,152,.22);
   box-shadow:0 24px 48px rgba(0,0,0,.4);
   transition:box-shadow .18s ease;
@@ -337,12 +419,7 @@ svg{display:block;flex:none}
    widens and darkens while it's being held, and settles back once it's
    set back down (released short of the swipe threshold). */
 .card.lifting{box-shadow:0 32px 60px rgba(0,0,0,.5)}
-/* Topic icon riding above the scenario text — identifies which topic this
-   card belongs to at a glance (useful once a player's cycling through
-   several topics a day) and gives the card a focal point up top, the way a
-   real printed card leads with a mark before the copy. */
-.card .cicon{width:44px;height:44px;border-radius:50%;background:var(--white-10);color:var(--primary-500);display:flex;align-items:center;justify-content:center;flex:none}
-.card .cprompt{font-size:18px;line-height:24px;font-weight:700;color:var(--white-100)} /* Title 2 */
+.card .cprompt{font-size:20px;line-height:26px;font-weight:700;color:var(--white-100)} /* Title 1 — the card's sole focal point now that there's no topic icon above it */
 .hint{position:absolute;top:16px;padding:6px 12px;border-radius:var(--radius);font-size:11px;line-height:16px;font-weight:700;letter-spacing:.2px;opacity:0;border:1.5px solid;pointer-events:none;transition:opacity .05s;background:var(--bg)}
 .hint.left{left:16px;color:var(--success-500);border-color:var(--success-500)}
 .hint.right{right:16px;color:var(--secondary-500);border-color:var(--secondary-500)}
@@ -364,20 +441,26 @@ svg{display:block;flex:none}
 .combo.show{top:-124px;opacity:1}
 
 .ctabtns{width:100%;max-width:300px;display:flex;gap:10px;margin-top:var(--space)}
+/* Translucent white glass over a blurred orange glow sitting behind each
+   button (the ::before, blurred and pushed behind via z-index) — the glow
+   shows through the dulled-down white fill instead of a flat solid color. */
 .catbtn{
-  flex:1;min-height:48px;padding:12px 10px;border-radius:var(--radius);border:1.5px solid var(--white-40);background:transparent;
+  position:relative;isolation:isolate;
+  flex:1;min-height:48px;padding:12px 10px;border-radius:var(--radius);border:1.5px solid rgba(255,255,255,.6);
+  background:rgba(255,255,255,.9);
   font-size:14px;line-height:20px;font-weight:700;cursor:pointer; /* Label 2 (P) */
   transition:transform .1s,opacity .15s;
-  display:flex;align-items:center;justify-content:center;text-align:center;color:var(--white-100);
+  display:flex;align-items:center;justify-content:center;text-align:center;color:var(--bg);
+}
+.catbtn::before{
+  content:'';position:absolute;inset:-16px;z-index:-1;border-radius:inherit;
+  background:var(--primary-500);filter:blur(20px);opacity:.55;pointer-events:none;
 }
 .catbtn:active{transform:scale(.96)}
-/* Same solid tokens as the home-card pills, same neutral border — one
-   consistent "category" visual language everywhere. */
-.catbtn.a{background:var(--success-500)}
-.catbtn.b{background:var(--secondary-500)}
 /* Matches §1.6's disabled-button spec exactly: drop to white/10% fill, not
    a flat opacity fade of whatever color was there. */
 .catbtn:disabled{background:var(--white-10);border-color:var(--white-20);color:var(--white-40);cursor:not-allowed;transform:none}
+.catbtn:disabled::before{opacity:.15}
 
 .howto{width:100%;max-width:300px;margin-top:var(--space);background:var(--white-10);border-radius:var(--radius);padding:16px}
 .howto-h{font-size:16px;line-height:20px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px} /* Title 3 — stepped up so it still reads as the header now that the steps below are bigger */
@@ -396,8 +479,8 @@ svg{display:block;flex:none}
   display:flex;align-items:center;justify-content:center;
 }
 
-/* ── SHEETS (coach + switch topic) — the one place besides toasts
-   that gets the approved shadow, per §1.5 "by extension sheets/menus". ── */
+/* ── SHEETS (coach) — the one place besides toasts that gets the
+   approved shadow, per §1.5 "by extension sheets/menus". ── */
 .sbg{position:fixed;inset:0;background:var(--black-75);z-index:200;display:none;align-items:flex-end;justify-content:center}
 .sbg.on{display:flex}
 .sht{width:100%;max-width:430px;background:var(--bg);border:1px solid var(--white-10);border-top-left-radius:var(--radius);border-top-right-radius:var(--radius);padding:20px var(--space) 28px;box-shadow:var(--shadow);animation:slideUp .32s cubic-bezier(.16,1,.3,1)}
@@ -409,12 +492,6 @@ svg{display:block;flex:none}
 .coachlbl{font-size:11px;line-height:16px;font-weight:700;color:var(--primary-500)} /* Label 4 (P) */
 .coachname{font-size:12px;line-height:16px;color:var(--white-60)} /* Body 3 */
 .coachbody{font-size:16px;line-height:24px;color:var(--white-100);margin-bottom:24px} /* Body 1 */
-
-.switchhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.switchtit{font-size:18px;line-height:24px;font-weight:700} /* Title 2 */
-.iconclose{width:32px;height:32px;border-radius:50%;background:var(--white-10);border:none;color:var(--white-100);cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none}
-.switchsub{font-size:12px;line-height:16px;color:var(--white-60);margin-bottom:var(--space)} /* Body 3 */
-.switchlist{display:flex;flex-direction:column;gap:12px;max-height:40vh;overflow-y:auto;padding-right:2px}
 
 /* ── LEVEL COMPLETE ────────────────────────────────────────────── */
 .bkdrop{position:fixed;inset:0;background:var(--black-75);z-index:150;display:none;align-items:center;justify-content:center;padding:var(--space)}
@@ -437,105 +514,182 @@ svg{display:block;flex:none}
 
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:328px;background:var(--white-10);border:1px solid var(--white-20);color:var(--white-100);font-size:12px;line-height:16px;font-weight:400;padding:8px 16px 8px 12px;border-radius:var(--radius);box-shadow:var(--shadow);z-index:999;opacity:0;transition:opacity .25s,bottom .25s;pointer-events:none;text-align:left}
 .toast.show{opacity:1;bottom:34px}
+
+/* ── TESTER MODE — scenario picker, separate from the real 9999999999
+   test login. Same overlay/card language as the coach sheet, just centered
+   like a dialog instead of docked to the bottom, since this is a one-time
+   choice rather than an in-flow interruption. ── */
+.scn-modal{width:100%;max-width:360px;background:var(--bg);border:1px solid var(--white-20);border-radius:var(--radius);padding:22px 20px;box-shadow:var(--shadow);animation:popIn .25s cubic-bezier(.34,1.5,.64,1);max-height:80vh;overflow-y:auto}
+.scn-title{display:flex;align-items:center;gap:8px;font-size:20px;line-height:26px;font-weight:700;margin-bottom:8px} /* Title 1 */
+.scn-sub{font-size:12px;line-height:16px;color:var(--white-60);margin-bottom:18px} /* Body 3 */
+.scn-list{display:flex;flex-direction:column;gap:10px}
+.scn-option{display:flex;flex-direction:column;gap:3px;padding:12px 14px;border-radius:var(--radius);border:1px solid var(--white-20);background:var(--white-10);text-align:left;cursor:pointer;font-family:var(--font-body);transition:border-color .15s ease}
+.scn-option:active{border-color:var(--primary-500);transform:scale(.99)}
+.scn-option-label{font-size:14px;line-height:20px;font-weight:700;color:var(--white-100)} /* Label 2 (P) */
+.scn-option-desc{font-size:12px;line-height:16px;color:var(--white-60)} /* Body 3 */
+
+/* Persistent strip while previewing a scenario — always-visible reminder
+   that the data on screen is simulated, not real, with a one-tap way out. */
+.tester-bar{width:100%;max-width:430px;flex:none;display:none;align-items:center;justify-content:space-between;gap:10px;padding:8px 16px;background:var(--secondary-500);color:var(--white-100);box-sizing:border-box}
+.tester-bar.on{display:flex}
+.tester-bar-label{font-size:11px;line-height:16px;font-weight:700} /* Label 4 (P) */
+.tester-bar-actions{display:flex;gap:14px;flex:none}
+.tester-bar button{background:none;border:none;color:var(--white-100);font-size:11px;line-height:16px;font-weight:700;font-family:var(--font-body);cursor:pointer;padding:2px}
+.tester-bar button:active{opacity:.7}
 </style>
 </head>
 <body>
+<!-- TESTER MODE bar — only ever shown for the dedicated scenario-preview
+     login (9999999900), never for the real test login or a real user. -->
+<div class="tester-bar" id="testerBar">
+  <span class="tester-bar-label" id="testerBarLabel">Previewing: —</span>
+  <span class="tester-bar-actions">
+    <button id="testerChangeBtn" type="button">Change</button>
+    <button id="testerExitBtn" type="button">Exit</button>
+  </span>
+</div>
 <div id="app">
 
   <!-- SPLASH -->
   <div id="splash" class="scr on">
     <div class="brand-halo"><img src="eaze-logo.png" alt="eaze"></div>
     <div class="spin-ring"></div>
-    <div class="splash-txt">Loading eaze Level Up…</div>
+    <div class="splash-txt">Loading Eaze - Choices…</div>
   </div>
 
   <!-- LOGIN -->
   <div id="login" class="scr">
     <div class="brand-halo"><img src="eaze-logo.png" alt="eaze"></div>
-    <div class="login-title eh">Welcome to eaze Level Up</div>
+    <div class="login-title eh">Welcome to Eaze - Choices</div>
     <div class="login-sub">Enter your mobile number to continue.</div>
     <label class="login-flbl" for="loginInput">Mobile number</label>
     <input id="loginInput" type="tel" inputmode="numeric" maxlength="10" placeholder="0000000000" autocomplete="off">
     <div class="login-err" id="loginErr"></div>
     <button class="btn-filled" id="loginBtn" disabled>Continue</button>
-    <div class="login-hint">Testing? Use 9999999999 — real number login isn't live yet.</div>
+    <div class="login-hint">Testing? Use 9999999999 for live data, or 9999999900 to preview scenarios — real number login isn't live yet.</div>
   </div>
 
-  <!-- LIFETIME SCORE — shown once per login, between Login and Home -->
-  <div id="lifetime" class="scr">
-    <div class="home-hero">
-      <div class="home-hdr">
-        <img src="eaze-logo.png" alt="eaze">
-      </div>
-      <div class="home-title eh">Your EazeScore</div>
-      <div class="home-sub">Lifetime points earned across eaze — every session adds up.</div>
-
-      <div class="escore-card">
-        <div class="escore-header">
-          <span class="escore-label"><img src="eaze-icon-white.png" alt="" class="escore-icon"> EazeScore</span>
-          <span class="escore-value-row">
-            <span class="escore-value eh" id="lifetimeScoreValue">0</span>
-          </span>
-        </div>
-        <div class="escore-bar-track"><div class="escore-bar-fill" id="lifetimeBarFill"><span class="escore-bar-thumb"><img src="eaze-icon.png" alt=""></span></div></div>
-        <p class="escore-caption" id="lifetimeTierCaption">—</p>
-      </div>
-
-      <div class="sessions-box">
-        <div class="sessions-icon"><span id="sessionsIcon"></span></div>
-        <div class="sessions-info">
-          <div class="sessions-count eh" id="lifetimeSessionCount">0</div>
-          <div class="sessions-label">sessions played</div>
-        </div>
-      </div>
-    </div>
-
-    <button class="lifetime-banner" id="lifetimeBannerBtn">
-      <span class="lifetime-banner-icon"><span id="lifetimeBannerIcon"></span></span>
-      <span class="lifetime-banner-text">
-        <span class="lifetime-banner-title">Ready for today's scenarios?</span>
-        <span class="lifetime-banner-sub">Jump into Level Up</span>
-      </span>
-      <span class="lifetime-banner-arrow"><span id="lifetimeBannerArrow"></span></span>
-    </button>
-  </div>
-
-  <!-- HOME -->
+  <!-- HOME — the single landing screen post-login: EazeScore, lifetime
+       stats, and the play/locked CTA all live here now, no separate
+       intermediate "Your EazeScore" screen. -->
   <div id="home" class="scr">
     <div class="home-hero">
       <div class="home-hdr">
         <img src="eaze-logo.png" alt="eaze">
-        <button class="btn-text" id="logoutBtn">Log out</button>
       </div>
-      <div class="home-title eh">Level up</div>
-      <div class="home-sub">Read the scenario. Swipe to sort it. Six topics, real-life moments.</div>
+      <div class="home-title eh">Eaze - Choices</div>
+      <div class="home-sub">Read the moment. Swipe to choose. One session a day.</div>
 
-      <div class="escore-card">
-        <div class="escore-header">
-          <span class="escore-label"><img src="eaze-icon-white.png" alt="" class="escore-icon"> EazeScore</span>
-          <span class="escore-value-row">
-            <span class="escore-value eh" id="escoreValue">0</span>
+      <div class="streak-row">
+        <span class="streak-icon" id="streakIcon"></span>
+        <span class="streak-text" id="streakText">—</span>
+      </div>
+
+      <div class="home-stats-row">
+        <button class="stat-card" id="scoreCard" type="button" aria-haspopup="dialog">
+          <span class="stat-card-header">
+            <span class="stat-card-head"><img src="eaze-icon-white.png" alt="" class="stat-card-icon"> EazeScore</span>
+            <span class="stat-card-header-actions">
+              <span class="stat-card-hint" aria-hidden="true">?</span>
+              <span class="card-chevron" id="scoreCardChevron"></span>
+            </span>
           </span>
-        </div>
-        <div class="escore-bar-track"><div class="escore-bar-fill" id="escoreBarFill"><span class="escore-bar-thumb"><img src="eaze-icon.png" alt=""></span></div></div>
-        <p class="escore-rule"><span class="num">+5</span> EazeScore per session · <span class="num">+10</span> bonus when all <span class="num">6</span> topics are played the same day</p>
-        <p class="escore-caption" id="escoreCaption">—</p>
+          <span class="stat-card-value eh" id="homeScoreValue">0</span>
+        </button>
+        <button class="stat-card" id="sessionsCard" type="button" aria-haspopup="dialog">
+          <span class="stat-card-header">
+            <span class="stat-card-head">Sessions completed</span>
+            <span class="stat-card-header-actions">
+              <span class="stat-card-hint" aria-hidden="true">?</span>
+              <span class="card-chevron" id="sessionsCardChevron"></span>
+            </span>
+          </span>
+          <span class="stat-card-value eh" id="homeSessionCount">0</span>
+        </button>
       </div>
     </div>
 
-    <div class="topics" id="topicsList"></div>
+    <button class="lifetime-banner" id="homePlayBtn">
+      <span class="lifetime-banner-copy" id="homePlayCopy"></span>
+    </button>
+
+    <button class="claim-card" id="claimCard" type="button" aria-haspopup="dialog">
+      <span class="claim-card-header">
+        <span class="claim-card-label"><img src="eaze-coin.png" alt="" class="claim-card-coin-icon"> Claim coins</span>
+        <span class="card-chevron" id="claimCardChevron"></span>
+      </span>
+      <span class="claim-card-value eh" id="claimCardValue">0 coins</span>
+      <span class="claim-card-caption" id="claimCardCaption">Play a session to start earning EazeScore</span>
+    </button>
+
+    <button class="btn-text" id="termsBtn" style="margin-top:14px">Terms and Conditions</button>
+  </div>
+
+  <!-- TERMS AND CONDITIONS -->
+  <div id="terms" class="scr">
+    <div class="topbar">
+      <button class="iconbtn" id="termsBackBtn" aria-label="Back"></button>
+      <div class="gtitle">Terms and Conditions</div>
+      <div class="iconbtn" style="visibility:hidden"></div>
+    </div>
+    <div class="terms-wrap" id="termsList"></div>
+  </div>
+
+  <!-- HOME STAT-CARD INFO POPUP (EazeScore / Sessions completed) -->
+  <div class="sbg" id="infoModal" style="align-items:center">
+    <div class="info-modal">
+      <button class="info-modal-close" id="infoModalClose" type="button" aria-label="Close">✕</button>
+      <img src="eaze-icon-white.png" alt="" class="info-modal-icon">
+      <p class="info-modal-title" id="infoModalTitle">—</p>
+      <p class="info-modal-sub" id="infoModalSub">—</p>
+      <ul class="info-modal-list" id="infoModalList"></ul>
+      <button class="info-modal-cta" id="infoModalCta" type="button">Play today's session</button>
+    </div>
+  </div>
+
+  <!-- CLAIM COINS MODAL — explainer/breakdown view, then a result view once
+       the claim resolves. -->
+  <div class="sbg" id="claimModal" style="align-items:center">
+    <div class="info-modal">
+      <button class="info-modal-close" id="claimModalClose" type="button" aria-label="Close">✕</button>
+
+      <div id="claimExplainer">
+        <img src="eaze-coin.png" alt="" class="info-modal-icon">
+        <p class="info-modal-title">Claim coins</p>
+        <p class="info-modal-sub">How EazeScore converts to coins</p>
+        <ul class="info-modal-list">
+          <li>The first 150 EazeScore converts at 0.5 coins per point.</li>
+          <li>Anything beyond 150 converts at a full 1 coin per point.</li>
+          <li>Claiming takes your full available balance — your EazeScore then resets to 0 and builds up again from there.</li>
+        </ul>
+        <div class="claim-breakdown">
+          <div class="claim-breakdown-row"><span>Available EazeScore</span><span class="claim-breakdown-value" id="claimScoreValue">0</span></div>
+          <div class="claim-breakdown-row"><span>You'll receive</span><span class="claim-breakdown-value accent" id="claimCoinsValue">0 coins</span></div>
+        </div>
+        <button class="info-modal-cta" id="claimSubmitBtn" type="button">Nothing to claim yet</button>
+      </div>
+
+      <div id="claimResult" hidden>
+        <div class="confetti-wrap" id="claimConfetti"></div>
+        <img src="eaze-coin.png" alt="" class="claim-result-coin-icon">
+        <p class="info-modal-title" id="claimResultTitle">Coins claimed</p>
+        <p class="claim-result-coins eh" id="claimResultCoins">You've received 0 coins</p>
+        <p class="info-modal-sub" id="claimResultMsg" style="font-weight:400;color:var(--white-80)">—</p>
+        <button class="info-modal-cta" id="claimDoneBtn" type="button">Done</button>
+      </div>
+    </div>
   </div>
 
   <!-- GAME -->
   <div id="game" class="scr">
     <div class="topbar">
       <button class="iconbtn" id="backBtn" aria-label="Back"></button>
-      <button class="gtitle" id="gTitle" aria-label="Switch topic"><span id="gTitleText">Topic</span></button>
-      <button class="resetbtn" id="resetBtn">Reset</button>
+      <div class="gtitle" id="gTitleText">Session 1</div>
+      <div class="iconbtn" style="visibility:hidden"></div>
     </div>
     <div class="metarow">
       <div class="timerbox"><span id="gTimerIcon"></span> <span id="gTimer">00:00</span></div>
-      <div class="sesslbl" id="gSession">Session 1 · —</div>
+      <div class="sesslbl" id="gCardLbl">Card 1 of 15</div>
     </div>
     <div class="dots" id="gDots"></div>
 
@@ -545,18 +699,30 @@ svg{display:block;flex:none}
           <!-- cards injected here -->
         </div>
         <div class="ctabtns">
-          <button class="catbtn a" id="btnA">Category A</button>
-          <button class="catbtn b" id="btnB">Category B</button>
+          <button class="catbtn a" id="btnA">Option A</button>
+          <button class="catbtn b" id="btnB">Option B</button>
         </div>
       </div>
       <div class="howto">
         <div class="howto-h"><span id="howtoIcon"></span> How to play</div>
         <ul class="howto-list">
-          <li>Read the scenario on the card</li>
+          <li>Read the word or moment on the card</li>
           <li>Tap the button that matches which side it belongs on</li>
           <li>You can also swipe the card that direction instead</li>
         </ul>
       </div>
+    </div>
+  </div>
+
+  <!-- TESTER MODE — scenario picker, shown right after logging in with the
+       dedicated scenario-preview number. Centered dialog, not docked to the
+       bottom, since this is a one-time choice rather than an in-flow
+       interruption. -->
+  <div class="sbg" id="scenarioModal" style="align-items:center">
+    <div class="scn-modal">
+      <div class="scn-title">🧪 Tester Mode</div>
+      <div class="scn-sub">You're logged in with a test number. Choose a scenario to preview:</div>
+      <div class="scn-list" id="scenarioList"></div>
     </div>
   </div>
 
@@ -575,28 +741,15 @@ svg{display:block;flex:none}
     </div>
   </div>
 
-  <!-- SWITCH TOPIC SHEET -->
-  <div class="sbg" id="switchSheet">
-    <div class="sht">
-      <div class="switchhdr">
-        <div class="switchtit">Switch topic</div>
-        <button class="iconclose" id="switchCloseBtn" aria-label="Close"></button>
-      </div>
-      <div class="switchsub">Leaving now won't use up today's play — your current topic is still waiting whenever you come back.</div>
-      <button class="btn-filled" id="shuffleBtn" style="margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:8px"><span id="shuffleIcon"></span> Surprise me — random topic</button>
-      <div class="switchlist" id="switchList"></div>
-    </div>
-  </div>
-
   <!-- LEVEL COMPLETE -->
   <div class="bkdrop" id="levelBk">
     <div class="lcard">
-      <div class="leyebrow">Session complete</div>
+      <div class="leyebrow" id="lEyebrow">Session complete</div>
       <div class="lscore eh" id="lScore">0/0</div>
       <div class="lmsg" id="lMsg">—</div>
       <div class="lstreak" id="lStreak" hidden>—</div>
       <div class="lmeta" id="lMeta">—</div>
-      <button class="btn-filled" id="lNextBtn">Choose another topic for today</button>
+      <button class="btn-filled" id="lNextBtn">Back to home</button>
     </div>
   </div>
 
@@ -606,26 +759,16 @@ svg{display:block;flex:none}
 <script>
 // ╔══════════════════════════════════════════════════════════════════╗
 // ║  ICONS — one outline family, stroke=currentColor, 1.75 weight.    ║
-// ║  Filled variants (check, lock-closed) mark state, per §1.6.       ║
 // ╚══════════════════════════════════════════════════════════════════╝
 // Real Phosphor Icons (regular weight), self-hosted in public/icons/ — no
-// CDN dependency at runtime. One consistent icon language everywhere,
-// replacing the earlier hand-drawn stroke set and the emoji glyphs.
+// CDN dependency at runtime.
 const ICON_FILES = {
   back: 'icons/arrow-left.svg',
-  close: 'icons/x.svg',
   check: 'icons/check.svg',
-  lock: 'icons/lock-simple.svg',
-  chevronDown: 'icons/caret-down.svg',
-  info: 'icons/info.svg',
   clock: 'icons/clock.svg',
-  shuffle: 'icons/shuffle.svg',
-  lightning: 'icons/lightning.svg',
-  bandaids: 'icons/bandaids.svg',
-  briefcase: 'icons/briefcase.svg',
-  leaf: 'icons/leaf.svg',
-  heartbreak: 'icons/heart-break.svg',
-  eye: 'icons/eye.svg',
+  info: 'icons/info.svg',
+  fire: 'icons/fire.svg',
+  play: 'icons/play.svg',
 };
 const iconCache = {};
 async function loadIcons(){
@@ -652,58 +795,48 @@ function svgIcon(name, size){
 // ║  CONFIG                                                          ║
 // ╚══════════════════════════════════════════════════════════════════╝
 const CONFIG = {
-  topicIcons: {
-    'stress': 'lightning',
-    'trauma': 'bandaids',
-    'work': 'briefcase',
-    'health': 'leaf',
-    'breakup-relationship': 'heartbreak',
-    'low-confidence': 'eye',
-  },
   swipeThreshold: 90,
-  sessionsPerTopic: 10,
-  cardsPerSession: 5,
+  cardsPerSession: 15,
+  totalSessions: 20,
   // No real SMS/OTP backend exists yet — these numbers are the only ones that
   // can log in until that's built. Mirrors eaze-spin-wheel's TESTER_MOBILE_NUMBERS.
-  testNumbers: ['9999999999'],
-  // EazeScore: 5 pts per completed session (any topic), +10 once per IST day
-  // a player completes a session in every topic. Separate earning mechanic
-  // from Checkin Eaze's daily-check-in one — same pooled currency, different
-  // tool, different shape (see eazescore-flow project memory).
-  pointsPerSession: 5,
-  allTopicsDailyBonus: 10,
+  // 9999999999 hits the real backend (live Postgres-backed data); 9999999900
+  // is a separate, dedicated number that instead opens the Tester Mode
+  // scenario picker (see SCENARIOS below) — fully simulated, no network
+  // calls at all, so it can never collide with or corrupt real test data.
+  scenarioTestNumber: '9999999900',
+  testNumbers: ['9999999999', '9999999900'],
 };
 
-// ── State ──────────────────────────────────────────────────────────
-const S = {
-  deck: null,
-  progress: loadProgress(),
-  run: null, // { topicId, sessionNumber, cards, index, correct, streak, bestStreak, startedAt, timerId, resolved }
-};
-
-// ── Persistence ───────────────────────────────────────────────────
-function loadProgress(){
-  try {
-    return JSON.parse(localStorage.getItem('eazeLevelUpProgress_v1')) || {};
-  } catch(e){ return {}; }
-}
-function saveProgress(){
-  localStorage.setItem('eazeLevelUpProgress_v1', JSON.stringify(S.progress));
-}
-function topicProgress(topicId){
-  if (!S.progress[topicId]) S.progress[topicId] = { unlocked: 1, best: {}, lastPlayedDateIST: null };
-  if (S.progress[topicId].lastPlayedDateIST === undefined) S.progress[topicId].lastPlayedDateIST = null;
-  return S.progress[topicId];
+// EazeScore -> coin conversion — mirrors this app's own backend formula
+// exactly (src/repositories/score-events.js computeCoins). eaze-checkin runs
+// its own independent rate/threshold (backend/app/services/eaze_score.py
+// compute_coins) — the two apps share the score_events ledger, not this
+// conversion rate. Client-side copy here is display-only (the claim card's
+// preview, the claim modal's breakdown) — the real conversion always happens
+// server-side, in POST /api/score/claim.
+const COIN_HALFWAY_THRESHOLD = 150;
+const COIN_LOW_RATE = 0.5;
+const COIN_HIGH_RATE = 1.0;
+function computeCoinsClient(score) {
+  if (score <= 0) return 0;
+  const coins = score <= COIN_HALFWAY_THRESHOLD
+    ? score * COIN_LOW_RATE
+    : COIN_HALFWAY_THRESHOLD * COIN_LOW_RATE + (score - COIN_HALFWAY_THRESHOLD) * COIN_HIGH_RATE;
+  return Math.floor(coins + 0.5);
 }
 
-// ── Daily limit (per topic, resets at IST midnight) ──────────────────────────
-// One session per category per day. "Today" is always computed in IST so the
-// reset happens at the same wall-clock moment for every player regardless of
-// their device's local timezone.
-function getISTDateString(){
-  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date());
+// ── TESTER MODE — scenario picker ────────────────────────────────────────
+// Mirrors eaze-checkin's "Tester Mode" modal: a canned set of named states a
+// QA pass wants to jump straight into, instead of grinding through real
+// gameplay to reach them. Each entry's `today`/`score` shape matches exactly
+// what GET /api/sessions/today and GET /api/score return, so the rest of the
+// app (renderHome, renderScoreCard, startSession, endSession) never needs to
+// know whether it's looking at real or simulated data.
+function buildCardsCompleted(n) {
+  return Array.from({ length: n }, (_, i) => ({ cardNumber: i + 1, isCorrect: (i + 1) % 3 !== 0 }));
 }
-function msUntilNextISTMidnight(){
+function msUntilNextISTMidnightLocal() {
   const parts = new Intl.DateTimeFormat('en-US', {
     timeZone: 'Asia/Kolkata', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit',
   }).formatToParts(new Date());
@@ -711,51 +844,69 @@ function msUntilNextISTMidnight(){
   const secondsSinceMidnight = get('hour') * 3600 + get('minute') * 60 + get('second');
   return (24 * 3600 - secondsSinceMidnight) * 1000;
 }
-function fmtCountdown(ms){
-  const totalMin = Math.max(1, Math.round(ms / 60000));
-  const h = Math.floor(totalMin / 60), m = totalMin % 60;
-  return h > 0 ? `${h}h ${m}m` : `${m}m`;
-}
-function hasPlayedToday(topicId){
-  return topicProgress(topicId).lastPlayedDateIST === getISTDateString();
+const SCENARIOS = {
+  fresh: {
+    label: 'Fresh Start',
+    desc: 'Brand new user · nothing played yet, session 1 up next',
+    totalScore: 20, sessionsCompleted: 0, streak: 0,
+    sessionNumber: 1, cardsCompletedToday: [], locked: false,
+  },
+  midSession: {
+    label: 'Mid-Session',
+    desc: '6 of 15 cards done today · resume right where it left off',
+    totalScore: 26, sessionsCompleted: 0, streak: 0,
+    sessionNumber: 1, cardsCompletedToday: buildCardsCompleted(6), locked: false,
+  },
+  locked: {
+    label: 'Session Complete',
+    desc: "Today's 15 cards are done · darkened button until midnight",
+    totalScore: 35, sessionsCompleted: 1, streak: 1,
+    sessionNumber: 1, cardsCompletedToday: buildCardsCompleted(15), locked: true,
+  },
+  streak: {
+    label: 'Active Streak',
+    desc: '5-day streak running · today not played yet',
+    totalScore: 95, sessionsCompleted: 5, streak: 5,
+    sessionNumber: 6, cardsCompletedToday: [], locked: false,
+  },
+  brokenStreak: {
+    label: 'Broken Streak',
+    desc: 'A day got missed · streak reset to 0, fresh session waiting',
+    totalScore: 140, sessionsCompleted: 8, streak: 0,
+    sessionNumber: 9, cardsCompletedToday: [], locked: false,
+  },
+  retryIncomplete: {
+    label: 'Retry Incomplete',
+    desc: "Yesterday's session stalled at 10 of 15 · offered again today",
+    totalScore: 60, sessionsCompleted: 2, streak: 0,
+    sessionNumber: 3, cardsCompletedToday: [], locked: false,
+  },
+};
+function scenarioState(key) {
+  const s = SCENARIOS[key] || SCENARIOS.fresh;
+  return {
+    score: { persisted: true, totalScore: s.totalScore, sessionsCompleted: s.sessionsCompleted, streak: s.streak },
+    today: {
+      persisted: true, sessionNumber: s.sessionNumber, cardsPerSession: CONFIG.cardsPerSession,
+      cardsCompletedToday: s.cardsCompletedToday.map(c => ({ ...c })),
+      locked: s.locked, msUntilMidnightIST: s.locked ? msUntilNextISTMidnightLocal() : null,
+    },
+  };
 }
 
-// ── EazeScore ─────────────────────────────────────────────────────────────
-// Derived, not a stored mutable counter — same "compute from events" shape as
-// the shared EazeScore ledger spec. Points come from two things:
-//   1. 5 pts for every session ever completed, in any topic (lifetime total).
-//   2. +10 once per IST calendar day a player completes a session in EVERY
-//      topic that same day — logged by date so it's only ever awarded once
-//      per qualifying day, not re-counted on every render.
-function scoreMeta(){
-  if (!S.progress._eazeScore) S.progress._eazeScore = { bonusDates: [] };
-  return S.progress._eazeScore;
-}
-function sessionsCompletedCount(){
-  return S.deck.topics.reduce((sum, topic) => {
-    const prog = topicProgress(topic.id);
-    return sum + Math.min(prog.unlocked - 1, CONFIG.sessionsPerTopic);
-  }, 0);
-}
-function topicsPlayedTodayCount(){
-  return S.deck.topics.filter(topic => hasPlayedToday(topic.id)).length;
-}
-function computeEazeScore(){
-  const meta = scoreMeta();
-  return sessionsCompletedCount() * CONFIG.pointsPerSession
-    + meta.bonusDates.length * CONFIG.allTopicsDailyBonus;
-}
-// Called after a session completes. Returns true if the bonus was newly
-// awarded just now (so the caller can show a celebration).
-function checkAndAwardDailyBonus(){
-  const today = getISTDateString();
-  const meta = scoreMeta();
-  if (meta.bonusDates.includes(today)) return false;
-  if (topicsPlayedTodayCount() < S.deck.topics.length) return false;
-  meta.bonusDates.push(today);
-  saveProgress();
-  return true;
-}
+// ── State ──────────────────────────────────────────────────────────
+// No local progress store anymore — every fact about "what session is this,
+// which cards are already done today, is today locked, what's the streak"
+// is server-derived (see card-results.js) so logging out mid-game and
+// coming back later just resumes exactly where the server says to.
+const S = {
+  deck: null,
+  todaySession: null,
+  run: null, // { sessionNumber, session, cards, index, earnedThisVisit, streak, bestStreak, startedAt, timerId, pendingTimeouts }
+  scenarioMode: null, // chosen SCENARIOS key, or null for a real (non-simulated) login
+  scenarioSim: null,  // { score, today } — mutated in place as simulated cards get "answered"
+  currentScore: 0, // last-known totalScore — the claim card/modal's live preview basis
+};
 
 // ── Auth (mobile-number gate, client-side only — no SMS/OTP backend yet) ────
 function getMobile(){
@@ -764,8 +915,54 @@ function getMobile(){
 function setMobile(mobile){
   localStorage.setItem('eazeLevelUpMobile', mobile);
 }
+
+// The real Eaze platform user id — distinct from the phone number, handed
+// over by the host app's banner link (see boot()'s ?user_id=&phone= check),
+// never generated by this app itself. Null for the typed-phone dev path,
+// where no banner ever supplied one.
+function getUserId(){
+  return localStorage.getItem('eazeChoicesUserId');
+}
+function setUserId(userId){
+  localStorage.setItem('eazeChoicesUserId', userId);
+}
+
+// Fire-and-forget — safe to call every time (idempotent server-side, see
+// login_logs_choices' unique user_id constraint), never blocks entry.
+function recordFirstLogin(userId, phoneNumber){
+  fetch('/api/login-logs/first-login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId, phoneNumber }),
+  }).catch(() => {});
+}
+
+// Fire-and-forget — records how far the user got when a session closes,
+// whether finished or abandoned early (see open_session_logs). Only fires
+// for banner-entered users (real userId present, never fabricated for the
+// typed-phone dev login path) and only once per run.
+function recordOpenSessionClose(run){
+  if (!run || run.closeLogged) return;
+  const userId = getUserId();
+  if (!userId) return;
+  run.closeLogged = true;
+  const cardsEngaged = run.cards.filter(c => c._result != null).length;
+  const wrongSelections = run.cards.filter(c => c._result === 'no').length;
+  fetch('/api/open-session-logs', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId, phoneNumber: getMobile(), cardsEngaged, wrongSelections }),
+  }).catch(() => {});
+}
+
 function logout(){
   localStorage.removeItem('eazeLevelUpMobile');
+  localStorage.removeItem('eazeChoicesUserId');
+  localStorage.removeItem('eazeChoicesScenario');
+  S.scenarioMode = null;
+  S.scenarioSim = null;
+  renderTesterBar();
+  document.getElementById('scenarioModal').classList.remove('on');
   document.getElementById('loginInput').value = '';
   document.getElementById('loginErr').textContent = '';
   document.getElementById('loginBtn').disabled = true;
@@ -778,6 +975,11 @@ function fmtTime(ms){
   const m = String(Math.floor(total / 60)).padStart(2, '0');
   const s = String(total % 60).padStart(2, '0');
   return `${m}:${s}`;
+}
+function fmtCountdown(ms){
+  const totalMin = Math.max(1, Math.round(ms / 60000));
+  const h = Math.floor(totalMin / 60), m = totalMin % 60;
+  return h > 0 ? `${h}h ${m}m` : `${m}m`;
 }
 function showScreen(id){
   document.querySelectorAll('.scr').forEach(el => el.classList.remove('on'));
@@ -805,104 +1007,98 @@ async function boot(){
   document.getElementById('backBtn').innerHTML = svgIcon('back', 18);
   document.getElementById('gTimerIcon').innerHTML = svgIcon('clock', 14);
   document.getElementById('howtoIcon').innerHTML = svgIcon('info', 16);
-  document.getElementById('switchCloseBtn').innerHTML = svgIcon('close', 15);
-  document.getElementById('shuffleIcon').innerHTML = svgIcon('shuffle', 16);
-  document.getElementById('sessionsIcon').innerHTML = svgIcon('check', 18);
-  document.getElementById('lifetimeBannerIcon').innerHTML = svgIcon('lightning', 18);
-  document.getElementById('lifetimeBannerArrow').innerHTML = svgIcon('back', 16);
+  document.getElementById('streakIcon').innerHTML = svgIcon('fire', 16);
+  document.getElementById('scoreCardChevron').innerHTML = svgIcon('back', 16);
+  document.getElementById('sessionsCardChevron').innerHTML = svgIcon('back', 16);
+  document.getElementById('claimCardChevron').innerHTML = svgIcon('back', 16);
+  document.getElementById('termsBackBtn').innerHTML = svgIcon('back', 18);
+
+  // Banner entry — the real production path (per the actual deployment: no
+  // typed-phone login screen there at all). The host app's banner link
+  // hands over both the real Eaze user id and the phone number as URL
+  // params; only honored when there's no saved session yet, so a bookmarked/
+  // revisited banner URL doesn't reprocess on every later visit.
+  const bannerParams = new URLSearchParams(window.location.search);
+  const bannerUserId = bannerParams.get('user_id');
+  const bannerPhone = bannerParams.get('phone');
+  if (bannerUserId && bannerPhone && !getMobile()) {
+    setUserId(bannerUserId);
+    setMobile(bannerPhone);
+    recordFirstLogin(bannerUserId, bannerPhone);
+    await enterHome();
+    return;
+  }
+
   if (!getMobile()) {
     showScreen('login');
     document.getElementById('loginInput').focus();
     return;
   }
-  showLifetimeScreen();
-}
-
-// The session number a fresh tap on this topic should open — its next
-// unplayed session, or session 1 again if the whole topic's been completed.
-function nextSessionNumberFor(topic){
-  const prog = topicProgress(topic.id);
-  const unlocked = Math.min(prog.unlocked, CONFIG.sessionsPerTopic);
-  const done = prog.unlocked > CONFIG.sessionsPerTopic;
-  return done ? 1 : unlocked;
-}
-function availableTopics(excludeId){
-  return S.deck.topics.filter(t => t.id !== excludeId && !hasPlayedToday(t.id));
-}
-function pickRandomTopic(excludeId){
-  const pool = availableTopics(excludeId);
-  if (!pool.length) return null;
-  return pool[Math.floor(Math.random() * pool.length)];
-}
-
-// Drops the player straight into a random available topic instead of making
-// them browse first — each login/open lands on a different category. Falls
-// back to Home (all darkened) only when every topic is already played today.
-function enterApp(){
-  const topic = pickRandomTopic(null);
-  if (!topic) {
-    renderHome();
-    showScreen('home');
-    return;
+  // A refresh while previewing a scenario should stay in that scenario, not
+  // silently fall through to a real (empty) fetch for the scenario number.
+  if (getMobile() === CONFIG.scenarioTestNumber) {
+    const savedScenario = localStorage.getItem('eazeChoicesScenario');
+    if (savedScenario && SCENARIOS[savedScenario]) {
+      S.scenarioMode = savedScenario;
+      S.scenarioSim = scenarioState(savedScenario);
+      renderTesterBar();
+    } else {
+      // Logged in with the scenario number but never actually picked one
+      // (e.g. this is a fresh load of a browser that already had this
+      // number saved from an earlier visit) — show the picker now instead
+      // of silently showing a real, empty Home for a fake user.
+      showScreen('home');
+      showScenarioModal();
+      return;
+    }
   }
-  startSession(topic.id, nextSessionNumberFor(topic));
+  await enterHome();
 }
 
-// ── LIFETIME SCORE ────────────────────────────────────────────────
-// Every login (not just the first) stops here before Home/the game — the
-// cumulative, cross-app EazeScore total pulled live from the shared ledger
-// backend, distinct from Home's own "today's topics" tracker. Points here
-// are grouped into flat 100-point tiers purely to give the bar something
-// meaningful to fill toward; the underlying score is still a plain sum.
-const LIFETIME_TIER_SIZE = 100;
-
-async function showLifetimeScreen(){
-  showScreen('lifetime');
-  const eazeUserId = getMobile();
-
-  document.getElementById('lifetimeScoreValue').textContent = '—';
-  document.getElementById('lifetimeSessionCount').textContent = '—';
-  document.getElementById('lifetimeTierCaption').textContent = 'Loading…';
-  document.getElementById('lifetimeBarFill').style.width = '0%';
-
-  // Idempotent server-side (see ensureWelcomeBonus) — only the very first
-  // call for a given eazeUserId actually awards anything, so it's safe to
-  // fire on every login rather than needing our own "have we already done
-  // this" tracking on the client.
-  let bonusAwarded = false;
-  try {
-    const res = await fetch('/api/score/welcome-bonus', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ eazeUserId }),
-    });
-    bonusAwarded = Boolean((await res.json()).awarded);
-  } catch (e) { /* offline/no DB — welcome bonus just doesn't fire */ }
-
-  let score = { totalScore: 0, sessionCount: 0 };
+// ── Shared score/session fetches ─────────────────────────────────────
+// In Tester Mode (S.scenarioMode set), these return the simulated state
+// instead of ever touching the network — the whole point is a QA pass that
+// never depends on, or risks corrupting, real backend data.
+async function fetchScore(eazeUserId){
+  if (S.scenarioMode) return { ...S.scenarioSim.score };
   try {
     const res = await fetch(`/api/score/${encodeURIComponent(eazeUserId)}`);
     const data = await res.json();
-    if (data.persisted) score = data;
-  } catch (e) { /* offline/no DB — show zeros rather than block the flow */ }
+    if (data.persisted) return data;
+  } catch (e) { /* offline/no DB — fall through to zeros */ }
+  return { totalScore: 0, sessionsCompleted: 0, streak: 0 };
+}
+async function fetchTodaySession(eazeUserId){
+  if (S.scenarioMode) return { ...S.scenarioSim.today, cardsCompletedToday: S.scenarioSim.today.cardsCompletedToday.map(c => ({ ...c })) };
+  try {
+    const res = await fetch(`/api/sessions/today/${encodeURIComponent(eazeUserId)}`);
+    const data = await res.json();
+    if (data.persisted) return data;
+  } catch (e) { /* offline/no DB — fail open so play isn't blocked */ }
+  return { persisted: false, sessionNumber: 1, cardsPerSession: CONFIG.cardsPerSession, cardsCompletedToday: [], locked: false, msUntilMidnightIST: null };
+}
 
-  renderLifetimeScore(score);
+// Called once right after login (real or restored) — fires the one-time
+// welcome bonus, then shows Home. Separate from renderHome() itself so
+// returning to Home later (back button, level-complete) doesn't re-fire the
+// bonus call on every visit, even though it's idempotent server-side.
+async function enterHome(){
+  const eazeUserId = getMobile();
+  let bonusAwarded = false;
+  if (!S.scenarioMode) {
+    try {
+      const res = await fetch('/api/score/welcome-bonus', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eazeUserId }),
+      });
+      bonusAwarded = Boolean((await res.json()).awarded);
+    } catch (e) { /* offline/no DB — welcome bonus just doesn't fire */ }
+  }
+  showScreen('home');
+  await renderHome();
   if (bonusAwarded) showToast('Welcome bonus — +20 EazeScore', 3200);
 }
-
-function renderLifetimeScore({ totalScore, sessionCount }){
-  const total = totalScore || 0;
-  const tierNumber = Math.floor(total / LIFETIME_TIER_SIZE) + 1;
-  const progressInTier = total % LIFETIME_TIER_SIZE;
-
-  document.getElementById('lifetimeScoreValue').textContent = total;
-  document.getElementById('lifetimeSessionCount').textContent = sessionCount || 0;
-  document.getElementById('lifetimeBarFill').style.width = `${Math.round((progressInTier / LIFETIME_TIER_SIZE) * 100)}%`;
-  document.getElementById('lifetimeTierCaption').textContent =
-    `Tier ${tierNumber} · ${progressInTier}/${LIFETIME_TIER_SIZE} to next tier`;
-}
-
-document.getElementById('lifetimeBannerBtn').addEventListener('click', enterApp);
 
 // ── LOGIN ─────────────────────────────────────────────────────────
 const loginInput = document.getElementById('loginInput');
@@ -920,164 +1116,395 @@ loginInput.addEventListener('keydown', (e) => {
 });
 loginBtn.addEventListener('click', submitLogin);
 
-function submitLogin(){
+async function submitLogin(){
   const mobile = loginInput.value;
   if (!CONFIG.testNumbers.includes(mobile)) {
     loginInput.classList.add('err');
-    loginErr.textContent = `Not recognized yet — use the test number ${CONFIG.testNumbers[0]}.`;
+    loginErr.textContent = `Not recognized yet — use ${CONFIG.testNumbers.join(' or ')}.`;
     return;
   }
   setMobile(mobile);
-  showLifetimeScreen();
-}
-
-document.getElementById('logoutBtn').addEventListener('click', logout);
-
-// ── HOME ──────────────────────────────────────────────────────────
-// Shared by the Home topic list and the in-game topic switcher — same card,
-// same lock/done rules, same tap behavior.
-function buildTopicCardEl(topic, { onOpen } = {}){
-  const prog = topicProgress(topic.id);
-  const unlocked = Math.min(prog.unlocked, CONFIG.sessionsPerTopic);
-  const done = prog.unlocked > CONFIG.sessionsPerTopic;
-  const completedCount = Math.min(prog.unlocked - 1, CONFIG.sessionsPerTopic);
-  const locked = hasPlayedToday(topic.id);
-
-  let subtitle;
-  if (locked) {
-    subtitle = `Played today · resets in ${fmtCountdown(msUntilNextISTMidnight())}`;
-  } else if (done) {
-    subtitle = 'Completed · tap to replay';
-  } else {
-    subtitle = `Session ${unlocked} of ${CONFIG.sessionsPerTopic}`;
-  }
-
-  const statusIcon = locked ? `<div class="tlock">${svgIcon('lock', 16)}</div>`
-    : done ? `<div class="tcheck">${svgIcon('check', 18)}</div>`
-    : '';
-
-  const card = document.createElement('div');
-  card.className = 'tcard' + (done ? ' done' : '') + (locked ? ' locked' : '');
-  card.innerHTML = `
-    <div class="tbgicon" aria-hidden="true">${svgIcon(CONFIG.topicIcons[topic.id], 128)}</div>
-    <div class="tcontent">
-      <div class="trow1">
-        <div class="tinfo">
-          <div class="tname">${topic.name}</div>
-          <div class="tprog">${subtitle}</div>
-        </div>
-        ${statusIcon}
-      </div>
-      <div class="tcats">
-        <div class="tpill a">${topic.categoryA}</div>
-        <div class="tpill b">${topic.categoryB}</div>
-      </div>
-      <div class="tbar"><i style="width:${(completedCount / CONFIG.sessionsPerTopic) * 100}%"></i></div>
-    </div>
-  `;
-  card.addEventListener('click', () => {
-    if (locked) {
-      showToast(`Already played today — resets in ${fmtCountdown(msUntilNextISTMidnight())}`);
-      return;
-    }
-    if (onOpen) onOpen();
-    startSession(topic.id, nextSessionNumberFor(topic));
-  });
-  return card;
-}
-
-function renderHome(){
-  renderScoreBar();
-  const list = document.getElementById('topicsList');
-  list.innerHTML = '';
-  S.deck.topics.forEach(topic => list.appendChild(buildTopicCardEl(topic)));
-}
-
-function renderScoreBar(){
-  const playedToday = topicsPlayedTodayCount();
-  const total = S.deck.topics.length;
-  const bonusEarnedToday = scoreMeta().bonusDates.includes(getISTDateString());
-
-  document.getElementById('escoreValue').textContent = computeEazeScore();
-  document.getElementById('escoreBarFill').style.width = `${Math.round((playedToday / total) * 100)}%`;
-  document.getElementById('escoreCaption').innerHTML = bonusEarnedToday
-    ? 'Full day complete — today’s bonus earned'
-    : `<span class="num">${playedToday}</span>/<span class="num">${total}</span> topics played today`;
-}
-
-// Keeps darkened cards live: once IST rolls past midnight, re-rendering
-// Home (still the visible screen, or the next time it becomes visible)
-// picks the date change up automatically via hasPlayedToday().
-setInterval(() => {
-  if (document.getElementById('home').classList.contains('on')) renderHome();
-}, 60_000);
-
-// ── IN-GAME TOPIC SWITCHER ────────────────────────────────────────
-function openSwitchSheet(){
-  const list = document.getElementById('switchList');
-  list.innerHTML = '';
-  S.deck.topics
-    .filter(topic => topic.id !== S.run.topicId)
-    .forEach(topic => {
-      list.appendChild(buildTopicCardEl(topic, {
-        onOpen: () => document.getElementById('switchSheet').classList.remove('on'),
-      }));
-    });
-  document.getElementById('switchSheet').classList.add('on');
-}
-document.getElementById('gTitle').addEventListener('click', openSwitchSheet);
-document.getElementById('switchCloseBtn').addEventListener('click', () => {
-  document.getElementById('switchSheet').classList.remove('on');
-});
-document.getElementById('shuffleBtn').addEventListener('click', () => {
-  const topic = pickRandomTopic(S.run.topicId);
-  if (!topic) {
-    showToast('No other topics available right now — check back tomorrow');
+  if (mobile === CONFIG.scenarioTestNumber) {
+    showScreen('home');
+    showScenarioModal();
     return;
   }
-  document.getElementById('switchSheet').classList.remove('on');
-  startSession(topic.id, nextSessionNumberFor(topic));
+  await enterHome();
+}
+
+// The header's own "Log out" button is gone (see the Terms and Conditions
+// link at the bottom of Home instead) — logout() is still reachable through
+// the tester bar's "Exit" button (see below), same as eaze-checkin.
+
+// ── TESTER MODE UI ────────────────────────────────────────────────
+function renderTesterBar(){
+  const bar = document.getElementById('testerBar');
+  if (!S.scenarioMode) { bar.classList.remove('on'); return; }
+  document.getElementById('testerBarLabel').textContent = `Previewing: ${SCENARIOS[S.scenarioMode].label}`;
+  bar.classList.add('on');
+}
+
+function showScenarioModal(){
+  const list = document.getElementById('scenarioList');
+  list.innerHTML = '';
+  Object.entries(SCENARIOS).forEach(([key, s]) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'scn-option';
+    btn.innerHTML = `<span class="scn-option-label">${s.label}</span><span class="scn-option-desc">${s.desc}</span>`;
+    btn.addEventListener('click', () => applyScenario(key));
+    list.appendChild(btn);
+  });
+  document.getElementById('scenarioModal').classList.add('on');
+}
+
+async function applyScenario(key){
+  S.scenarioMode = key;
+  S.scenarioSim = scenarioState(key);
+  localStorage.setItem('eazeChoicesScenario', key);
+  document.getElementById('scenarioModal').classList.remove('on');
+  renderTesterBar();
+  await enterHome();
+}
+
+document.getElementById('testerChangeBtn').addEventListener('click', showScenarioModal);
+document.getElementById('testerExitBtn').addEventListener('click', logout);
+
+// ── HOME ──────────────────────────────────────────────────────────
+// The single screen post-login: lifetime EazeScore total, sessions-played
+// and day-streak stat boxes, and the one CTA that either starts/resumes
+// today's session or, once it's done, shows a darkened "come back later"
+// state (§7).
+let homeLockTimerId = null;
+
+async function renderHome(){
+  clearInterval(homeLockTimerId);
+  const eazeUserId = getMobile();
+
+  document.getElementById('homeScoreValue').textContent = '—';
+  document.getElementById('homeSessionCount').textContent = '—';
+  document.getElementById('streakText').textContent = 'Loading…';
+  setHomePlayLoading();
+
+  const [score, today] = await Promise.all([fetchScore(eazeUserId), fetchTodaySession(eazeUserId)]);
+  document.getElementById('homeScoreValue').textContent = score.totalScore || 0;
+  document.getElementById('homeSessionCount').textContent = score.sessionsCompleted || 0;
+  const streak = score.streak || 0;
+  document.getElementById('streakText').innerHTML = streak > 0
+    ? `<span class="num">${streak}</span> day streak`
+    : 'Start a streak today';
+  S.currentScore = score.totalScore || 0;
+  renderClaimCard(S.currentScore);
+  renderHomePlayState(today);
+}
+
+// Claim coins card — a live preview of the claim (see the claim modal for
+// the real submit), computed client-side with the exact same formula the
+// backend actually claims with (see computeCoinsClient).
+function renderClaimCard(totalScore){
+  const coins = computeCoinsClient(totalScore);
+  document.getElementById('claimCardValue').textContent = `${coins} coins`;
+  document.getElementById('claimCardCaption').textContent = totalScore > 0
+    ? `from ${totalScore} EazeScore available`
+    : 'Play a session to start earning EazeScore';
+}
+
+function setHomePlayLoading(){
+  const btn = document.getElementById('homePlayBtn');
+  btn.disabled = true;
+  btn.classList.remove('locked');
+  document.getElementById('homePlayCopy').innerHTML = `<span class="lifetime-banner-title">Loading…</span>`;
+}
+
+// CTA pill markup shared by both "not locked" states — same
+// eyebrow/title/cta-pill layout as eaze-checkin's own home-banner.
+function playCtaHtml(label){
+  return `<span class="lifetime-banner-cta">${label} ${svgIcon('back', 16)}</span>`;
+}
+
+function renderHomePlayState(today){
+  clearInterval(homeLockTimerId);
+  S.todaySession = today;
+  const btn = document.getElementById('homePlayBtn');
+  const copy = document.getElementById('homePlayCopy');
+
+  if (today.locked) {
+    btn.disabled = true;
+    btn.classList.add('locked');
+    let remaining = today.msUntilMidnightIST || 0;
+    const tick = () => {
+      copy.innerHTML = `
+        <span class="lifetime-banner-eyebrow">Session complete · streak safe</span>
+        <span class="lifetime-banner-title">You're all set for now</span>
+        <span class="lifetime-banner-countdown-label">New session in</span>
+        <span class="lifetime-banner-countdown">${remaining > 0 ? fmtCountdown(remaining) : 'unlocking soon'}</span>
+      `;
+    };
+    tick();
+    // Ticks down locally between page loads so the countdown doesn't just
+    // freeze at whatever value it had when Home was first rendered.
+    homeLockTimerId = setInterval(() => {
+      remaining = Math.max(0, remaining - 60_000);
+      tick();
+    }, 60_000);
+    return;
+  }
+
+  btn.disabled = false;
+  btn.classList.remove('locked');
+  const doneCount = (today.cardsCompletedToday || []).length;
+  const perSession = today.cardsPerSession || CONFIG.cardsPerSession;
+  if (doneCount > 0) {
+    copy.innerHTML = `
+      <span class="lifetime-banner-eyebrow">${doneCount} of ${perSession} done</span>
+      <span class="lifetime-banner-title">Continue <span class="lifetime-banner-accent">session ${today.sessionNumber}</span></span>
+      ${playCtaHtml('Resume session')}
+    `;
+  } else {
+    copy.innerHTML = `
+      <span class="lifetime-banner-eyebrow">Session open · keep your streak</span>
+      <span class="lifetime-banner-title">Ready for today's <span class="lifetime-banner-accent">session</span>?</span>
+      ${playCtaHtml(`Play session ${today.sessionNumber}`)}
+    `;
+  }
+}
+
+document.getElementById('homePlayBtn').addEventListener('click', () => {
+  if (!S.todaySession || S.todaySession.locked) return;
+  startSession(S.todaySession.sessionNumber, S.todaySession.cardsCompletedToday);
+});
+
+// ── HOME STAT-CARD INFO POPUPS ──────────────────────────────────────
+// Tapping EazeScore or Sessions completed opens a short explainer — context
+// for what the stat means, plus a shortcut into today's session, so tapping
+// either card is never a dead end.
+const HOME_INFO_CONTENT = {
+  score: {
+    title: 'EazeScore',
+    sub: 'Your current score, explained',
+    points: [
+      'Every card you engage with adds +2 to your EazeScore, right or wrong.',
+      'A session is 15 cards — 30 EazeScore if you finish the whole thing.',
+      'Claiming coins converts your full balance and resets it to 0 — see the claim card below.',
+    ],
+  },
+  sessions: {
+    title: 'Sessions completed',
+    sub: 'What counts as a session',
+    points: [
+      'A session is complete once all 15 of its cards are answered.',
+      'Sessions build your streak and your EazeScore together.',
+      'One session unlocks per day, resetting at midnight IST.',
+    ],
+  },
+};
+function showInfoModal(key){
+  const content = HOME_INFO_CONTENT[key];
+  document.getElementById('infoModalTitle').textContent = content.title;
+  document.getElementById('infoModalSub').textContent = content.sub;
+  const list = document.getElementById('infoModalList');
+  list.innerHTML = '';
+  content.points.forEach(point => {
+    const li = document.createElement('li');
+    li.textContent = point;
+    list.appendChild(li);
+  });
+  document.getElementById('infoModal').classList.add('on');
+}
+function closeInfoModal(){
+  document.getElementById('infoModal').classList.remove('on');
+}
+document.getElementById('scoreCard').addEventListener('click', () => showInfoModal('score'));
+document.getElementById('sessionsCard').addEventListener('click', () => showInfoModal('sessions'));
+document.getElementById('infoModalClose').addEventListener('click', closeInfoModal);
+document.getElementById('infoModal').addEventListener('click', (e) => { if (e.target.id === 'infoModal') closeInfoModal(); });
+document.getElementById('infoModalCta').addEventListener('click', () => {
+  closeInfoModal();
+  document.getElementById('homePlayBtn').click();
+});
+
+// ── CLAIM COINS ───────────────────────────────────────────────────
+const CONFETTI_COLORS = ['var(--primary-500)', 'var(--primary-200)', 'var(--success-500)', 'var(--secondary-200)', 'var(--white-100)'];
+const CONFETTI_PIECE_COUNT = 26;
+function spawnConfetti(containerId){
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  const frag = document.createDocumentFragment();
+  for (let i = 0; i < CONFETTI_PIECE_COUNT; i++) {
+    const piece = document.createElement('span');
+    piece.className = 'confetti-piece';
+    piece.style.setProperty('--x', `${Math.round(Math.random() * 100)}%`);
+    piece.style.setProperty('--drift', `${Math.round((Math.random() - 0.5) * 160)}px`);
+    piece.style.setProperty('--rot', `${Math.round(Math.random() * 540)}deg`);
+    piece.style.setProperty('--dur', `${(1.1 + Math.random() * 0.9).toFixed(2)}s`);
+    piece.style.setProperty('--delay', `${(Math.random() * 0.35).toFixed(2)}s`);
+    piece.style.setProperty('--piece-color', CONFETTI_COLORS[i % CONFETTI_COLORS.length]);
+    frag.appendChild(piece);
+  }
+  container.appendChild(frag);
+}
+
+function openClaimModal(){
+  document.getElementById('claimExplainer').hidden = false;
+  document.getElementById('claimResult').hidden = true;
+  const score = S.currentScore || 0;
+  const coins = computeCoinsClient(score);
+  document.getElementById('claimScoreValue').textContent = score;
+  document.getElementById('claimCoinsValue').textContent = `${coins} coins`;
+  const btn = document.getElementById('claimSubmitBtn');
+  btn.disabled = score <= 0;
+  btn.textContent = score > 0 ? `Claim ${coins} coins` : 'Nothing to claim yet';
+  document.getElementById('claimModal').classList.add('on');
+}
+function closeClaimModal(){
+  document.getElementById('claimModal').classList.remove('on');
+}
+function showClaimResult(ok, coins, message){
+  document.getElementById('claimExplainer').hidden = true;
+  document.getElementById('claimResult').hidden = false;
+  document.getElementById('claimResultTitle').textContent = ok ? 'Coins claimed' : 'Claim recorded';
+  document.getElementById('claimResultCoins').textContent = ok ? `You've received ${coins} coins` : `${coins} coins requested`;
+  document.getElementById('claimResultMsg').textContent = message;
+  if (ok) spawnConfetti('claimConfetti');
+}
+
+document.getElementById('claimCard').addEventListener('click', openClaimModal);
+document.getElementById('claimModalClose').addEventListener('click', closeClaimModal);
+document.getElementById('claimModal').addEventListener('click', (e) => { if (e.target.id === 'claimModal') closeClaimModal(); });
+document.getElementById('claimDoneBtn').addEventListener('click', async () => {
+  closeClaimModal();
+  await renderHome();
+});
+
+document.getElementById('claimSubmitBtn').addEventListener('click', async () => {
+  const score = S.currentScore || 0;
+  if (score <= 0) return;
+  const btn = document.getElementById('claimSubmitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Claiming…';
+
+  // Tester Mode never touches the real backend — the claim is simulated
+  // locally, exactly like every other Tester Mode interaction.
+  if (S.scenarioMode) {
+    const coins = computeCoinsClient(score);
+    S.scenarioSim.score.totalScore = 0;
+    showClaimResult(true, coins, 'Simulated claim (tester mode) — no real coins were sent.');
+    // Refreshes the whole dashboard (EazeScore card, claim card) right away —
+    // not just when the modal happens to close via "Done" — so the lifetime
+    // total never sits stale behind a claim result the user is still reading.
+    await renderHome();
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/score/claim', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        eazeUserId: getMobile(),
+        // Only present for banner-entered users — see claim_choices.
+        userId: getUserId() || undefined,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Claim failed');
+    const ok = data.status === 'mock_success' || data.status === 'submitted';
+    showClaimResult(
+      ok,
+      data.coinsRequested,
+      ok
+        ? 'Your EazeScore has been converted and reset to 0.'
+        : 'Your EazeScore was reset to 0, but the coins couldn\'t be delivered yet — this has been flagged for follow-up.',
+    );
+    // Refreshes the whole dashboard (EazeScore card, claim card) right away —
+    // not just when the modal happens to close via "Done" — so the lifetime
+    // total never sits stale behind a claim result the user is still reading.
+    await renderHome();
+  } catch (err) {
+    showClaimResult(false, computeCoinsClient(score), err.message || 'Something went wrong and your claim wasn\'t recorded. Please try again.');
+    btn.disabled = false;
+    btn.textContent = `Claim ${computeCoinsClient(score)} coins`;
+  }
+});
+
+// ── TERMS AND CONDITIONS ─────────────────────────────────────────────
+const TERMS_SECTIONS = [
+  { title: 'Eligibility', body: 'This feature is available to registered eaze users aged 18 or older. By playing Eaze - Choices, you accept these Terms. eaze may suspend or restrict access for users who do not meet these requirements.' },
+  { title: 'Sessions & EazeScore', body: 'Each card you engage with in a session adds points to your EazeScore, regardless of whether your answer is correct. A session is 15 cards, and one session unlocks per calendar day in Indian Standard Time (IST), regardless of your device’s local time zone. New users receive a one-time welcome bonus of 20 EazeScore points. EazeScore and streaks are non-transferable between accounts and have no cash value in themselves.' },
+  { title: 'Coin Conversion & Claims', body: 'EazeScore may be converted into coins at eaze’s published conversion rate, which may apply different rates at different EazeScore thresholds and is subject to change on notice. Submitting a claim converts your entire available EazeScore balance to coins and resets your balance to zero — partial claims are not supported. Claimed coins are submitted for transfer to your eaze wallet and are subject to processing by eaze’s payment systems; submission of a claim does not guarantee instant crediting, and coins may remain pending until processing completes.' },
+  { title: 'Verification & Anti-Fraud Checks', body: 'eaze may require identity or account verification before processing a claim, particularly where a claim is unusually large or flagged by fraud-prevention systems. eaze may delay, decline, or reverse a claim pending verification. Decisions made under this section are final.' },
+  { title: 'Fair Play', body: 'Any attempt to manipulate session results, circumvent the one-session-a-day limit, use multiple or automated accounts, or exploit vulnerabilities in the scoring or coin systems will result in immediate suspension of your account and forfeiture of any accrued EazeScore, coins, or pending claims.' },
+  { title: 'Limitation of Liability', body: 'eaze is not liable for delays, interruptions, or failures in EazeScore calculation or coin crediting arising from technical issues, third-party payment or wallet processing systems, or other causes beyond eaze’s reasonable control.' },
+  { title: 'Modifications', body: 'eaze reserves the right to modify, suspend, or terminate Eaze - Choices, its EazeScore mechanics, or coin conversion rates at any time, with or without notice.' },
+];
+function renderTerms(){
+  document.getElementById('termsList').innerHTML = `
+    <div class="terms-card">
+      ${TERMS_SECTIONS.map((s, i) => `
+        <div class="terms-section">
+          <h2 class="terms-heading">${i + 1}. ${s.title}</h2>
+          <p class="terms-body">${s.body}</p>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+document.getElementById('termsBtn').addEventListener('click', () => {
+  renderTerms();
+  showScreen('terms');
+});
+document.getElementById('termsBackBtn').addEventListener('click', () => {
+  showScreen('home');
 });
 
 // ── GAME SETUP ────────────────────────────────────────────────────
-function startSession(topicId, sessionNumber){
+// cardsCompletedToday (from GET /api/sessions/today) lists cards already
+// answered today, by number + correctness — used to pre-mark those dots and
+// skip straight to the first unanswered card, so resuming a session (after
+// a logout, a refresh, or coming back later the same day) never re-shows a
+// card that's already been scored.
+function startSession(sessionNumber, cardsCompletedToday){
   // A session in flight (e.g. mid swipe-animation) has pending setTimeouts
   // that reference the OLD run object. Clear them before discarding it —
   // otherwise a late timer can fire after this new run has replaced it and
   // apply a stale card's result/explanation on top of the new session.
   clearRunTimers(S.run);
+  if (S.run) clearInterval(S.run.timerId);
 
-  const topic = S.deck.topics.find(t => t.id === topicId);
-  const session = topic.sessions.find(s => s.number === sessionNumber);
+  const session = S.deck.sessions.find(s => s.number === sessionNumber);
+  const doneMap = new Map((cardsCompletedToday || []).map(c => [c.cardNumber, c.isCorrect]));
+  const cards = session.cards.map((c, i) => {
+    const cardNumber = i + 1;
+    const done = doneMap.has(cardNumber);
+    return { ...c, cardNumber, _result: done ? (doneMap.get(cardNumber) ? 'ok' : 'no') : null };
+  });
+  const startIndex = cards.findIndex(c => c._result == null);
 
   S.run = {
-    topicId, topic, sessionNumber, session,
-    cards: session.cards,
-    index: 0,
-    correct: 0,
+    sessionNumber, session, cards,
+    index: startIndex === -1 ? cards.length : startIndex,
+    earnedThisVisit: 0,
     streak: 0,
     bestStreak: 0,
     startedAt: Date.now(),
     timerId: null,
     pendingTimeouts: [],
-    resolved: false,
+    closeLogged: false,
   };
 
-  document.getElementById('gTitleText').textContent = topic.name;
-  document.getElementById('gSession').textContent = `Session ${sessionNumber} · ${session.title}`;
-  document.getElementById('btnA').textContent = topic.categoryA;
-  document.getElementById('btnB').textContent = topic.categoryB;
-
+  document.getElementById('gTitleText').textContent = `Session ${sessionNumber}`;
   renderDots();
-  renderCard();
-  startTimer();
   showScreen('game');
-}
-
-function restartSession(){
-  clearInterval(S.run.timerId);
-  document.getElementById('coachSheet').classList.remove('on');
-  startSession(S.run.topicId, S.run.sessionNumber);
+  startTimer();
+  if (S.run.index >= cards.length) {
+    // Every card in this session was already answered today (e.g. resuming
+    // right after finishing) — go straight to the summary instead of
+    // rendering an empty stack.
+    endSession();
+    return;
+  }
+  renderCard();
 }
 
 function startTimer(){
@@ -1100,6 +1527,7 @@ function renderDots(){
     else if (i === S.run.index) d.classList.add('now');
     wrap.appendChild(d);
   });
+  document.getElementById('gCardLbl').textContent = `Card ${Math.min(S.run.index + 1, S.run.cards.length)} of ${S.run.cards.length}`;
 }
 
 // ── CARD RENDER + SWIPE ───────────────────────────────────────────
@@ -1140,10 +1568,9 @@ function renderCard(){
   top.className = 'card';
   top.id = 'topCard';
   top.innerHTML = `
-    <div class="cicon">${svgIcon(CONFIG.topicIcons[S.run.topicId], 22)}</div>
     <div class="cprompt">${card.prompt}</div>
-    <div class="hint left" id="hintA">${S.run.topic.categoryA}</div>
-    <div class="hint right" id="hintB">${S.run.topic.categoryB}</div>
+    <div class="hint left" id="hintA">${card.optionA}</div>
+    <div class="hint right" id="hintB">${card.optionB}</div>
     <div class="fbanner" id="fbanner"><div class="fic">${svgIcon('check', 12)}</div><div class="ftxt" id="fbannerTxt"></div></div>
     <div class="combo" id="combo"></div>
   `;
@@ -1151,6 +1578,11 @@ function renderCard(){
 
   attachDrag(top, card);
 
+  // Each card carries its own optionA/optionB (no fixed per-topic category
+  // pair anymore), so the buttons are relabeled on every card, not once per
+  // session.
+  document.getElementById('btnA').textContent = card.optionA;
+  document.getElementById('btnB').textContent = card.optionB;
   document.getElementById('btnA').disabled = false;
   document.getElementById('btnB').disabled = false;
 }
@@ -1265,11 +1697,10 @@ function commitSwipe(direction, el){
 }
 
 function handleAnswer(direction, card, run){
-  const isCorrect = direction === card.correctCategory;
+  const isCorrect = direction === card.correctOption;
   card._result = isCorrect ? 'ok' : 'no';
 
   if (isCorrect) {
-    run.correct++;
     run.streak++;
     run.bestStreak = Math.max(run.bestStreak, run.streak);
   } else {
@@ -1277,9 +1708,14 @@ function handleAnswer(direction, card, run){
   }
   renderDots();
 
+  // Fire-and-forget, immediately per card (§3) — not batched at session end.
+  // A failed/offline call just means this card's point doesn't land; play
+  // itself never blocks on the network.
+  submitCardResult(run, card);
+
   if (isCorrect) {
     const banner = document.getElementById('fbanner');
-    document.getElementById('fbannerTxt').textContent = card.explanation;
+    document.getElementById('fbannerTxt').textContent = 'Nice — that tracks.';
     banner.classList.add('show');
     if (run.streak >= 2) {
       const combo = document.getElementById('combo');
@@ -1295,6 +1731,44 @@ function handleAnswer(direction, card, run){
     document.getElementById('coachBody').textContent = card.explanation;
     document.getElementById('coachSheet').classList.add('on');
   }
+}
+
+function submitCardResult(run, card){
+  const isCorrect = card._result === 'ok';
+  if (S.scenarioMode) {
+    // Same dedup rule as the real backend (one point per card per day) —
+    // applied here in-memory since Tester Mode never calls the API.
+    const sim = S.scenarioSim.today;
+    if (sim.cardsCompletedToday.some(c => c.cardNumber === card.cardNumber)) return;
+    sim.cardsCompletedToday.push({ cardNumber: card.cardNumber, isCorrect });
+    S.scenarioSim.score.totalScore += 1;
+    run.earnedThisVisit += 1;
+    // Mirrors the real backend's derived fields: locked flips once all 15
+    // are in, and that now counts as one more completed (streak-extending)
+    // day — recomputed here rather than only at scenarioState() build time,
+    // since a scenario can go from unlocked to locked mid-play.
+    if (!sim.locked && sim.cardsCompletedToday.length >= sim.cardsPerSession) {
+      sim.locked = true;
+      sim.msUntilMidnightIST = msUntilNextISTMidnightLocal();
+      S.scenarioSim.score.sessionsCompleted += 1;
+      S.scenarioSim.score.streak += 1;
+    }
+    return;
+  }
+  fetch('/api/cards/complete', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      eazeUserId: getMobile(),
+      sessionNumber: run.sessionNumber,
+      cardNumber: card.cardNumber,
+      isCorrect,
+      // Only present for banner-entered users — see session_logs_choices.
+      userId: getUserId() || undefined,
+    }),
+  }).then(res => res.json()).then(data => {
+    if (S.run === run && data.scoreEvent) run.earnedThisVisit += data.scoreEvent.points;
+  }).catch(() => {});
 }
 
 document.getElementById('gotItBtn').addEventListener('click', () => {
@@ -1324,96 +1798,58 @@ function nextCard(){
 // ── LEVEL COMPLETE ────────────────────────────────────────────────
 function endSession(){
   clearInterval(S.run.timerId);
-  const { topicId, sessionNumber, correct, cards, bestStreak, startedAt } = S.run;
+  recordOpenSessionClose(S.run);
+  showSessionSummary(S.run, true);
+}
+
+// Shared by the natural end-of-session path and an early Back-press —
+// same popup either way, just swapped copy. Deliberately no correct/wrong
+// ratio anywhere here — the headline stat is purely how many cards were
+// attempted, not how well the user scored on them.
+function showSessionSummary(run, completed){
+  const { cards, bestStreak, startedAt, earnedThisVisit } = run;
   const total = cards.length;
+  const attempted = cards.filter(c => c._result != null).length;
   const elapsed = Date.now() - startedAt;
 
-  const prog = topicProgress(topicId);
-  prog.unlocked = Math.max(prog.unlocked, Math.min(sessionNumber + 1, CONFIG.sessionsPerTopic + 1));
-  const prevBest = prog.best[sessionNumber];
-  if (!prevBest || correct > prevBest.correct) {
-    prog.best[sessionNumber] = { correct, total };
-  }
-  // One session per category per day — this topic is now locked until IST midnight.
-  prog.lastPlayedDateIST = getISTDateString();
-  saveProgress();
-  const bonusJustAwarded = checkAndAwardDailyBonus();
-  reportSessionResult({ topicId, sessionNumber, correct, total, bestStreak, elapsed });
-
-  const accuracy = Math.round((correct / total) * 100);
-  document.getElementById('lScore').textContent = `${correct}/${total}`;
-  document.getElementById('lMsg').textContent = `${messageFor(accuracy)} · +${CONFIG.pointsPerSession} EazeScore`;
+  document.getElementById('lEyebrow').textContent = completed ? 'Session complete' : 'Session paused';
+  document.getElementById('lScore').textContent = `${attempted}/${total}`;
+  document.getElementById('lMsg').textContent = completed
+    ? `Cards attempted · +${earnedThisVisit} EazeScore`
+    : `Pick up right where you left off · +${earnedThisVisit} EazeScore`;
   // Best streak is only worth its own line when it's actually notable —
-  // otherwise it folds away and the accuracy/time meta line does the work.
+  // otherwise it folds away and the time meta line does the work.
   const streakEl = document.getElementById('lStreak');
   streakEl.hidden = bestStreak < 2;
   streakEl.textContent = `Best streak: ${bestStreak} in a row`;
-  document.getElementById('lMeta').textContent = `${accuracy}% accuracy · ${fmtTime(elapsed)}`;
-  if (bonusJustAwarded) {
-    showToast(`All 6 topics today — +${CONFIG.allTopicsDailyBonus} EazeScore bonus`, 3200);
-  }
-
-  // Same-topic continuation is blocked now (today's play is used up), so the
-  // primary action always routes to topic selection rather than auto-advancing.
-  const nextBtn = document.getElementById('lNextBtn');
-  nextBtn.textContent = sessionNumber >= CONFIG.sessionsPerTopic
-    ? 'Topic complete — choose another'
-    : 'Choose another topic for today';
+  document.getElementById('lMeta').textContent = fmtTime(elapsed);
 
   document.getElementById('levelBk').classList.add('on');
 }
 
-// Fire-and-forget — the game already saved progress to localStorage, so a
-// failed or skipped network call (no backend, offline, DB not configured)
-// never blocks play.
-function reportSessionResult({ topicId, sessionNumber, correct, total, bestStreak, elapsed }){
-  fetch('/api/sessions/complete', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      // The mobile number is the only identity this app has — login is
-      // mandatory before a session can ever complete, so it's always
-      // available here. It's also what lets a session's score event land
-      // in the shared EazeScore ledger under the same eaze_user_id
-      // eaze-checkin reports into.
-      eazeUserId: getMobile(),
-      topicId,
-      sessionNumber,
-      correctCount: correct,
-      totalCount: total,
-      bestStreak,
-      durationMs: elapsed,
-    }),
-  }).catch(() => {});
-}
-
-function messageFor(accuracy){
-  if (accuracy === 100) return 'Perfect read — every one of them.';
-  if (accuracy >= 80) return 'Strong instincts on this one.';
-  if (accuracy >= 50) return 'Solid — a few worth a second look.';
-  return 'Worth another pass — the patterns get clearer.';
-}
-
-document.getElementById('lNextBtn').addEventListener('click', () => {
+document.getElementById('lNextBtn').addEventListener('click', async () => {
   document.getElementById('levelBk').classList.remove('on');
-  renderHome();
   showScreen('home');
+  await renderHome();
 });
 
 // ── TOPBAR ────────────────────────────────────────────────────────
-document.getElementById('backBtn').addEventListener('click', () => {
+document.getElementById('backBtn').addEventListener('click', async () => {
+  document.getElementById('coachSheet').classList.remove('on');
   if (S.run) {
+    const incomplete = S.run.index < S.run.cards.length;
+    const attemptedAny = S.run.cards.some(c => c._result != null);
     clearInterval(S.run.timerId);
     clearRunTimers(S.run);
+    recordOpenSessionClose(S.run);
+    if (incomplete && attemptedAny) {
+      showSessionSummary(S.run, false);
+      return;
+    }
   }
-  document.getElementById('coachSheet').classList.remove('on');
-  document.getElementById('switchSheet').classList.remove('on');
   document.getElementById('levelBk').classList.remove('on');
-  renderHome();
   showScreen('home');
-});
-document.getElementById('resetBtn').addEventListener('click', () => {
-  restartSession();
+  await renderHome();
 });
 
 boot();

@@ -3,8 +3,12 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { closePool, healthCheck } from './db/client.js';
-import { recordSessionResult } from './repositories/session-results.js';
-import { recordScoreEvent, getScoreForUser, ensureWelcomeBonus, SOURCE_APPS } from './repositories/score-events.js';
+import { recordCardResult, getTodaySessionState, getCompletedSessionsCount, getStreak, TOTAL_SESSIONS, CARDS_PER_SESSION } from './repositories/card-results.js';
+import { recordScoreEvent, getScoreForUser, ensureWelcomeBonus, claimScore, SOURCE_APPS } from './repositories/score-events.js';
+import { transferCoins } from './services/coin-transfer.js';
+import { recordFirstLogin } from './repositories/login-logs.js';
+import { recordOpenSessionClose } from './repositories/open-session-logs.js';
+import { recordClaim } from './repositories/claim-choices.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
@@ -41,22 +45,44 @@ app.get('/api/content', (_req, res) => {
   res.json(cardDeck);
 });
 
-app.post('/api/sessions/complete', async (req, res) => {
-  try {
-    const { eazeUserId, topicId, sessionNumber, correctCount, totalCount, bestStreak, durationMs } = req.body;
+// One global session per day, 20 sessions x 15 cards, no topics — see
+// card-results.js for how "today's session" is derived.
 
-    if (!eazeUserId || !topicId || !sessionNumber || correctCount == null || totalCount == null) {
-      return res.status(400).json({ error: 'eazeUserId, topicId, sessionNumber, correctCount and totalCount are required' });
+// Call before showing a session, so the frontend knows which session number
+// to load, which of its cards are already answered today (resume), and
+// whether today is already used up (darkened/locked state).
+app.get('/api/sessions/today/:eazeUserId', async (req, res) => {
+  try {
+    const { eazeUserId } = req.params;
+    if (!eazeUserId) {
+      return res.status(400).json({ error: 'eazeUserId is required' });
+    }
+    const result = await getTodaySessionState(eazeUserId, {
+      totalSessions: TOTAL_SESSIONS,
+      cardsPerSession: CARDS_PER_SESSION,
+    });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/cards/complete', async (req, res) => {
+  try {
+    const { eazeUserId, sessionNumber, cardNumber, isCorrect, userId } = req.body;
+
+    if (!eazeUserId || sessionNumber == null || cardNumber == null || typeof isCorrect !== 'boolean') {
+      return res.status(400).json({ error: 'eazeUserId, sessionNumber, cardNumber and isCorrect (boolean) are required' });
     }
 
-    const result = await recordSessionResult({
-      eazeUserId, topicId,
+    const result = await recordCardResult({
+      eazeUserId,
       sessionNumber: Number(sessionNumber),
-      correctCount: Number(correctCount),
-      totalCount: Number(totalCount),
-      bestStreak: Number(bestStreak || 0),
-      durationMs: durationMs != null ? Number(durationMs) : null,
-      totalTopicCount: cardDeck.topics.length,
+      cardNumber: Number(cardNumber),
+      isCorrect,
+      // Optional — only present for banner-entered (real identity) users;
+      // see recordCardResult's session_logs_choices hook.
+      userId: typeof userId === 'string' ? userId : undefined,
     });
 
     res.status(201).json(result);
@@ -107,14 +133,109 @@ app.post('/api/score/welcome-bonus', async (req, res) => {
   }
 });
 
+// First-login-only tracking (login_logs_choices) — safe to call on every
+// login, idempotent (see recordFirstLogin). userId is the real Eaze
+// platform user id, resolved by the caller — not the same value as
+// eazeUserId (the phone number) used everywhere else in this app.
+app.post('/api/login-logs/first-login', async (req, res) => {
+  try {
+    const { userId, phoneNumber } = req.body;
+    if (!userId || typeof userId !== 'string') {
+      return res.status(400).json({ error: 'userId is required' });
+    }
+    if (!phoneNumber || typeof phoneNumber !== 'string') {
+      return res.status(400).json({ error: 'phoneNumber is required' });
+    }
+    const result = await recordFirstLogin({ userId, phoneNumber });
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Fired whenever a session closes, finished or abandoned early (see
+// open_session_logs) — the frontend computes the final tally itself (it
+// already has the per-card results in memory), no server-side derivation.
+app.post('/api/open-session-logs', async (req, res) => {
+  try {
+    const { userId, phoneNumber, cardsEngaged, wrongSelections } = req.body;
+    if (!userId || typeof userId !== 'string') {
+      return res.status(400).json({ error: 'userId is required' });
+    }
+    if (!phoneNumber || typeof phoneNumber !== 'string') {
+      return res.status(400).json({ error: 'phoneNumber is required' });
+    }
+    if (!Number.isInteger(cardsEngaged) || !Number.isInteger(wrongSelections)) {
+      return res.status(400).json({ error: 'cardsEngaged and wrongSelections must be integers' });
+    }
+    const result = await recordOpenSessionClose({ userId, phoneNumber, cardsEngaged, wrongSelections });
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Always empties the full available balance (see claimScore) — the ledger
+// deduction lands before the transfer is even attempted, so a failed
+// transfer never leaves a user able to claim the same points twice.
+app.post('/api/score/claim', async (req, res) => {
+  try {
+    const { eazeUserId, userId } = req.body;
+    if (!eazeUserId || typeof eazeUserId !== 'string') {
+      return res.status(400).json({ error: 'eazeUserId is required' });
+    }
+
+    const claim = await claimScore(eazeUserId);
+    if (!claim.persisted) {
+      return res.status(503).json({ error: 'DATABASE_URL is not configured' });
+    }
+    if (!claim.claimed) {
+      return res.status(400).json({ error: 'No EazeScore available to claim' });
+    }
+
+    // claim_choices only ever records banner-entered (real userId) users —
+    // never fabricated for the typed-phone dev login path — and a logging
+    // failure here must never take down the claim/transfer that already
+    // succeeded.
+    if (userId) {
+      try {
+        await recordClaim({ userId, phoneNumber: eazeUserId, eazescoreClaimed: claim.available });
+      } catch (err) {
+        console.error('claim_choices logging failed', err);
+      }
+    }
+
+    let transfer;
+    try {
+      transfer = await transferCoins(eazeUserId, claim.coins);
+    } catch (err) {
+      transfer = { status: 'failed_provider', providerRef: null, notes: err.message };
+    }
+
+    res.status(201).json({
+      eazeScoreClaimed: claim.available,
+      coinsRequested: claim.coins,
+      status: transfer.status,
+      providerRef: transfer.providerRef,
+      notes: transfer.notes,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.get('/api/score/:eazeUserId', async (req, res) => {
   try {
     const { eazeUserId } = req.params;
     if (!eazeUserId) {
       return res.status(400).json({ error: 'eazeUserId is required' });
     }
-    const result = await getScoreForUser(eazeUserId);
-    res.json(result);
+    const [score, sessionsCompleted, streak] = await Promise.all([
+      getScoreForUser(eazeUserId),
+      getCompletedSessionsCount(eazeUserId),
+      getStreak(eazeUserId),
+    ]);
+    res.json({ ...score, sessionsCompleted, streak });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

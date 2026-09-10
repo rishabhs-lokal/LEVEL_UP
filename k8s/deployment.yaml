@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: eaze-level-up
+  namespace: eaze
   labels:
     app: eaze-level-up
 spec:
@@ -22,6 +23,10 @@ spec:
       # Ensures the one-off migration Job has already run to completion for
       # this release before pods start — apply migration-job.yaml and wait
       # for it in your deploy pipeline before applying this Deployment.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
       containers:
         - name: eaze-level-up
           image: ghcr.io/OWNER/eaze-level-up:latest   # replace OWNER, pin to :sha-<commit> for real rollouts

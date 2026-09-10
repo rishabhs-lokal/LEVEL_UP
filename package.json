@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "eaze Level Up — a this-or-that swipe card game for eaze, mental health scenario judgement across 6 topics",
+  "description": "Eaze - Choices — a this-or-that swipe card game for eaze, 20 sessions of 15 quick-play cards",
   "engines": {
     "node": ">=24"
   },
@@ -15,7 +15,7 @@
     "migrate:create": "node-pg-migrate create",
     "test": "node --test tests/*.test.js",
     "db:test": "node scripts/test-connection.js",
-    "content:parse": "python3 scripts/parse-content.py"
+    "content:parse": "python3 scripts/parse-quickplay-content.py"
   },
   "dependencies": {
     "express": "^4.21.2",

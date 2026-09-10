@@ -1,18 +1,17 @@
-# One-time migration runner. This is the standard Kubernetes pattern for
-# "run this exactly once per deploy, not once per pod": a Job, applied and
-# waited on BEFORE the Deployment rolls out new pods.
+# Runs `npm run migrate:up` (node-pg-migrate) to completion, then exits — the
+# Kubernetes-native way to run a task exactly once per deploy, ahead of the
+# Deployment rollout.
 #
-# `metadata.name` is versioned so re-applying for a new release creates a new
-# Job object instead of silently no-op'ing against a completed one. Swap
-# <RELEASE> for a real value in CI (git sha, build number, etc).
-#
+# Jobs are immutable once created, so a fresh deploy must delete the previous
+# run first (see scripts/deploy.sh):
+#   kubectl delete job/eaze-level-up-migrate -n eaze --ignore-not-found
 #   kubectl apply -f k8s/migration-job.yaml
-#   kubectl wait --for=condition=complete --timeout=120s job/eaze-level-up-migrate-<RELEASE>
-#   kubectl apply -f k8s/deployment.yaml -f k8s/service.yaml
+#   kubectl wait --for=condition=complete job/eaze-level-up-migrate -n eaze --timeout=120s
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: eaze-level-up-migrate-<RELEASE>
+  name: eaze-level-up-migrate
+  namespace: eaze
   labels:
     app: eaze-level-up
     role: migrate
@@ -26,12 +25,24 @@ spec:
         role: migrate
     spec:
       restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
       containers:
         - name: migrate
           image: ghcr.io/OWNER/eaze-level-up:latest   # must match the image being deployed
+          imagePullPolicy: IfNotPresent
           command: ["npm", "run", "migrate:up"]
           envFrom:
             - configMapRef:
                 name: eaze-level-up-config
             - secretRef:
                 name: eaze-level-up-secrets
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
