@@ -29,6 +29,7 @@ from .repositories.score_events import (
     record_score_event,
 )
 from .services.coin_transfer import transfer_coins
+from .services.redash_client import lookup_phone_number
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 PUBLIC_DIR = BASE_DIR / "public"
@@ -83,6 +84,22 @@ async def ready():
 @app.get("/api/content")
 async def get_content():
     return ok(CARD_DECK)
+
+
+# Fallback for banner entries that hand over user_id but no phone (see
+# boot()'s ?user_id=&phone= check in the frontend) — resolves it via Redash
+# query 20342 (see services/redash_client.py). Never blocks login on
+# failure: phoneNumber is only a logging attribute here, not an identity —
+# score_events/card_results already key on user_id regardless.
+@app.get("/api/users/{user_id}/phone")
+async def user_phone(user_id: str):
+    if not user_id:
+        return error(400, "userId is required")
+    try:
+        phone_number = await lookup_phone_number(user_id)
+        return ok({"phoneNumber": phone_number})
+    except Exception as err:  # noqa: BLE001
+        return error(500, str(err))
 
 
 # One global session per day, 20 sessions x 15 cards, no topics — see

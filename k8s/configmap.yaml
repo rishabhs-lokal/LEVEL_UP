@@ -9,3 +9,6 @@ data:
   DB_SSL: "false"
   DB_POOL_MAX: "10"
   EAZE_COINS_API_URL: "https://api.eazeapp.com/payments/free-coins/upload/"
+  REDASH_BASE_URL: "https://analytics.getlokalapp.com"
+  REDASH_PHONE_QUERY_ID: "20342"
+  REDASH_PHONE_COLUMN: "mobile_no"

@@ -40,6 +40,12 @@ services:
       # left unset here, claims run in mock mode (see app/services/coin_transfer.py).
       EAZE_COINS_AUTH_KEY: ${EAZE_COINS_AUTH_KEY:-}
       EAZE_COINS_API_URL: ${EAZE_COINS_API_URL:-https://api.eazeapp.com/payments/free-coins/upload/}
+      # Phone-number fallback lookup (see app/services/redash_client.py) —
+      # left unset here, the lookup returns nothing and login proceeds anyway.
+      REDASH_API_KEY: ${REDASH_API_KEY:-}
+      REDASH_BASE_URL: ${REDASH_BASE_URL:-https://analytics.getlokalapp.com}
+      REDASH_PHONE_QUERY_ID: ${REDASH_PHONE_QUERY_ID:-20342}
+      REDASH_PHONE_COLUMN: ${REDASH_PHONE_COLUMN:-mobile_no}
     volumes:
       # Local-dev convenience: edit public/ or content/ on the host and see it
       # immediately, no rebuild. Not present in the k8s deployment — there the

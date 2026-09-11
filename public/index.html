@@ -925,6 +925,21 @@ function getEazeUserId(){
   return getUserId() || getMobile();
 }
 
+// Only called from boot() when a banner link supplies user_id but no
+// phone — looks it up server-side (Redash-backed, see
+// services/redash_client.py) rather than blocking entry on it. Fails
+// closed to null on any error/timeout so a slow or unavailable lookup
+// never hangs login.
+async function resolvePhoneNumber(userId){
+  try {
+    const res = await fetch(`/api/users/${encodeURIComponent(userId)}/phone`);
+    const data = await res.json();
+    return data.phoneNumber || null;
+  } catch (e) {
+    return null;
+  }
+}
+
 // Fire-and-forget — safe to call every time (idempotent server-side, see
 // login_logs_choices' unique user_id constraint), never blocks entry.
 function recordFirstLogin(userId, phoneNumber){
@@ -1013,16 +1028,21 @@ async function boot(){
 
   // Banner entry — the real production path (per the actual deployment: no
   // typed-phone login screen there at all). The host app's banner link
-  // hands over both the real Eaze user id and the phone number as URL
+  // hands over the real Eaze user id and, usually, the phone number as URL
   // params; only honored when there's no saved session yet, so a bookmarked/
-  // revisited banner URL doesn't reprocess on every later visit.
+  // revisited banner URL doesn't reprocess on every later visit. user_id
+  // alone is enough to log in — phone is only ever a logging attribute
+  // (never the identity score_events/card_results key on), so a banner
+  // link missing ?phone= falls back to a server-side lookup instead of
+  // blocking entry.
   const bannerParams = new URLSearchParams(window.location.search);
   const bannerUserId = bannerParams.get('user_id');
   const bannerPhone = bannerParams.get('phone');
-  if (bannerUserId && bannerPhone && !getMobile()) {
+  if (bannerUserId && !getMobile()) {
+    const phone = bannerPhone || await resolvePhoneNumber(bannerUserId) || bannerUserId;
     setUserId(bannerUserId);
-    setMobile(bannerPhone);
-    recordFirstLogin(bannerUserId, bannerPhone);
+    setMobile(phone);
+    recordFirstLogin(bannerUserId, phone);
     await enterHome();
     return;
   }
