@@ -75,12 +75,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
 html,body{height:100%;overflow:hidden}
-/* padding:12px — the app content sits inset from the physical screen edge
-   on every side (a visible gutter of body's own flat --bg showing around
-   it) instead of running edge to edge; #app's own width:100%/flex:1 below
-   resolve against this narrowed content box, so the gutter is real on an
-   actual phone-width viewport, not just an artifact of desktop centering. */
-body{font-family:var(--font-body);font-weight:400;background:var(--bg);color:var(--white-100);display:flex;flex-direction:column;align-items:center;padding:12px}
+body{font-family:var(--font-body);font-weight:400;background:var(--bg);color:var(--white-100);display:flex;flex-direction:column;align-items:center;padding:0}
 /* #app flexes to fill whatever height the tester bar doesn't take —
    height:100dvh only when that bar is hidden (the default, real-user case). */
 /* The gradient lives here, on #app, not on the individual scrolling screens
@@ -98,13 +93,9 @@ body{font-family:var(--font-body);font-weight:400;background:var(--bg);color:var
    against the true rendered width there). cover is spec-guaranteed to
    fill the box on both axes with no gap possible, and the image's own
    aspect ratio (1440x3200) is already close to a phone screen's, so it
-   barely needs to crop anything to do that. border-radius: now that this
-   box sits inset from the screen edge (padding on body) instead of flush
-   against it, a square corner reads as unfinished — round it like the
-   cards floating inside it. */
+   barely needs to crop anything to do that. */
 #app{
   width:100%;max-width:430px;flex:1;min-height:0;position:relative;overflow:hidden;background:var(--bg);
-  border-radius:28px;
   background-image:url('bg-gradient.png');background-repeat:no-repeat;background-position:top center;background-size:cover;
 }
 .scr{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;overflow-y:auto}
@@ -192,22 +183,22 @@ svg{display:block;flex:none}
 /* No background of their own — transparent lets #app's gradient (painted
    once, pinned, never scrolling — see the comment on #app) show through. */
 #home,#terms{
-  justify-content:flex-start;padding:0 0 40px;
+  justify-content:flex-start;padding:0 0 48px;
   background-color:transparent;
 }
 /* No padding-bottom/margin-bottom here — .lifetime-banner's own margin-top
    is the sole gap between the stats row and that card, matching the single
    margin-top gap below it (before .claim-card), so the banner sits evenly
    centered between its neighbors instead of sitting closer to one. */
-.home-hero{width:100%;padding:var(--space) var(--space) 0}
-.home-hdr{display:flex;align-items:center;justify-content:space-between;width:100%;margin-bottom:4px}
+.home-hero{width:100%;padding:24px 20px 0}
+.home-hdr{display:flex;align-items:center;justify-content:space-between;width:100%;margin-bottom:8px}
 .home-hdr img{height:20px}
-.home-title{font-size:32px;line-height:36px;margin:20px 0 4px;width:100%} /* Headline 1 */
-.home-sub{font-size:14px;line-height:20px;color:var(--white-80);margin-bottom:16px;width:100%} /* Body 2 */
+.home-title{font-size:32px;line-height:36px;margin:24px 0 8px;width:100%} /* Headline 1 */
+.home-sub{font-size:14px;line-height:20px;color:var(--white-80);margin-bottom:20px;width:100%} /* Body 2 */
 
 /* Small streak indicator under the header — bare icon + text, same language
    as eaze-checkin's check-in-page streak pill, not a stat card of its own. */
-.streak-row{display:flex;align-items:center;gap:6px;margin-bottom:20px;width:100%}
+.streak-row{display:flex;align-items:center;gap:6px;margin-bottom:28px;width:100%}
 .streak-icon{width:16px;height:16px;color:var(--primary-500);flex:none}
 .streak-text{font-size:14px;line-height:20px;color:var(--white-80)}
 .streak-text .num{font-weight:700;color:var(--white-100)}
@@ -217,10 +208,10 @@ svg{display:block;flex:none}
    white/40% border, 20px radius (bigger than this app's usual 12px, matching
    the shared card scale), a header row (label + chevron), and one big
    centered number filling the rest of the card. */
-.home-stats-row{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.home-stats-row{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .stat-card{
-  display:flex;flex-direction:column;align-items:stretch;min-height:140px;
-  padding:18px;border-radius:20px;background:var(--card-fill);border:1px solid var(--white-40);
+  display:flex;flex-direction:column;align-items:stretch;min-height:152px;
+  padding:22px;border-radius:20px;background:var(--card-fill);border:1px solid var(--white-40);
   text-align:left;cursor:pointer;font-family:var(--font-body);color:inherit;
   transition:border-color .15s ease,transform .1s ease;
 }
@@ -252,8 +243,8 @@ svg{display:block;flex:none}
    gets clipped/cramped against the bottom edge instead of centering. */
 .lifetime-banner{
   position:relative;overflow:hidden;
-  width:100%;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:10px;
-  min-height:148px;margin-top:var(--space);padding:18px 16px;border-radius:20px;
+  width:90%;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:12px;
+  min-height:148px;margin:20px auto 0;padding:22px 18px;border-radius:20px;
   background:var(--card-fill);border:1px solid var(--white-40);color:var(--white-100);
   cursor:pointer;text-align:left;font-family:var(--font-body);
   transition:border-color .15s ease,opacity .2s ease;
@@ -264,7 +255,7 @@ svg{display:block;flex:none}
   background-image:url('lifetime-banner-watermark.png');background-repeat:no-repeat;background-size:contain;background-position:center right;
   opacity:.18;pointer-events:none;
 }
-.lifetime-banner-copy{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-width:0}
+.lifetime-banner-copy{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;gap:10px;min-width:0}
 .lifetime-banner-eyebrow{font-size:12px;line-height:16px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--white-100)}
 .lifetime-banner-title{font-size:20px;line-height:26px;font-weight:700;color:var(--white-100)}
 .lifetime-banner-accent{color:var(--white-100)}
@@ -290,8 +281,8 @@ svg{display:block;flex:none}
    so that card sits centered in the space between the stat-cards row and
    this one instead of being pulled closer to one neighbor than the other. */
 .claim-card{
-  position:relative;overflow:hidden;width:100%;min-height:140px;margin-top:var(--space);
-  padding:18px;border-radius:20px;background:var(--card-fill);border:1px solid var(--white-40);
+  position:relative;overflow:hidden;width:90%;min-height:150px;margin:20px auto 0;
+  padding:22px;border-radius:20px;background:var(--card-fill);border:1px solid var(--white-40);
   text-align:left;cursor:pointer;font-family:var(--font-body);color:var(--white-100);
   transition:border-color .15s ease,transform .1s ease;
 }
@@ -301,11 +292,11 @@ svg{display:block;flex:none}
   background-image:url('eaze-coin.png');background-repeat:no-repeat;background-size:contain;
   opacity:.4;pointer-events:none;
 }
-.claim-card-header{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.claim-card-header{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .claim-card-label{display:inline-flex;align-items:center;gap:8px;font-size:14px;line-height:20px;font-weight:400;color:var(--white-100)} /* Label 2 */
 .claim-card-coin-icon{width:20px;height:20px;flex:none}
 .claim-card-value{position:relative;z-index:1;font-size:40px;line-height:44px;color:var(--white-100)} /* .eh applied inline for weight */
-.claim-card-caption{position:relative;z-index:1;display:block;margin-top:2px;font-size:12px;line-height:16px;color:var(--white-80)} /* Body 3 */
+.claim-card-caption{position:relative;z-index:1;display:block;margin-top:4px;font-size:12px;line-height:16px;color:var(--white-80)} /* Body 3 */
 
 /* ── INFO / CLAIM MODALS — centered dialog, same language as the tester
    scenario picker (.scn-modal), reused here for the stat-card popups and
@@ -916,15 +907,22 @@ function setMobile(mobile){
   localStorage.setItem('eazeLevelUpMobile', mobile);
 }
 
-// The real Eaze platform user id — distinct from the phone number, handed
-// over by the host app's banner link (see boot()'s ?user_id=&phone= check),
-// never generated by this app itself. Null for the typed-phone dev path,
-// where no banner ever supplied one.
+// The real Eaze platform user id, handed over by the host app's banner link
+// (see boot()'s ?user_id=&phone= check), never generated by this app itself.
+// Null for the typed-phone dev path, where no banner ever supplied one.
 function getUserId(){
   return localStorage.getItem('eazeChoicesUserId');
 }
 function setUserId(userId){
   localStorage.setItem('eazeChoicesUserId', userId);
+}
+
+// The identity used for EazeScore/session tracking (score_events,
+// card_results) — always the real platform user_id when a banner supplied
+// one. Only falls back to the phone number for the typed-phone dev login
+// path, which never has a real user_id to fall back on.
+function getEazeUserId(){
+  return getUserId() || getMobile();
 }
 
 // Fire-and-forget — safe to call every time (idempotent server-side, see
@@ -1083,7 +1081,7 @@ async function fetchTodaySession(eazeUserId){
 // returning to Home later (back button, level-complete) doesn't re-fire the
 // bonus call on every visit, even though it's idempotent server-side.
 async function enterHome(){
-  const eazeUserId = getMobile();
+  const eazeUserId = getEazeUserId();
   let bonusAwarded = false;
   if (!S.scenarioMode) {
     try {
@@ -1179,7 +1177,7 @@ let homeLockTimerId = null;
 
 async function renderHome(){
   clearInterval(homeLockTimerId);
-  const eazeUserId = getMobile();
+  const eazeUserId = getEazeUserId();
 
   document.getElementById('homeScoreValue').textContent = '—';
   document.getElementById('homeSessionCount').textContent = '—';
@@ -1402,9 +1400,10 @@ document.getElementById('claimSubmitBtn').addEventListener('click', async () => 
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        eazeUserId: getMobile(),
+        eazeUserId: getEazeUserId(),
         // Only present for banner-entered users — see claim_choices.
         userId: getUserId() || undefined,
+        phoneNumber: getMobile(),
       }),
     });
     const data = await res.json();
@@ -1759,12 +1758,13 @@ function submitCardResult(run, card){
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      eazeUserId: getMobile(),
+      eazeUserId: getEazeUserId(),
       sessionNumber: run.sessionNumber,
       cardNumber: card.cardNumber,
       isCorrect,
       // Only present for banner-entered users — see session_logs_choices.
       userId: getUserId() || undefined,
+      phoneNumber: getMobile(),
     }),
   }).then(res => res.json()).then(data => {
     if (S.run === run && data.scoreEvent) run.earnedThisVisit += data.scoreEvent.points;

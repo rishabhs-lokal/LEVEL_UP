@@ -69,7 +69,7 @@ app.get('/api/sessions/today/:eazeUserId', async (req, res) => {
 
 app.post('/api/cards/complete', async (req, res) => {
   try {
-    const { eazeUserId, sessionNumber, cardNumber, isCorrect, userId } = req.body;
+    const { eazeUserId, sessionNumber, cardNumber, isCorrect, userId, phoneNumber } = req.body;
 
     if (!eazeUserId || sessionNumber == null || cardNumber == null || typeof isCorrect !== 'boolean') {
       return res.status(400).json({ error: 'eazeUserId, sessionNumber, cardNumber and isCorrect (boolean) are required' });
@@ -83,6 +83,7 @@ app.post('/api/cards/complete', async (req, res) => {
       // Optional — only present for banner-entered (real identity) users;
       // see recordCardResult's session_logs_choices hook.
       userId: typeof userId === 'string' ? userId : undefined,
+      phoneNumber: typeof phoneNumber === 'string' ? phoneNumber : undefined,
     });
 
     res.status(201).json(result);
@@ -135,8 +136,9 @@ app.post('/api/score/welcome-bonus', async (req, res) => {
 
 // First-login-only tracking (login_logs_choices) — safe to call on every
 // login, idempotent (see recordFirstLogin). userId is the real Eaze
-// platform user id, resolved by the caller — not the same value as
-// eazeUserId (the phone number) used everywhere else in this app.
+// platform user id, resolved by the caller — the same identity used as
+// eazeUserId everywhere else in this app (score_events, card_results);
+// phoneNumber is stored here only as an attribute, never as the identity key.
 app.post('/api/login-logs/first-login', async (req, res) => {
   try {
     const { userId, phoneNumber } = req.body;
@@ -180,7 +182,7 @@ app.post('/api/open-session-logs', async (req, res) => {
 // transfer never leaves a user able to claim the same points twice.
 app.post('/api/score/claim', async (req, res) => {
   try {
-    const { eazeUserId, userId } = req.body;
+    const { eazeUserId, userId, phoneNumber } = req.body;
     if (!eazeUserId || typeof eazeUserId !== 'string') {
       return res.status(400).json({ error: 'eazeUserId is required' });
     }
@@ -199,7 +201,7 @@ app.post('/api/score/claim', async (req, res) => {
     // succeeded.
     if (userId) {
       try {
-        await recordClaim({ userId, phoneNumber: eazeUserId, eazescoreClaimed: claim.available });
+        await recordClaim({ userId, phoneNumber: phoneNumber || eazeUserId, eazescoreClaimed: claim.available });
       } catch (err) {
         console.error('claim_choices logging failed', err);
       }

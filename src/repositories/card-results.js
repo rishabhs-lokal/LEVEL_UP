@@ -37,7 +37,7 @@ function msUntilNextISTMidnight() {
 // already answered today earns nothing further, but the same card can be
 // answered again (and re-scored) on a later day if that day's session was
 // never completed the first time around.
-export async function recordCardResult({ eazeUserId, sessionNumber, cardNumber, isCorrect, userId }) {
+export async function recordCardResult({ eazeUserId, sessionNumber, cardNumber, isCorrect, userId, phoneNumber }) {
   if (!dbEnabled) return { persisted: false };
 
   const result = await withTransaction(async (client) => {
@@ -83,11 +83,11 @@ export async function recordCardResult({ eazeUserId, sessionNumber, cardNumber, 
   // path — and only fire on the exact card that started/completed the
   // session, not every card.
   if (result.justStartedSession && userId) {
-    await recordSessionEngagement({ userId, phoneNumber: eazeUserId, sessionNumber });
+    await recordSessionEngagement({ userId, phoneNumber: phoneNumber || eazeUserId, sessionNumber });
   }
   if (result.justCompletedSession && userId) {
     const sessionsCount = await getCompletedSessionsCount(eazeUserId);
-    await recordSessionCompletion({ userId, phoneNumber: eazeUserId, sessionsCount });
+    await recordSessionCompletion({ userId, phoneNumber: phoneNumber || eazeUserId, sessionsCount });
   }
 
   return result;
