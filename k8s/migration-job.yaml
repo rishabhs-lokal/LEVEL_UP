@@ -1,4 +1,4 @@
-# Runs `npm run migrate:up` (node-pg-migrate) to completion, then exits — the
+# Runs `python scripts/migrate.py up` to completion, then exits — the
 # Kubernetes-native way to run a task exactly once per deploy, ahead of the
 # Deployment rollout.
 #
@@ -33,7 +33,7 @@ spec:
         - name: migrate
           image: ghcr.io/OWNER/eaze-level-up:latest   # must match the image being deployed
           imagePullPolicy: IfNotPresent
-          command: ["npm", "run", "migrate:up"]
+          command: ["python", "scripts/migrate.py", "up"]
           envFrom:
             - configMapRef:
                 name: eaze-level-up-config

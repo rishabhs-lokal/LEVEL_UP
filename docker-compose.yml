@@ -22,7 +22,7 @@ services:
   # gates the Deployment rollout in the cluster.
   migrate:
     build: .
-    command: ["npm", "run", "migrate:up"]
+    command: ["python", "scripts/migrate.py", "up"]
     environment:
       DATABASE_URL: postgresql://app_user:app_password@postgres:5432/app_db
     depends_on:
@@ -37,7 +37,7 @@ services:
       PORT: 3000
       DATABASE_URL: postgresql://app_user:app_password@postgres:5432/app_db
       # Pulled from the host env / a local .env file (see .env.example) —
-      # left unset here, claims run in mock mode (see coin-transfer.js).
+      # left unset here, claims run in mock mode (see app/services/coin_transfer.py).
       EAZE_COINS_AUTH_KEY: ${EAZE_COINS_AUTH_KEY:-}
       EAZE_COINS_API_URL: ${EAZE_COINS_API_URL:-https://api.eazeapp.com/payments/free-coins/upload/}
     volumes:

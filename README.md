@@ -7,7 +7,7 @@ A "this-or-that" swipe card game for [eaze](https://eazeapp.com) — read a shor
 | Part | Description |
 |------|-------------|
 | **Frontend** | Single-file HTML/CSS/Vanilla JS WebView (`public/index.html`). No framework, no build step. Max-width 430px, mobile-first. Visual theme (dark palette, brand color, logo, font) matches [eaze-spin-wheel](https://github.com/chitrarth05/eaze-spin-wheel). |
-| **Backend** | Node.js + Express. Serves the static app, the card deck (`content/cards.json`), and records per-card results + the shared EazeScore ledger in Postgres via a generic DB client (`src/db/client.js`). |
+| **Backend** | Python + FastAPI. Serves the static app, the card deck (`content/cards.json`), and records per-card results + the shared EazeScore ledger in Postgres via a generic DB client (`app/db/client.py`). |
 | **Content** | 20 sessions × 15 cards = 300 cards, no topics — each card carries its own pair of options. Parsed into `content/cards.json` by `scripts/parse-quickplay-content.py` from the source markdown. |
 | **Login** | Mobile-number gate, client-side only — there's no SMS/OTP backend yet, so `9999999999` is the only number that logs in. See [Login](#login). |
 
@@ -44,26 +44,32 @@ eaze-level-up/
 ├── public/
 │   ├── index.html          # The entire game — screens, styles, logic
 │   └── eaze-logo.png        # Wordmark, extracted from eaze-spin-wheel
-├── src/
-│   ├── server.js            # Express routes: static app, /api/content, /api/sessions/*, /api/cards/*, /api/score/*, /health, /ready
+├── app/
+│   ├── main.py               # FastAPI routes: static app, /api/content, /api/sessions/*, /api/cards/*, /api/score/*, /health, /ready
 │   ├── db/
-│   │   └── client.js        # Generic Postgres client (pool, query, transaction, health check)
-│   └── repositories/
-│       ├── card-results.js     # Per-card results, today's-session state, streak, completed-session count
-│       └── score-events.js     # Shared, cross-app EazeScore ledger (append-only)
-├── migrations/               # node-pg-migrate, ESM migration files
+│   │   └── client.py         # Generic Postgres client (async pool, query, transaction, health check)
+│   ├── lib/
+│   │   └── ist_time.py       # Shared IST wall-clock helper for the log tables
+│   ├── repositories/
+│   │   ├── card_results.py       # Per-card results, today's-session state, streak, completed-session count
+│   │   ├── score_events.py       # Shared, cross-app EazeScore ledger (append-only)
+│   │   ├── login_logs.py, session_logs.py, open_session_logs.py, claim_choices.py, session_count.py
+│   └── services/
+│       └── coin_transfer.py  # Real EazeScore -> coin transfer (mock mode when EAZE_COINS_AUTH_KEY is unset)
+├── migrations/                # Custom SQL migrations (see scripts/migrate.py), NNNN_name.sql with -- up / -- down sections
 ├── content/
 │   └── cards.json            # Parsed card deck (generated) — 20 sessions x 15 cards
 ├── scripts/
 │   ├── parse-quickplay-content.py  # Regenerates cards.json from the source markdown
-│   └── test-connection.js
+│   ├── migrate.py             # Migration runner (up/down/baseline/create)
+│   └── test_connection.py
 ├── tests/
-│   ├── card-results.test.js    # Per-card scoring, session cycling, locking, streak grace rule
-│   └── score-events.test.js    # Shared EazeScore ledger
+│   ├── test_card_results.py    # Per-card scoring, session cycling, locking, streak grace rule
+│   └── test_score_events.py    # Shared EazeScore ledger
 ├── k8s/                       # Deployment, Service, ConfigMap/Secret templates, migration Job
 ├── Dockerfile
 ├── docker-compose.yml         # Local dev: postgres → one-shot migrate → app
-└── package.json
+└── requirements.txt
 ```
 
 ## Local development
@@ -72,31 +78,34 @@ eaze-level-up/
 docker compose up -d --build   # postgres, one-shot migrations, then the app
 ```
 
-Open http://localhost:3000. `public/` and `content/` are bind-mounted into the `app` container, so editing them on the host reflects immediately — no rebuild. `src/` is **not** bind-mounted (it's baked into the image), so a backend change needs `docker compose up -d --build app` to take effect. Postgres credentials and `DATABASE_URL` are hardcoded in `docker-compose.yml` for local dev; there's nothing to configure.
+Open http://localhost:3000. `public/` and `content/` are bind-mounted into the `app` container, so editing them on the host reflects immediately — no rebuild. `app/` is **not** bind-mounted (it's baked into the image), so a backend change needs `docker compose up -d --build app` to take effect. Postgres credentials and `DATABASE_URL` are hardcoded in `docker-compose.yml` for local dev; there's nothing to configure.
 
 Without Docker (no DB, local-only mode — results just aren't persisted):
 
 ```bash
-npm install
-npm run dev              # http://localhost:3000
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements-dev.txt
+uvicorn app.main:app --reload --port 3000   # http://localhost:3000
 ```
 
-Copy `.env.example` to `.env` first if you want this mode to talk to a database (e.g. one already running from `docker compose up postgres`).
+Copy `.env.example` to `.env` first if you want this mode to talk to a database (e.g. one already running from `docker compose up postgres`) — export its values into your shell before running uvicorn, since the app reads `os.environ` directly.
 
 To regenerate the card deck after editing the source content doc:
 
 ```bash
-npm run content:parse
+python3 scripts/parse-quickplay-content.py
 ```
 
 ## Database & migrations
 
-Migrations use [`node-pg-migrate`](https://github.com/salsita/node-pg-migrate) — the standard tool for raw-SQL Postgres projects. Running the app without `DATABASE_URL` set works fine (results just aren't persisted); no leaderboard is implemented either way.
+Migrations are plain SQL files under `migrations/` (`NNNN_name.sql`, each with a `-- up` and `-- down` section), applied by a small custom runner (`scripts/migrate.py`) tracked in a `schema_migrations` table. Running the app without `DATABASE_URL` set works fine (results just aren't persisted); no leaderboard is implemented either way.
 
 ```bash
-npm run migrate:up       # apply pending migrations (idempotent, safe to re-run)
-npm run migrate:down     # roll back the last migration
-npm run migrate:create <name>   # scaffold a new migration
+python scripts/migrate.py up              # apply pending migrations (idempotent, safe to re-run)
+python scripts/migrate.py down            # roll back the last migration
+python scripts/migrate.py create <name>   # scaffold a new migration
+python scripts/migrate.py baseline        # mark all migrations as already applied, without running them —
+                                           # for adopting a DB that was already fully migrated elsewhere
 ```
 
 In `docker-compose.yml`, migrations run once via a dedicated `migrate` service that the `app` service waits on (`condition: service_completed_successfully`).
@@ -104,10 +113,11 @@ In `docker-compose.yml`, migrations run once via a dedicated `migrate` service t
 ## Tests
 
 ```bash
-npm test        # node --test tests/*.test.js — needs DATABASE_URL, hits a real Postgres
+pip install -r requirements-dev.txt
+DATABASE_URL=postgresql://app_user:app_password@localhost:5432/app_db pytest   # hits a real Postgres
 ```
 
-Every test uses its own randomly-generated `eazeUserId`, so runs never collide with each other or with real data.
+Every test uses its own randomly-generated `eaze_user_id`, so runs never collide with each other or with real data.
 
 ## Kubernetes
 
