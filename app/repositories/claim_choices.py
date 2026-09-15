@@ -7,14 +7,14 @@ from ..db.client import DB_ENABLED, query
 from ..lib.ist_time import ist_now_parts
 
 
-async def record_claim(*, user_id, phone_number, eazescore_claimed):
+async def record_claim(*, user_id, eazescore_claimed):
     if not DB_ENABLED:
         return {"persisted": False}
     parts = ist_now_parts()
     result = await query(
-        """INSERT INTO claim_choices (user_id, phone_number, eazescore_claimed, log_date, log_time)
-           VALUES (%s, %s, %s, %s, %s)
-           RETURNING id, user_id, phone_number, eazescore_claimed, log_date, log_time""",
-        [user_id, phone_number, eazescore_claimed, parts["date"], parts["time"]],
+        """INSERT INTO claim_choices (user_id, eazescore_claimed, log_date, log_time)
+           VALUES (%s, %s, %s, %s)
+           RETURNING id, user_id, eazescore_claimed, log_date, log_time""",
+        [user_id, eazescore_claimed, parts["date"], parts["time"]],
     )
     return {"persisted": True, "log": result["rows"][0]}

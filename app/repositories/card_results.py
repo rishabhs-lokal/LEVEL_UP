@@ -44,7 +44,7 @@ def _ms_until_next_ist_midnight() -> int:
 # already answered today earns nothing further, but the same card can be
 # answered again (and re-scored) on a later day if that day's session was
 # never completed the first time around.
-async def record_card_result(*, eaze_user_id, session_number, card_number, is_correct, user_id=None, phone_number=None):
+async def record_card_result(*, eaze_user_id, session_number, card_number, is_correct, user_id=None):
     if not DB_ENABLED:
         return {"persisted": False}
 
@@ -93,10 +93,10 @@ async def record_card_result(*, eaze_user_id, session_number, card_number, is_co
     # path — and only fire on the exact card that started/completed the
     # session, not every card.
     if result.get("justStartedSession") and user_id:
-        await record_session_engagement(user_id=user_id, phone_number=phone_number or eaze_user_id, session_number=session_number)
+        await record_session_engagement(user_id=user_id, session_number=session_number)
     if result.get("justCompletedSession") and user_id:
         sessions_count = await get_completed_sessions_count(eaze_user_id)
-        await record_session_completion(user_id=user_id, phone_number=phone_number or eaze_user_id, sessions_count=sessions_count)
+        await record_session_completion(user_id=user_id, sessions_count=sessions_count)
 
     return result
 

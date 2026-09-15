@@ -29,7 +29,6 @@ from .repositories.score_events import (
     record_score_event,
 )
 from .services.coin_transfer import transfer_coins
-from .services.redash_client import lookup_phone_number
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 PUBLIC_DIR = BASE_DIR / "public"
@@ -86,22 +85,6 @@ async def get_content():
     return ok(CARD_DECK)
 
 
-# Fallback for banner entries that hand over user_id but no phone (see
-# boot()'s ?user_id=&phone= check in the frontend) — resolves it via Redash
-# query 20342 (see services/redash_client.py). Never blocks login on
-# failure: phoneNumber is only a logging attribute here, not an identity —
-# score_events/card_results already key on user_id regardless.
-@app.get("/api/users/{user_id}/phone")
-async def user_phone(user_id: str):
-    if not user_id:
-        return error(400, "userId is required")
-    try:
-        phone_number = await lookup_phone_number(user_id)
-        return ok({"phoneNumber": phone_number})
-    except Exception as err:  # noqa: BLE001
-        return error(500, str(err))
-
-
 # One global session per day, 20 sessions x 15 cards, no topics — see
 # card_results.py for how "today's session" is derived.
 
@@ -130,7 +113,6 @@ async def cards_complete(request: Request):
         card_number = body.get("cardNumber")
         is_correct = body.get("isCorrect")
         user_id = body.get("userId")
-        phone_number = body.get("phoneNumber")
 
         if not eaze_user_id or session_number is None or card_number is None or not isinstance(is_correct, bool):
             return error(400, "eazeUserId, sessionNumber, cardNumber and isCorrect (boolean) are required")
@@ -143,7 +125,6 @@ async def cards_complete(request: Request):
             # Optional — only present for banner-entered (real identity)
             # users; see record_card_result's session_logs_choices hook.
             user_id=user_id if isinstance(user_id, str) else None,
-            phone_number=phone_number if isinstance(phone_number, str) else None,
         )
         return ok(result, 201)
     except Exception as err:  # noqa: BLE001
@@ -200,19 +181,15 @@ async def welcome_bonus(request: Request):
 # First-login-only tracking (login_logs_choices) — safe to call on every
 # login, idempotent (see record_first_login). userId is the real Eaze
 # platform user id, resolved by the caller — the same identity used as
-# eazeUserId everywhere else in this app (score_events, card_results);
-# phoneNumber is stored here only as an attribute, never as the identity key.
+# eazeUserId everywhere else in this app (score_events, card_results).
 @app.post("/api/login-logs/first-login")
 async def login_logs_first_login(request: Request):
     try:
         body = await request.json()
         user_id = body.get("userId")
-        phone_number = body.get("phoneNumber")
         if not user_id or not isinstance(user_id, str):
             return error(400, "userId is required")
-        if not phone_number or not isinstance(phone_number, str):
-            return error(400, "phoneNumber is required")
-        result = await record_first_login(user_id=user_id, phone_number=phone_number)
+        result = await record_first_login(user_id=user_id)
         return ok(result, 200)
     except Exception as err:  # noqa: BLE001
         return error(500, str(err))
@@ -226,21 +203,17 @@ async def open_session_logs(request: Request):
     try:
         body = await request.json()
         user_id = body.get("userId")
-        phone_number = body.get("phoneNumber")
         cards_engaged = body.get("cardsEngaged")
         wrong_selections = body.get("wrongSelections")
 
         if not user_id or not isinstance(user_id, str):
             return error(400, "userId is required")
-        if not phone_number or not isinstance(phone_number, str):
-            return error(400, "phoneNumber is required")
         if not isinstance(cards_engaged, int) or isinstance(cards_engaged, bool) or \
            not isinstance(wrong_selections, int) or isinstance(wrong_selections, bool):
             return error(400, "cardsEngaged and wrongSelections must be integers")
 
         result = await record_open_session_close(
-            user_id=user_id, phone_number=phone_number,
-            cards_engaged=cards_engaged, wrong_selections=wrong_selections,
+            user_id=user_id, cards_engaged=cards_engaged, wrong_selections=wrong_selections,
         )
         return ok(result, 200)
     except Exception as err:  # noqa: BLE001
@@ -256,7 +229,6 @@ async def score_claim(request: Request):
         body = await request.json()
         eaze_user_id = body.get("eazeUserId")
         user_id = body.get("userId")
-        phone_number = body.get("phoneNumber")
 
         if not eaze_user_id or not isinstance(eaze_user_id, str):
             return error(400, "eazeUserId is required")
@@ -273,10 +245,7 @@ async def score_claim(request: Request):
         # that already succeeded.
         if user_id:
             try:
-                await record_claim(
-                    user_id=user_id, phone_number=phone_number or eaze_user_id,
-                    eazescore_claimed=claim["available"],
-                )
+                await record_claim(user_id=user_id, eazescore_claimed=claim["available"])
             except Exception as log_err:  # noqa: BLE001
                 print(f"claim_choices logging failed: {log_err}")
 
