@@ -560,6 +560,15 @@ svg{display:block;flex:none}
     <div class="login-hint">Testing? Use 9999999999 for live data, or 9999999900 to preview scenarios — real number login isn't live yet.</div>
   </div>
 
+  <!-- NO ACCESS — shown when opened without a valid banner ?user_id= and no
+       saved session already exists (production has no other way in; see
+       boot()). -->
+  <div id="noAccess" class="scr">
+    <div class="brand-halo"><img src="eaze-logo.png" alt="eaze"></div>
+    <div class="login-title eh">Open this from the Eaze app</div>
+    <div class="login-sub">Eaze - Choices only works when opened from inside the Eaze app.</div>
+  </div>
+
   <!-- HOME — the single landing screen post-login: EazeScore, lifetime
        stats, and the play/locked CTA all live here now, no separate
        intermediate "Your EazeScore" screen. -->
@@ -910,18 +919,24 @@ function setMobile(mobile){
 // The host app's banner link sends ?user_id= as base64 (or base64url — '-'/
 // '_' in place of '+'/'/', no padding, since '+' is otherwise silently
 // corrupted to a space by application/x-www-form-urlencoded query-string
-// decoding). Normalizes either variant, then decodes; falls back to the raw
-// value on any error rather than blocking entry, since production has no
-// login screen to fall back to.
+// decoding). atob() is lenient and silently produces garbage bytes for
+// input that isn't actually valid base64, so the decoded result is
+// round-tripped back through btoa() to confirm it's genuinely base64
+// before it's trusted; otherwise this returns "" (treated as no user_id at
+// all, see boot()'s no-access screen) rather than risk logging a user in
+// under a corrupted id.
 function decodeBannerUserId(raw){
-  if (!raw) return null;
+  if (!raw) return '';
+  let normalized = raw.replace(/-/g, '+').replace(/_/g, '/');
+  while (normalized.length % 4 !== 0) normalized += '=';
   try {
-    const normalized = raw.replace(/-/g, '+').replace(/_/g, '/');
-    const padded = normalized + '='.repeat((4 - (normalized.length % 4)) % 4);
-    return atob(padded) || null;
+    const decoded = atob(normalized);
+    if (btoa(decoded) === normalized) return decoded;
   } catch (e) {
-    return raw;
+    // falls through to the empty-string return below
   }
+  console.error('banner user_id was not valid base64, ignoring:', raw);
+  return '';
 }
 
 // The real Eaze platform user id, handed over by the host app's banner link
@@ -1044,7 +1059,19 @@ async function boot(){
     return;
   }
 
+  // No banner id and no saved session — in production there is no other
+  // way in (see above), so show the same "open from the Eaze app" gate as
+  // eaze-checkin instead of a login screen real users could never use.
+  // The typed-number screen stays reachable on localhost/dev hosts only,
+  // for QA (test numbers, Tester Mode).
+  const DEV_HOSTNAMES = ['localhost', '127.0.0.1'];
+  const isDevHost = DEV_HOSTNAMES.includes(window.location.hostname);
+
   if (!getEazeUserId()) {
+    if (!isDevHost) {
+      showScreen('noAccess');
+      return;
+    }
     showScreen('login');
     document.getElementById('loginInput').focus();
     return;
