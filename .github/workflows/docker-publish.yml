@@ -31,3 +31,10 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          # GHCR intermittently rejects the provenance attestation's blob
+          # with "unknown blob" right after all real image layers finish
+          # pushing (a known buildx/GHCR interaction, not an image problem)
+          # — disabling provenance/SBOM avoids generating that attestation
+          # manifest at all.
+          provenance: false
+          sbom: false
